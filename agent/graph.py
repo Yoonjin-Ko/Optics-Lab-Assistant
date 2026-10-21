@@ -19,6 +19,7 @@ from langgraph.config import get_stream_writer
 from langgraph.graph import END, StateGraph
 from langsmith import traceable
 
+from .optics_calculations import plan_calculation, format_calculation
 from .deps import SupervisorDeps
 from .retry import with_retry
 from .optics import optical_targets, answer_mode, short_concept_card
@@ -52,6 +53,8 @@ class AgentState(TypedDict, total=False):
     query: str
     optics_targets: list[str]
     optics_mode: str
+    calculation_request: dict | None
+    calculation_result: dict | None
     thread_id: str
     history: list[dict]
     route: str
@@ -87,15 +90,16 @@ def _cost(state: AgentState, usage: dict) -> float:
 @traceable(name="route_node")
 async def route_node(state: AgentState, deps: SupervisorDeps) -> dict:
     """Wave 5 — 모든 쿼리가 무거운 파이프라인을 탈 필요는 없다."""
-    targets = optical_targets(state["query"], state.get("history", []))
+    calculation = plan_calculation(state["query"])
+    targets = [calculation["document"]] if calculation else optical_targets(state["query"], state.get("history", []))
     if targets:
-        return {"route": "incident", "optics_targets": targets, "optics_mode": answer_mode(state["query"]),
+        return {"route": "incident", "calculation_request": calculation, "optics_targets": targets, "optics_mode": answer_mode(state["query"]),
                 "needs_analysis": False,
                 "events": state.get("events", []) +
                     [{"type": "RouteDecided", "route": "incident"}]}
     result, usage = deps.fast_llm.route(state["query"])
     event = {"type": "RouteDecided", "route": result["route"]}
-    return {"route": result["route"], "needs_analysis": result["needs_analysis"],
+    return {"route": result["route"], "calculation_request": None, "needs_analysis": result["needs_analysis"],
             "cost_usd": _cost(state, usage),
             "events": state.get("events", []) + [event]}
 
@@ -126,6 +130,9 @@ async def plan_node(state: AgentState, deps: SupervisorDeps) -> dict:
         tasks = [{"id": f"optics-{i}", "agent": "research", "kind": "runbook",
                   "target": target, "status": "pending"}
                  for i, target in enumerate(state["optics_targets"])]
+        if state.get("calculation_request"):
+            tasks.append({"id":"optics-calculation", "agent":"calculation", "kind":"calculation",
+                          "target":state["calculation_request"]["operation"], "status":"pending"})
         return {"tasks": tasks, "needs_analysis": False,
                 "events": state["events"] + [{"type": "PlanCreated",
                     "task_count": len(tasks), "targets": state["optics_targets"]}]}
@@ -228,6 +235,23 @@ async def replan_check_node(state: AgentState, deps: SupervisorDeps) -> dict:
     return {"events": state["events"] + [verdict]}
 
 
+@traceable(name="calculation_node")
+async def calculation_node(state: AgentState, deps: SupervisorDeps) -> dict:
+    """계산 담당: 필요한 질문에서만 실제 MCP 수치 도구를 호출한다."""
+    request = state.get("calculation_request")
+    if not request:
+        return {"calculation_result": None}
+    data, retries = await with_retry(deps.mcp.call_tool, "calculate_optics",
+                                    {"operation":request["operation"], "parameters":request["parameters"]})
+    data["input_origins"] = request["origins"]
+    tasks = [dict(t, status="done") if t.get("agent")=="calculation" else dict(t) for t in state["tasks"]]
+    return {"tasks":tasks, "calculation_result":data,
+            "retry_count":state.get("retry_count",0)+retries,
+            "collected":state.get("collected",[])+[{"source":"calculation", "data":data}],
+            "events":state["events"]+[{"type":"CalculationCompleted", "tool":"calculate_optics",
+                "operation":request["operation"], "status":data["status"], "ok":data["ok"]}]}
+
+
 @traceable(name="analysis_node")
 async def analysis_node(state: AgentState, deps: SupervisorDeps) -> dict:
     """Wave 6 보완 — needs_analysis=True가 정당한 경우(모델의 자기모순이 아니라
@@ -256,6 +280,10 @@ async def write_node(state: AgentState, deps: SupervisorDeps) -> dict:
     토큰마다 attempt 번호를 같이 실어 보낸다 — validate가 반려해 재작성(attempt 증가)
     될 때 프론트가 새 말풍선으로 끊어서 보여줄 수 있게 하기 위함(Wave 8 재작성 루프를
     그대로 노출)."""
+    if state.get("calculation_result") is not None:
+        draft = format_calculation(state["calculation_result"])
+        return {"draft":draft, "last_prompt":None, "events":state["events"]+[
+            {"type":"DraftWritten", "attempt":1, "length":len(draft), "mode":"verified_calculation"}]}
     attempt = state.get("validation_attempts", 0) + 1
     writer = get_stream_writer()
     collected = list(state.get("collected", []))
@@ -294,6 +322,14 @@ async def validate_node(state: AgentState, deps: SupervisorDeps) -> dict:
     Returns:
         시도 횟수, 보완 요청, 형식 검사 이벤트를 담은 상태 갱신 사전.
     """
+    if state.get("calculation_result") is not None:
+        data = state["calculation_result"]
+        expected = format_calculation(data)
+        return {"draft":expected, "validation_attempts":state.get("validation_attempts",0)+1,
+                "validation_feedback":None, "events":state["events"]+[
+                    {"type":"CalculationValidated", "status":data["status"],
+                     "checks":["explicit_units", "finite_values", "domain", "result_matches_tool"],
+                     "ok":data["ok"]}]}
     draft = state["draft"]
     attempts = state.get("validation_attempts", 0) + 1
     theory = state.get("optics_mode") == "theory"
@@ -385,6 +421,7 @@ def build_graph(deps: SupervisorDeps):
     g.add_node("gate", node(gate_node))
     g.add_node("research", node(research_node))
     g.add_node("replan_check", node(replan_check_node))
+    g.add_node("calculation", node(calculation_node))
     g.add_node("analysis", node(analysis_node))
     g.add_node("write", node(write_node))
     g.add_node("validate", node(validate_node))
@@ -398,7 +435,8 @@ def build_graph(deps: SupervisorDeps):
     g.add_edge("gate", "research")
     g.add_edge("research", "replan_check")
     g.add_conditional_edges("replan_check", _after_replan_check,
-                            {"analysis": "analysis", "research": "research"})
+                            {"analysis": "calculation", "research": "research"})
+    g.add_edge("calculation", "analysis")
     g.add_edge("analysis", "write")
     g.add_edge("write", "validate")
     g.add_conditional_edges("validate", _after_validate,

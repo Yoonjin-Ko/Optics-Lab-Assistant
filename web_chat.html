@@ -50,13 +50,44 @@
 
 
 .apparatus-art .instrument-scene{max-height:none;height:auto}
+.experiment-issues{margin:20px 0;border:1px solid #b5cbdc;border-radius:6px;background:#fff}.experiment-issues>details>summary{padding:13px;cursor:pointer;color:#285e80;background:#edf4fa}.experiment-issues summary span{float:right;font-size:11px;font-weight:normal}.issue-notice{margin:12px;padding:12px;border-left:3px solid #d2ad57;background:#fff9ed}.issue-question{margin:10px 12px;border:1px solid #d4e0e9;border-radius:4px}.issue-question summary{padding:11px;cursor:pointer;font-weight:bold;color:#345e7a}.issue-question ul{padding:0 20px 5px 32px;line-height:1.8}.experiment-issues .model-note{padding:0 12px}
+.experiment-theory{margin:14px 0;border:1px solid #b4cadb;background:white;border-radius:6px}.experiment-theory>details>summary{padding:13px;background:#e7f1f8;color:#285c7e;cursor:pointer}.experiment-theory summary span{float:right;font-size:11px}.theory-section{margin:10px 12px;border-bottom:1px solid #e0e9f0}.theory-section>summary{padding:9px;cursor:pointer;font-weight:bold;color:#356681}.theory-section .bubble{width:100%;border:0;background:transparent;margin:0;padding:10px;white-space:normal}.theory-section .katex-display{overflow-x:auto;overflow-y:hidden}
+
+/* 실험: 장치·결과 | 조절 장치 | 대화. 각 열은 독립적으로 스크롤한다. */
+.experiment-layout{grid-template-columns:130px minmax(0,1fr)}
+.experiment-layout .rightbar{display:none!important}
+.experiment-layout .desk{grid-template-columns:minmax(0,1fr) minmax(270px,310px);gap:10px}
+.experiment-layout .workspace{padding:10px}
+.experiment-layout .simulation-pane{display:grid;grid-template-columns:minmax(0,1fr) 220px;gap:12px;padding:10px;height:calc(100dvh - 235px);min-height:460px}
+.experiment-stage{grid-column:1;grid-row:1;min-width:0;overflow:auto;padding-right:4px}
+.experiment-controls{grid-column:2;grid-row:1;min-width:0;overflow:auto;background:#eef5f9;border:1px solid #bbcfdd;padding:10px}
+.control-heading{font-weight:bold;color:#286484;border-bottom:1px solid #bfd2df;padding:0 0 10px}
+.experiment-controls label{font-size:12px;line-height:1.6;margin:12px 0}
+.experiment-controls label b{float:none;display:block}
+.experiment-controls .michelson-controls{gap:4px}
+.experiment-controls button{font-size:11px}
+.experiment-controls .transfer{margin-top:16px;white-space:normal}
+.experiment-layout .conversation-pane{display:flex;flex-direction:column;min-height:0;height:calc(100dvh - 215px);min-height:480px}
+.experiment-layout .chat-panel{flex:1;min-height:0;display:flex;flex-direction:column}
+.experiment-layout #log{height:auto;min-height:0;flex:1}
+.experiment-layout .sim-tabs{display:none}
+@media(max-width:1100px){.experiment-layout{grid-template-columns:110px minmax(0,1fr)}.experiment-layout .desk{grid-template-columns:minmax(0,1fr) 260px}.experiment-layout .simulation-pane{grid-template-columns:minmax(0,1fr) 180px}}
+@media(max-width:850px){.experiment-layout .desk{grid-template-columns:1fr}.experiment-layout .simulation-pane{height:auto;max-height:70dvh;min-height:400px}.experiment-layout .conversation-pane{height:420px;min-height:0}}
+@media(max-width:600px){.experiment-layout{display:block}.experiment-layout .simulation-pane{grid-template-columns:minmax(0,1fr) 145px;padding:5px;gap:6px}.experiment-controls{padding:6px}}
+
+/* 실험과 조절 장치는 페이지 흐름에 두고 별도 스크롤 상자를 만들지 않는다. */
+.experiment-layout .simulation-pane{height:auto;min-height:0;max-height:none;overflow:visible;border:0;padding:10px 0;background:transparent;align-items:start}
+.experiment-layout .experiment-stage{overflow:visible;padding-right:0}
+.experiment-layout .experiment-controls{overflow:visible;border:0;border-left:1px solid #c4d5e1;border-radius:0;background:transparent;padding:0 0 0 12px}
+.experiment-layout .conversation-pane{position:sticky;top:12px;align-self:start}
+@media(max-width:850px){.experiment-layout .simulation-pane{height:auto;max-height:none;min-height:0}.experiment-layout .conversation-pane{position:static}}
 </style>
 </head>
 <body>
 <div id="app">
   <div class="utility"><span><b>OPTICS LAB ONLINE</b> &nbsp; / &nbsp; EXPLORE · LEARN · EXPERIMENT</span><span>한국어</span></div>
   <header class="masthead"><div class="branding"><div class="eyebrow">THE EXPLORER'S GUIDE TO LIGHT</div><h1>OPTICS <em>LAB</em></h1></div><div class="hero-optics" aria-hidden="true"><span class="hero-label">DISCOVER THE SPECTRUM</span></div></header>
-  <div class="layout" :class="{'home-layout':view==='ask'}">
+  <div class="layout" :class="{'home-layout':view==='ask','experiment-layout':view==='simulation'}">
   <!-- 좌측: 가상 실험 선택과 로컬 문서 탐색. 클릭만으로 LLM을 호출하지 않는다. -->
   <nav class="sidebar" aria-label="학습 메뉴"><div class="side-heading">CONTENTS</div>
     <button class="nav-link" :class="{active:view==='ask'}" @click="view='ask'">ASK / 메인</button>
@@ -64,13 +95,9 @@
     <button class="nav-link" @click="absorptionType='metal';absorptionWave=193;openSimulation('absorption')">광전효과 · 전자 방출</button>
     <div class="side-heading">가상 실험</div>
     <button v-for="lab in navigationLabs" :key="lab.id" class="nav-link" :class="{active:view==='simulation' && activeLabId===lab.id}" :aria-current="view==='simulation' && activeLabId===lab.id ? 'page' : undefined" @click="openSimulation(lab.id)">{{ lab.title }} 실험</button>
-    <div class="side-heading">학습 문서</div>
-    <button class="nav-link" @click="openDoc('experiment-intake')">Home / 실험 안내</button>
+    <div class="side-heading">기초 · 심화 문서</div>
     <button class="nav-link" @click="openDoc('light-fundamentals')">빛의 기초</button>
-    <button class="nav-link" @click="openDoc('shadow-and-diffraction')">이론 알아보기</button>
-    <button class="nav-link" @click="openDoc('experiment-intake')">실험 문제 해결</button>
     <button class="nav-link" @click="openDoc('electron-energy-levels')">전자 · 에너지 준위</button>
-    <button class="nav-link" @click="openDoc('absorption-photoelectric')">광흡수 · 광전효과</button>
     <button class="nav-link" @click="openDoc('measurement-and-uncertainty')">측정 · 오차 · 교정</button>
     <button class="nav-link" @click="openDoc('ising-and-monte-carlo')">Ising · Monte Carlo</button>
     <button class="nav-link" @click="openDoc('data-and-model-validation')">데이터 · 모델 검증</button>
@@ -104,21 +131,28 @@
         <article v-if="!docLoading && !docError" class="bubble" v-answer="docContent"></article>
       </div>
       <div v-show="view === 'simulation'" class="simulation-pane">
+        <aside class="experiment-controls" aria-label="실험 조절 장치"><div class="control-heading">조절 장치</div><div id="experiment-controls"></div><button class="transfer" @click="transferResult">조건·결과를 채팅에 넣기 →</button></aside>
+        <div class="experiment-stage">
         <div class="sim-tabs"><button v-for="lab in navigationLabs" :key="lab.id" :class="{selected:activeLabId===lab.id}" @click="openSimulation(lab.id)">{{ lab.title }}</button></div>
+        <section v-if="activeTheory" :key="'theory-'+issueKey" class="experiment-theory" aria-label="실험 이론과 공식">
+          <details><summary><strong>이론 · 공식</strong><span>열어서 확인하기</span></summary>
+            <details v-for="section in activeTheory" :key="section.title" class="theory-section"><summary>{{ section.title }}</summary><div class="bubble" v-answer="section.body"></div></details>
+          </details>
+        </section>
 
         <p class="model-note">공식 기반의 이상적 모델입니다. 실제 장비의 오차·손상·안전 조건을 재현하지 않습니다.</p>
         <div class="light-picker" v-if="simKind!=='xrd' && simKind!=='absorption' && simKind!=='equipment'">
-          <label v-if="simKind==='prism'">입사광 종류<select v-model="prismMode"><option value="white">백색광 · 스펙트럼 분리</option><option value="mono">단색광 · 파장별 굴절 비교</option></select></label>
+          <Teleport defer to="#experiment-controls"><label v-if="simKind==='prism'">입사광 종류<select v-model="prismMode"><option value="white">백색광 · 스펙트럼 분리</option><option value="mono">단색광 · 파장별 굴절 비교</option></select></label></Teleport>
           <template v-if="simKind!=='prism'||prismMode==='mono'">
-            <label>광원 선택<select :value="selectedLight" @change="chooseLight($event.target.value)"><option v-for="light in lightOptions" :key="light.value" :value="light.value">{{ light.label }}</option><option value="custom">직접 조절</option></select></label>
-            <label>파장 <b>{{ wavelength }} nm</b><input type="range" min="380" max="750" step="0.1" v-model.number="wavelength"></label>
+            <Teleport defer to="#experiment-controls"><label>광원 선택<select :value="selectedLight" @change="chooseLight($event.target.value)"><option v-for="light in lightOptions" :key="light.value" :value="light.value">{{ light.label }}</option><option value="custom">직접 조절</option></select></label></Teleport>
+            <Teleport defer to="#experiment-controls"><label>파장 <b>{{ wavelength }} nm</b><input type="range" min="380" max="750" step="0.1" v-model.number="wavelength"></label></Teleport>
             <div class="light-chip"><i :style="{background:lightColor}"></i>{{ wavelength }} nm · 광자 에너지 {{ (1239.841984/wavelength).toFixed(3) }} eV</div>
             <p class="model-note">색은 설명용입니다. 렌즈·거울은 색수차를, 이상적 편광판은 파장 의존성을 생략합니다. s/p 실험의 굴절률은 고정값입니다.</p>
           </template>
         </div>
         <template v-if="simKind==='polarization'">
           <p><strong>두 번째 편광판을 돌려 보세요.</strong> 첫 번째 판과 방향이 같으면 밝고, 90°로 교차하면 빛이 차단됩니다.</p>
-          <div class="michelson-controls"><button @click="angle=0">0° · 최대</button><button @click="angle=45">45° · 절반</button><button @click="angle=90">90° · 차단</button></div>
+          <Teleport defer to="#experiment-controls"><div class="michelson-controls"><button @click="angle=0">0° · 최대</button><button @click="angle=45">45° · 절반</button><button @click="angle=90">90° · 차단</button></div></Teleport>
           <svg viewBox="0 0 640 330" class="sim-svg polarizer-experiment" aria-label="두 편광판과 검출기가 연결된 회전 실험" @pointermove="dragPolarizer" @pointerup="endPolarizerDrag" @pointercancel="endPolarizerDrag">
             <rect width="640" height="330" rx="8" fill="#14283e"/>
             <path d="M45 250H600" stroke="#58758a" stroke-width="8"/>
@@ -141,30 +175,30 @@
             <text x="167" y="285">기준 방향 ↑</text><text x="315" y="285">θ = {{ angle }}° · 드래그</text>
             <text x="22" y="313">회전판의 노란 손잡이를 움직이거나 아래 슬라이더를 조절하세요.</text>
           </svg>
-          <label>두 편광판 사이 각도 <b>{{ angle }}°</b><input type="range" min="0" max="180" step="1" v-model.number="angle"></label>
+          <Teleport defer to="#experiment-controls"><label>두 편광판 사이 각도 <b>{{ angle }}°</b><input type="range" min="0" max="180" step="1" v-model.number="angle"></label></Teleport>
           <div class="result">검출기 밝기: 기준의 {{ (sim.ratio*100).toFixed(1) }}%<br>{{ Math.abs(angle-90)<1?'두 판이 교차하여 이상적으로 차단됩니다.':angle===0||angle===180?'두 판의 투과축이 일치합니다.':'입사 전기장의 투과축 방향 성분만 남습니다.' }}</div>
           <p>파란 화살표는 첫 판의 고정 투과축, 노란 선은 두 번째 판의 투과축입니다. 판 사이 빛의 세기를 I₀로 놓으면 <strong>I/I₀ = cos²θ</strong>입니다. 표시 밝기는 상대 세기이며 실제 눈의 밝기 반응과 같지는 않습니다.</p>
 
         </template>
         <template v-else-if="['lens','concave-lens','concave-mirror','convex-mirror'].includes(simKind)">
-          <label>렌즈 / 거울 종류<select v-model="simKind" aria-label="렌즈 또는 거울 종류"><option v-for="item in lensOptions" :key="item.id" :value="item.id">{{ item.title }}</option></select></label>
-          <label>초점거리 |f| <b>{{ focal }} cm</b><input type="range" min="5" max="30" step="1" v-model.number="focal"></label>
-          <label>물체 거리 s <b>{{ object }} cm</b><input type="range" min="5" max="60" step="1" v-model.number="object"></label>
+          <Teleport defer to="#experiment-controls"><label>렌즈 / 거울 종류<select v-model="simKind" aria-label="렌즈 또는 거울 종류"><option v-for="item in lensOptions" :key="item.id" :value="item.id">{{ item.title }}</option></select></label></Teleport>
+          <Teleport defer to="#experiment-controls"><label>초점거리 |f| <b>{{ focal }} cm</b><input type="range" min="5" max="30" step="1" v-model.number="focal"></label></Teleport>
+          <Teleport defer to="#experiment-controls"><label>물체 거리 s <b>{{ object }} cm</b><input type="range" min="5" max="60" step="1" v-model.number="object"></label></Teleport>
           <svg viewBox="0 0 500 260" class="sim-svg" aria-label="수렴렌즈의 주요 광선과 상" ><g :transform="lensTransform"><path d="M-80 0H80" stroke="#819aaa" stroke-width=".4"/><path v-if="sim.mirror" :d="sim.signedF>0?'M-2 -18Q6 0 -2 18':'M2 -18Q-6 0 2 18'" fill="none" stroke="#286b96" stroke-width="1"/><path v-else-if="sim.signedF<0" d="M-3 -18Q0 0 -3 18L3 18Q0 0 3 -18Z" fill="#aed5e8" stroke="#286b96" stroke-width=".6"/><ellipse v-else cx="0" cy="0" rx="2" ry="18" fill="#aed5e8" stroke="#286b96" stroke-width=".6"/><path :d="'M'+(-object)+' 0V-10'" stroke="#168c72" stroke-width="1.3"/><circle :cx="sim.signedF" cy="0" r="1" fill="#276da1"/><circle :cx="-sim.signedF" cy="0" r="1" fill="#276da1"/><path :d="lensRays" fill="none" :stroke="lightColor" stroke-width=".6"/><path v-if="sim.image!==null && sim.image<0" :d="'M0 -10L'+imageX+' '+(-10*sim.magnification)+' M0 0L'+imageX+' '+(-10*sim.magnification)" fill="none" stroke="#a261ad" stroke-dasharray="2 1" stroke-width=".6"/><path v-if="sim.image!==null" :d="'M'+imageX+' 0V'+(-10*sim.magnification)" stroke="#b54b57" stroke-width="1.3"/></g></svg>
           <div class="result" v-if="sim.image===null">물체가 초점에 있습니다. 유한한 상 거리가 없습니다.</div><div class="result" v-else>s′ = {{ sim.image.toFixed(2) }} cm · M = {{ sim.magnification.toFixed(2) }}<br>{{ sim.image>0?'도립 실상':'정립 허상 (점선은 광선의 역연장)' }}</div><p>1/f = 1/s + 1/s′ · M = −s′/s. f = {{ sim.signedF }} cm. 거울은 앞쪽 실상 거리 양수, 뒤쪽 허상 거리 음수입니다. 광선도는 자동 축척됩니다.</p>
         </template>
         <template v-else-if="simKind==='xrd'">
           <p><strong>검출기를 끌어 회절각을 바꿔 보세요.</strong> 중앙 결정 시료를 기준으로 광원과 검출기가 대칭으로 움직입니다. 아래 피크는 이론 위치, 점선은 현재 검출각입니다.</p>
           <div class="xrd-device" @pointerdown="startXrdDrag" @pointermove="dragXrd" @pointerup="endXrdDrag" @pointercancel="endXrdDrag" @keydown="keyXrd" v-html="apparatusSvg"></div>
-          <label>현재 스캔 각도 2θ <b>{{ scanTwoTheta.toFixed(2) }}°</b><input type="range" min="0" max="180" step=".01" v-model.number="scanTwoTheta"></label>
+          <Teleport defer to="#experiment-controls"><label>현재 스캔 각도 2θ <b>{{ scanTwoTheta.toFixed(2) }}°</b><input type="range" min="0" max="180" step=".01" v-model.number="scanTwoTheta"></label></Teleport>
           <button class="small-action" :disabled="sim.twoTheta===null" @click="scanTwoTheta=sim.twoTheta">선택한 결정면의 이론 각도에 맞추기</button>
           <p v-if="sim.angularError!==null">선택한 반사의 이론 위치와 차이: <strong>{{ sim.angularError.toFixed(3) }}°</strong>. 이는 각도 비교이며 실측 회절 세기가 아닙니다.</p>
-          <label>결정 시료<select v-model="material"><option value="custom">수동 면간격</option><option v-for="sample in materials" :key="sample.id" :value="sample.id">{{ sample.name }} · {{ sample.structure }}</option></select></label>
-          <div v-if="material!=='custom'"><label>결정면 (hkl)<select v-model="plane"><option v-for="hkl in ['111','200','220','222','311','400']" :key="hkl" :value="hkl">({{ hkl }})</option></select></label><p class="model-note">a = {{ sim.preset.a }} nm · d = a/√(h²+k²+l²) = {{ sim.spacing.toFixed(6) }} nm. 프리셋은 n=1과 소멸 규칙을 적용합니다. 격자상수 출처는 XRD 학습 문서에 있습니다.</p></div>
-          <label>X선 파장 선택<select :value="xray" @change="xray=Number($event.target.value)"><option :value="xray">현재 {{ xray }} nm</option><option :value="0.15406">0.15406 nm · Cu Kα₁ 근사</option><option :value="0.1">0.10000 nm · 비교용</option><option :value="0.2">0.20000 nm · 비교용</option></select></label>
-          <label>X선 파장 λ <b>{{ xray.toFixed(3) }} nm</b><input type="range" min="0.05" max="0.4" step="0.001" v-model.number="xray"></label>
-          <label v-if="material==='custom'">결정면 간격 d <b>{{ spacing.toFixed(3) }} nm</b><input type="range" min="0.05" max="0.6" step="0.001" v-model.number="spacing"></label>
-          <label v-if="material==='custom'">회절 차수 n <b>{{ order }}</b><input type="range" min="1" max="3" step="1" v-model.number="order"></label>
+          <Teleport defer to="#experiment-controls"><label>결정 시료<select v-model="material"><option value="custom">수동 면간격</option><option v-for="sample in materials" :key="sample.id" :value="sample.id">{{ sample.name }} · {{ sample.structure }}</option></select></label></Teleport>
+          <div v-if="material!=='custom'"><Teleport defer to="#experiment-controls"><label>결정면 (hkl)<select v-model="plane"><option v-for="hkl in ['111','200','220','222','311','400']" :key="hkl" :value="hkl">({{ hkl }})</option></select></label></Teleport><p class="model-note">a = {{ sim.preset.a }} nm · d = a/√(h²+k²+l²) = {{ sim.spacing.toFixed(6) }} nm. 프리셋은 n=1과 소멸 규칙을 적용합니다. 격자상수 출처는 XRD 학습 문서에 있습니다.</p></div>
+          <Teleport defer to="#experiment-controls"><label>X선 파장 선택<select :value="xray" @change="xray=Number($event.target.value)"><option :value="xray">현재 {{ xray }} nm</option><option :value="0.15406">0.15406 nm · Cu Kα₁ 근사</option><option :value="0.1">0.10000 nm · 비교용</option><option :value="0.2">0.20000 nm · 비교용</option></select></label></Teleport>
+          <Teleport defer to="#experiment-controls"><label>X선 파장 λ <b>{{ xray.toFixed(3) }} nm</b><input type="range" min="0.05" max="0.4" step="0.001" v-model.number="xray"></label></Teleport>
+          <Teleport defer to="#experiment-controls"><label v-if="material==='custom'">결정면 간격 d <b>{{ spacing.toFixed(3) }} nm</b><input type="range" min="0.05" max="0.6" step="0.001" v-model.number="spacing"></label></Teleport>
+          <Teleport defer to="#experiment-controls"><label v-if="material==='custom'">회절 차수 n <b>{{ order }}</b><input type="range" min="1" max="3" step="1" v-model.number="order"></label></Teleport>
           <svg viewBox="0 0 500 230" class="sim-svg" aria-label="XRD 회절 피크 위치"><path d="M30 25V190H470" fill="none" stroke="#7897ae"/><path v-if="sim.twoTheta!==null" :d="'M'+(30+sim.twoTheta/180*440)+' 190V45'" stroke="#2785b4" stroke-width="3"/><text x="30" y="218">0°</text><text x="430" y="218">180° · 2θ</text><path :d="'M'+(30+scanTwoTheta/180*440)+' 25V160'" stroke="#d57d37" stroke-width="2" stroke-dasharray="4 3"/></svg>
           <div class="result" v-if="sim.theta===null">{{ !sim.allowed?'이상적 결정의 소멸 규칙상 금지 반사입니다.':'nλ > 2d: 가능한 브래그 각이 없습니다.' }}</div><div class="result" v-else>θ = {{ sim.theta.toFixed(3) }}° · 2θ = {{ sim.twoTheta.toFixed(3) }}°</div>
           <div v-if="material!=='custom'" class="xrd-peaks"><h3>결정별 이론 반사 위치</h3><svg viewBox="0 0 500 200" class="sim-svg" aria-label="이론적 분말 반사 위치 표시"><path d="M30 25V160H470" fill="none" stroke="#819bad"/><path v-for="peak in sim.peaks" :key="peak.hkl" :d="'M'+(30+peak.twoTheta/180*440)+' 160V50'" stroke="#367da9" stroke-width="2"/><text x="30" y="184">0°</text><text x="235" y="184">2θ (세기 아님)</text><text x="435" y="184">180°</text><path :d="'M'+(30+scanTwoTheta/180*440)+' 25V160'" stroke="#d57d37" stroke-width="2" stroke-dasharray="4 3"/></svg><table class="sim-table"><tr><th>(hkl)</th><th>d (nm)</th><th>2θ</th></tr><tr v-for="peak in sim.peaks" :key="peak.hkl"><td>({{ peak.hkl }})</td><td>{{ peak.spacing.toFixed(5) }}</td><td>{{ peak.twoTheta.toFixed(3) }}°</td></tr></table><p class="model-note">h,k,l≤5 중 동일 d는 한 대표 표기로 묶었습니다. 막대 높이는 모두 같으며 세기를 뜻하지 않습니다. 분말 반사 후보이며 실제 단결정 웨이퍼에서는 배향·측정 배치에 따라 관측 피크가 제한됩니다.</p></div>
@@ -173,10 +207,10 @@
         <template v-else-if="simKind==='michelson'">
           <p><strong>이동 거울 M₂를 좌우로 끌어 보세요.</strong> 빛은 두 팔에서 왕복한 뒤 빔스플리터에서 합쳐집니다. 거울 이동과 장치의 관찰 화면·아래 확대 무늬가 같은 값으로 움직입니다.</p>
           <div class="michelson-device" @pointerdown="startMirrorDrag" @pointermove="dragMirror" @pointerup="endMirrorDrag" @pointercancel="endMirrorDrag" @keydown="keyMirror" v-html="apparatusSvg"></div>
-          <label>거울 이동 Δx <b>{{ displacement.toFixed(4) }} µm</b><input type="range" min="0" max="5" step="0.0001" v-model.number="displacement" @input="pauseMichelson"></label>
-          <label>가시도 V <b>{{ visibility.toFixed(2) }}</b><input type="range" min="0" max="1" step="0.01" v-model.number="visibility"></label>
-          <div class="michelson-controls"><button @click="playing?pauseMichelson():playMichelson()">{{ playing?'Ⅱ 일시정지':'▶ 느리게 재생' }}</button><button @click="stepMichelson(-.25)">− ¼주기</button><button @click="stepMichelson(.25)">+ ¼주기</button><button @click="resetMichelson">처음으로</button></div>
-          <label>재생 속도 <b>{{ playbackRate }} 주기/초</b><input type="range" min="0.1" max="1" step="0.05" v-model.number="playbackRate"></label>
+          <Teleport defer to="#experiment-controls"><label>거울 이동 Δx <b>{{ displacement.toFixed(4) }} µm</b><input type="range" min="0" max="5" step="0.0001" v-model.number="displacement" @input="pauseMichelson"></label></Teleport>
+          <Teleport defer to="#experiment-controls"><label>가시도 V <b>{{ visibility.toFixed(2) }}</b><input type="range" min="0" max="1" step="0.01" v-model.number="visibility"></label></Teleport>
+          <Teleport defer to="#experiment-controls"><div class="michelson-controls"><button @click="playing?pauseMichelson():playMichelson()">{{ playing?'Ⅱ 일시정지':'▶ 느리게 재생' }}</button><button @click="stepMichelson(-.25)">− ¼주기</button><button @click="stepMichelson(.25)">+ ¼주기</button><button @click="resetMichelson">처음으로</button></div></Teleport>
+          <Teleport defer to="#experiment-controls"><label>재생 속도 <b>{{ playbackRate }} 주기/초</b><input type="range" min="0.1" max="1" step="0.05" v-model.number="playbackRate"></label></Teleport>
           <svg viewBox="0 0 500 390" class="sim-svg michelson-screen" aria-label="거울 이동에 따라 중심에서 이동하는 등경사 간섭무늬"><defs><radialGradient id="michelson-fringes"><stop v-for="(sample,i) in sim.radial" :key="i" :offset="sample.offset+'%'" :stop-color="sample.color"/></radialGradient></defs><rect width="500" height="390" fill="#0d1822"/><circle cx="250" cy="187" r="167" fill="url(#michelson-fringes)"/><path d="M250 175V199M238 187H262" stroke="#fa815c" stroke-width="1"/><circle cx="250" cy="187" r="6" fill="none" stroke="#fa815c"/><text x="250" y="374" style="fill:#d8e6ee;text-anchor:middle">중심 관측점 + · 선택한 단색광의 상대 세기</text></svg>
           <div class="fringe-counter"><strong>{{ sim.completed }}</strong><span>완료 주기<br>현재 주기 {{ (sim.fraction*100).toFixed(1) }}%</span><div class="phase-track"><div :style="{width:(sim.fraction*100)+'%'}"></div></div></div>
           <svg viewBox="0 0 500 145" class="sim-svg" aria-label="화면 중심을 지나는 세기 단면"><path d="M30 20V110H470" fill="none" stroke="#819bad"/><path :d="sim.profile" fill="none" stroke="#277eac" stroke-width="2"/><text x="30" y="132">−30 mm</text><text x="240" y="132">중심</text><text x="423" y="132">+30 mm</text></svg>
@@ -190,24 +224,24 @@
             <p class="p-legend"><strong>주황 물결 = p편광</strong><br>전기장이 보라색 입사면 안에서 진동합니다. 입사면에 <strong>평행</strong>입니다.</p>
             <p>노란 선은 빛의 진행 경로입니다. 물결은 빛이 구불구불 이동한다는 뜻이 아니라 <strong>전기장 방향</strong>을 보여줍니다. s와 p 모두 전기장은 빛의 진행 방향에 수직입니다.</p>
           </div>
-          <div class="michelson-controls"><button @click="polMode='s'">파란 s만 보기</button><button @click="polMode='p'">주황 p만 보기</button><button @click="polMode='both'">둘 다 비교</button></div>
-          <label>전기장 표시<select v-model="polMode"><option value="both">s · p 함께 비교</option><option value="s">s편광만</option><option value="p">p편광만</option></select></label>
-          <label>3D 좌우 회전 {{ viewYaw }}°<input type="range" min="-80" max="80" v-model.number="viewYaw"></label>
-          <label>3D 위에서 보기 {{ viewTilt }}°<input type="range" min="10" max="70" v-model.number="viewTilt"></label>
-          <label>진동 위상<input type="range" min="0" max="6.283" step=".05" v-model.number="polPhase"></label>
+          <Teleport defer to="#experiment-controls"><div class="michelson-controls"><button @click="polMode='s'">파란 s만 보기</button><button @click="polMode='p'">주황 p만 보기</button><button @click="polMode='both'">둘 다 비교</button></div></Teleport>
+          <Teleport defer to="#experiment-controls"><label>전기장 표시<select v-model="polMode"><option value="both">s · p 함께 비교</option><option value="s">s편광만</option><option value="p">p편광만</option></select></label></Teleport>
+          <Teleport defer to="#experiment-controls"><label>3D 좌우 회전 {{ viewYaw }}°<input type="range" min="-80" max="80" v-model.number="viewYaw"></label></Teleport>
+          <Teleport defer to="#experiment-controls"><label>3D 위에서 보기 {{ viewTilt }}°<input type="range" min="10" max="70" v-model.number="viewTilt"></label></Teleport>
+          <Teleport defer to="#experiment-controls"><label>진동 위상<input type="range" min="0" max="6.283" step=".05" v-model.number="polPhase"></label></Teleport>
           <div v-html="sim.polarization3d"></div>
           <p class="model-note">3차원 좌표를 회전 투영한 그림입니다. 함께 표시는 두 기저 방향 비교이며, 특정 위상차의 타원편광 합성을 뜻하지 않습니다. 정상 입사에서는 입사면 선택이 유일하지 않습니다.</p>
           <p><strong>브루스터 각:</strong> 이상적인 유전체에서 p 반사는 0이 되고 s 반사는 남습니다. <strong>정상 입사:</strong> s·p 반사율이 같습니다. <strong>전반사:</strong> 둘 다 세기 반사율은 100%지만 위상 변화는 다를 수 있습니다. 지진의 S파·P파와는 다릅니다.</p>
-          <label>입사 매질 n₁ <b>{{ n1.toFixed(2) }}</b><input type="range" min="1" max="2" step="0.01" v-model.number="n1"></label>
-          <label>투과 매질 n₂ <b>{{ n2.toFixed(2) }}</b><input type="range" min="1" max="2" step="0.01" v-model.number="n2"></label>
-          <label>법선 기준 입사각 <b>{{ incidence.toFixed(1) }}°</b><input type="range" min="0" max="89.5" step="0.5" v-model.number="incidence"></label>
+          <Teleport defer to="#experiment-controls"><label>입사 매질 n₁ <b>{{ n1.toFixed(2) }}</b><input type="range" min="1" max="2" step="0.01" v-model.number="n1"></label></Teleport>
+          <Teleport defer to="#experiment-controls"><label>투과 매질 n₂ <b>{{ n2.toFixed(2) }}</b><input type="range" min="1" max="2" step="0.01" v-model.number="n2"></label></Teleport>
+          <Teleport defer to="#experiment-controls"><label>법선 기준 입사각 <b>{{ incidence.toFixed(1) }}°</b><input type="range" min="0" max="89.5" step="0.5" v-model.number="incidence"></label></Teleport>
           <button class="small-action" @click="n1=1;n2=1.5;incidence=Math.atan(1.5)*180/Math.PI">브루스터 각: p 반사 최소</button>
           <button class="small-action" @click="n1=1.5;n2=1;incidence=50">유리 → 공기 전반사 예시</button>
           <svg viewBox="0 0 500 240" class="sim-svg" aria-label="입사각에 따른 s·p 편광 반사율"><path d="M35 30V185H465" fill="none" stroke="#819aaa"/><path :d="sim.sPath" fill="none" stroke="#267fb3" stroke-width="2"/><path :d="sim.pPath" fill="none" stroke="#c26555" stroke-width="2"/><path :d="'M'+(35+incidence/89.5*430)+' 30V185'" stroke="#75899a" stroke-dasharray="4 4"/><text x="40" y="22">반사율: 파랑 s / 빨강 p</text><text x="35" y="212">0°</text><text x="405" y="212">89.5°</text></svg>
           <div class="result">Rₛ = {{ (sim.rs*100).toFixed(2) }}% · Rₚ = {{ (sim.rp*100).toFixed(2) }}%<br>{{ sim.tir?'전반사 발생':'굴절각 '+sim.transmitted.toFixed(2)+'°' }}<br>브루스터 각 {{ sim.brewster.toFixed(2) }}° · 임계각 {{ sim.critical===null?'없음':sim.critical.toFixed(2)+'°' }}</div><p>비흡수·비자성 유전체의 프레넬 반사율. 전반사에서도 경계 밖 소멸파와 반사 위상 변화가 있지만 이 모델에서는 생략합니다.</p>
         </template>
         <template v-else-if="simKind==='prism'">
-          <label>프리즘 꼭지각 A (정삼각형 60°) <b>{{ apex }}°</b><input type="range" min="30" max="70" step="1" v-model.number="apex"></label>
+          <Teleport defer to="#experiment-controls"><label>프리즘 꼭지각 A (정삼각형 60°) <b>{{ apex }}°</b><input type="range" min="30" max="70" step="1" v-model.number="apex"></label></Teleport>
           <svg viewBox="0 0 560 360" class="sim-svg" aria-label="각도에 따라 변하는 프리즘과 연속 무지개 스펙트럼">
           <defs><linearGradient id="prism-glass" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#d9f6ff" stop-opacity=".7"/><stop offset="1" stop-color="#6ca7df" stop-opacity=".2"/></linearGradient></defs>
           <rect width="560" height="360" rx="8" fill="#14283e"/>
@@ -226,29 +260,29 @@
           <table class="sim-table"><tr><th>파장</th><th>가상 굴절률</th><th>편이각</th></tr><tr v-for="ray in sim.rays" :key="ray.lambda"><td>{{ ray.lambda }} nm</td><td>{{ ray.index.toFixed(4) }}</td><td>{{ ray.deviation.toFixed(3) }}°</td></tr></table><p>가상 정상분산 n=1.50+0.004/λ[µm]², 550 nm의 최소 편이 입사각을 고정하고 두 면의 Snell 법칙으로 계산합니다. 특정 유리의 데이터나 프리즘 내부의 정밀 광선 추적은 아닙니다.</p>
         </template>
         <template v-else-if="simKind==='absorption'">
-          <label>과정 선택<select v-model="absorptionType"><option value="semiconductor">반도체 · 밴드 사이 전자 들뜸</option><option value="metal">금속 · 진공으로 전자 방출</option><option value="insulator">부도체 · 큰 밴드갭의 들뜸</option></select></label>
-          <div class="michelson-controls"><button @click="chooseAbsorptionExample('semiconductor','si',650)">Si + 빨강 · 들뜸 조건</button><button @click="chooseAbsorptionExample('semiconductor','gan',650)">GaN + 빨강 · 부족</button><button @click="chooseAbsorptionExample('semiconductor','gan',300)">GaN + UV · 들뜸 조건</button><button @click="chooseAbsorptionExample('metal','na',450)">Na + 파랑 · 방출 조건</button><button @click="chooseAbsorptionExample('metal','cu',450)">Cu + 파랑 · 방출 불가</button></div>
-          <label>물질 선택 · 기준값<select v-model="bandMaterial" @change="chooseBandMaterial"><option value="custom">직접 설정 · 가상 물질</option><option v-for="m in bandMaterials.filter(m=>m.type===absorptionType)" :key="m.id" :value="m.id">{{ m.name }} · {{ m.gap }} eV</option></select></label>
+          <Teleport defer to="#experiment-controls"><label>과정 선택<select v-model="absorptionType"><option value="semiconductor">반도체 · 밴드 사이 전자 들뜸</option><option value="metal">금속 · 진공으로 전자 방출</option><option value="insulator">부도체 · 큰 밴드갭의 들뜸</option></select></label></Teleport>
+          <Teleport defer to="#experiment-controls"><div class="michelson-controls"><button @click="chooseAbsorptionExample('semiconductor','si',650)">Si + 빨강 · 들뜸 조건</button><button @click="chooseAbsorptionExample('semiconductor','gan',650)">GaN + 빨강 · 부족</button><button @click="chooseAbsorptionExample('semiconductor','gan',300)">GaN + UV · 들뜸 조건</button><button @click="chooseAbsorptionExample('metal','na',450)">Na + 파랑 · 방출 조건</button><button @click="chooseAbsorptionExample('metal','cu',450)">Cu + 파랑 · 방출 불가</button></div></Teleport>
+          <Teleport defer to="#experiment-controls"><label>물질 선택 · 기준값<select v-model="bandMaterial" @change="chooseBandMaterial"><option value="custom">직접 설정 · 가상 물질</option><option v-for="m in bandMaterials.filter(m=>m.type===absorptionType)" :key="m.id" :value="m.id">{{ m.name }} · {{ m.gap }} eV</option></select></label></Teleport>
           <p v-if="selectedBandMaterial" class="model-note"><strong>{{ selectedBandMaterial.name }}</strong> · {{ selectedBandMaterial.transition }} · {{ absorptionType==='metal'?'표면 일함수 대표값':'약 300 K 밴드갭 대표값' }}. <a :href="selectedBandMaterial.source" target="_blank" rel="noopener">출처</a><br>문턱 파장 {{ (1239.841984/selectedBandMaterial.gap).toFixed(1) }} nm · 점유 분포 온도를 바꿔도 기준 밴드갭은 고정됩니다.</p>
-          <label>입사 파장 <b>{{ absorptionWave }} nm</b><input type="range" min="100" max="2000" step="1" v-model.number="absorptionWave"></label>
-          <div class="michelson-controls"><button @click="absorptionWave=193">자외선 193 nm</button><button @click="absorptionWave=450">파랑 450 nm</button><button @click="absorptionWave=650">빨강 650 nm</button><button @click="absorptionWave=1550">적외선 1550 nm</button></div>
-          <label>{{ absorptionType==='metal'?'일함수 Φ':'밴드갭 Eg' }} · {{ selectedBandMaterial?'물질 기준값':'직접 설정' }} <b>{{ threshold.toFixed(3) }} eV</b><input type="range" min="0.5" max="10" step="0.001" v-model.number="threshold" @input="bandMaterial='custom'"></label>
+          <Teleport defer to="#experiment-controls"><label>입사 파장 <b>{{ absorptionWave }} nm</b><input type="range" min="100" max="2000" step="1" v-model.number="absorptionWave"></label></Teleport>
+          <Teleport defer to="#experiment-controls"><div class="michelson-controls"><button @click="absorptionWave=193">자외선 193 nm</button><button @click="absorptionWave=450">파랑 450 nm</button><button @click="absorptionWave=650">빨강 650 nm</button><button @click="absorptionWave=1550">적외선 1550 nm</button></div></Teleport>
+          <Teleport defer to="#experiment-controls"><label>{{ absorptionType==='metal'?'일함수 Φ':'밴드갭 Eg' }} · {{ selectedBandMaterial?'물질 기준값':'직접 설정' }} <b>{{ threshold.toFixed(3) }} eV</b><input type="range" min="0.5" max="10" step="0.001" v-model.number="threshold" @input="bandMaterial='custom'"></label></Teleport>
           <p class="model-note">반도체·부도체에서는 전자가 물질 안의 높은 에너지 상태로 이동합니다. 금속 모드는 표면 밖 진공 방출을 별도로 다룹니다. 물질 선택값은 출처의 대표값이며, 직접 설정은 가상 물질입니다.</p>
           <details class="electron-concepts"><summary><strong>전자 들뜸 · 밴드갭 · 페르미 준위 알아보기</strong></summary>
             <ul><li><strong>가전자대:</strong> 원자가 결합과 관련된 전자들이 차지하는 에너지 띠.</li><li><strong>전도대:</strong> 전기 전도에 참여할 수 있는 전자 상태의 띠.</li><li><strong>밴드갭 Eg:</strong> 가전자대 꼭대기 Ev와 전도대 바닥 Ec 사이의 에너지 간격.</li><li><strong>페르미 준위 EF:</strong> 열평형 전자 점유를 설명하는 화학 퍼텐셜. 유한 온도에서 f(EF)=½이며, 그 에너지에 실제 상태가 있다는 뜻은 아닙니다.</li><li><strong>전자 들뜸:</strong> 에너지를 받아 높은 허용 상태로 이동하는 것. 낮은 상태에 남은 빈자리는 정공으로 다룹니다.</li><li><strong>일함수 Φ:</strong> 금속의 페르미 준위에서 진공 준위까지의 에너지 차이. Eg와 다릅니다.</li></ul>
             <button class="small-action" @click="openDoc('electron-energy-levels')">전체 개념 문서 보기 →</button>
           </details>
-          <label>빛의 세기 · 상대 광자 유입률 <b>{{ intensity }}배</b><input type="range" min="0" max="10" step="1" v-model.number="intensity"></label>
+          <Teleport defer to="#experiment-controls"><label>빛의 세기 · 상대 광자 유입률 <b>{{ intensity }}배</b><input type="range" min="0" max="10" step="1" v-model.number="intensity"></label></Teleport>
           <p class="model-note">동일 파장에서 세기를 높이면 광자 수가 늘며, 광자 하나의 에너지는 변하지 않습니다. 단일 광자 모델에서는 문턱 미만의 빛을 강하게 쏴도 외부 방출되지 않습니다.</p>
-          <div class="michelson-controls"><button @click="firePhoton">▶ 광자 1개 쏘기</button><button @click="fireLightPulse">▶ 현재 세기로 반응 보기</button><button @click="absorptionType='metal';absorptionWave=193">금속 방출 예제 · 193 nm</button></div>
+          <Teleport defer to="#experiment-controls"><div class="michelson-controls"><button @click="firePhoton">▶ 광자 1개 쏘기</button><button @click="fireLightPulse">▶ 현재 세기로 반응 보기</button><button @click="absorptionType='metal';absorptionWave=193">금속 방출 예제 · 193 nm</button></div></Teleport>
           <div v-html="sim.energyScene"></div>
-          <label>전자 반응 진행 · 직접 움직여 보기 {{ (absorptionProgress*100).toFixed(0) }}%<input type="range" min="0" max="1" step=".01" v-model.number="absorptionProgress" @input="stopAbsorptionAnimation"></label>
+          <Teleport defer to="#experiment-controls"><label>전자 반응 진행 · 직접 움직여 보기 {{ (absorptionProgress*100).toFixed(0) }}%<input type="range" min="0" max="1" step=".01" v-model.number="absorptionProgress" @input="stopAbsorptionAnimation"></label></Teleport>
           <p v-if="absorptionType==='metal'" class="result">{{ sim.emits?(shotCount?'방출 조건 충족 · 대표 전자 1개의 이동 표시':'빛을 쏘면 표면 밖으로 전자가 이동합니다'):'방출 없음: 광자 에너지가 문턱을 넘어야 합니다' }}<br>방출 속도는 Kmax의 증가 경향을 느리게 표현한 예시이며 실제 전자 속도·개수·전류가 아닙니다.</p>
           <div class="result">광자 E = {{ sim.energy.toFixed(3) }} eV · 문턱 {{ threshold.toFixed(2) }} eV<br>문턱 파장 λ₀ ≈ {{ sim.cutoff.toFixed(1) }} nm<br><template v-if="absorptionType==='metal'">{{ sim.emits?'방출 에너지 조건 충족':'양의 운동에너지 방출 조건 미충족' }} · Kmax = {{ sim.kinetic.toFixed(3) }} eV</template><template v-else>{{ sim.allowed?'밴드 간 들뜸 조건 충족 (물질 내부)':'밴드 간 들뜸 에너지 부족' }}</template></div>
           <p>광자 에너지 E=hc/λ. 금속은 Kmax=E−Φ, 내부 들뜸은 E≥Eg를 비교합니다. <strong>밴드갭을 넘었다고 물질 밖으로 전자가 방출되는 것은 아닙니다.</strong></p><p class="model-note">빛이 물질 내부를 통과·흡수하는 실제 비율과 전류는 계산하지 않습니다. 허용 전이·간접 밴드갭의 포논·반사·결함·다광자 과정·수집 전압을 생략한 모델입니다. 문턱과 같으면 금속의 최대 운동에너지는 0입니다.</p>
           <details><summary>페르미 준위·점유 분포 자세히 보기</summary>
-          <label v-if="absorptionType!=='metal'">밴드갭 안의 EF 위치 · 개념 조절 <b>{{ (fermiPosition*100).toFixed(0) }}%</b><input type="range" min="0.1" max="0.9" step="0.05" v-model.number="fermiPosition"></label>
-          <label>점유 분포 계산 온도 <b>{{ electronTemperature }} K</b><input type="range" min="50" max="600" step="10" v-model.number="electronTemperature"></label>
+          <Teleport defer to="#experiment-controls"><label v-if="absorptionType!=='metal'">밴드갭 안의 EF 위치 · 개념 조절 <b>{{ (fermiPosition*100).toFixed(0) }}%</b><input type="range" min="0.1" max="0.9" step="0.05" v-model.number="fermiPosition"></label></Teleport>
+          <Teleport defer to="#experiment-controls"><label>점유 분포 계산 온도 <b>{{ electronTemperature }} K</b><input type="range" min="50" max="600" step="10" v-model.number="electronTemperature"></label></Teleport>
           <svg viewBox="0 0 560 280" class="sim-svg band-diagram" aria-label="페르미 준위와 밴드갭 에너지 도표">
             <path d="M65 235V25L60 35M65 25L70 35" fill="none" stroke="#6c8da5"/><text x="15" y="28">에너지 ↑</text>
             <template v-if="absorptionType!=='metal'">
@@ -266,35 +300,35 @@
           </details>
         </template>
         <template v-else-if="simKind==='equipment'">
-          <label>광학장비<select v-model="equipment.equipmentType"><option value="camera">카메라 · 상 형성</option><option value="telescope">망원경 · 각배율</option><option value="microscope">현미경 · 중간상 / 분해능</option></select></label>
+          <Teleport defer to="#experiment-controls"><label>광학장비<select v-model="equipment.equipmentType"><option value="camera">카메라 · 상 형성</option><option value="telescope">망원경 · 각배율</option><option value="microscope">현미경 · 중간상 / 분해능</option></select></label></Teleport>
           <div class="equipment-intro"><strong>{{ {camera:'카메라: 무엇이 사진에 담길까?',telescope:'망원경: 멀리 있는 물체를 얼마나 크게 볼까?',microscope:'현미경: 작은 구조를 얼마나 구분할까?'}[equipment.equipmentType] }}</strong><p>{{ {camera:'센서 길이를 바꾸고 사진에 들어오는 건물 수를 비교하세요. F수는 오른쪽 조리개 구멍과 사진 밝기를 바꿉니다.',telescope:'대물렌즈는 빛을 모으고 접안렌즈는 중간상을 확대합니다. 접안 초점거리를 줄이면 각배율이 커집니다.',microscope:'대물렌즈가 시료 빛을 받아 튜브렌즈가 중간상을 만듭니다. NA를 바꾸면 아래 분해 가능 거리가 달라집니다.'}[equipment.equipmentType] }}</p></div>
         <div v-if="apparatusSvg" class="apparatus-panel" ><div class="apparatus-title">조절 중인 장비 <span>장치와 광경로</span></div><div class="apparatus-art"  v-html="apparatusSvg"></div><p>장치 배치는 원리 학습용 개념도입니다. 실제 장비의 기구 치수·안전 절차를 재현하지 않습니다.</p></div>
           <template v-if="equipment.equipmentType==='camera'">
-            <label>렌즈 초점거리 {{ equipment.f }} mm<input type="range" min="10" max="200" v-model.number="equipment.f"></label>
-            <label>물체 거리 {{ equipment.u }} mm<input type="range" min="250" max="5000" step="10" v-model.number="equipment.u"></label>
-            <label>사진을 받는 센서의 가로 길이 {{ equipment.sensor }} mm<input type="range" min="5" max="50" step=".1" v-model.number="equipment.sensor"></label>
+            <Teleport defer to="#experiment-controls"><label>렌즈 초점거리 {{ equipment.f }} mm<input type="range" min="10" max="200" v-model.number="equipment.f"></label></Teleport>
+            <Teleport defer to="#experiment-controls"><label>물체 거리 {{ equipment.u }} mm<input type="range" min="250" max="5000" step="10" v-model.number="equipment.u"></label></Teleport>
+            <Teleport defer to="#experiment-controls"><label>사진을 받는 센서의 가로 길이 {{ equipment.sensor }} mm<input type="range" min="5" max="50" step=".1" v-model.number="equipment.sensor"></label></Teleport>
             <p>센서를 넓히면 사진에 건물이 더 많이 들어옵니다. 초점거리를 늘리면 확대되고, 거리가 멀어지면 더 넓게 보입니다.</p>
-            <label>조리개 · 빛이 들어오는 구멍 크기 <b>f/{{ equipment.fNumber }}</b><input type="range" min="1" max="22" step=".1" v-model.number="equipment.fNumber"></label>
+            <Teleport defer to="#experiment-controls"><label>조리개 · 빛이 들어오는 구멍 크기 <b>f/{{ equipment.fNumber }}</b><input type="range" min="1" max="22" step=".1" v-model.number="equipment.fNumber"></label></Teleport>
             <p><strong>f/4는 초점거리 ÷ 구멍 지름이 4라는 뜻</strong>입니다. 예: 50 mm 렌즈의 f/4는 구멍 지름 12.5 mm. 숫자를 낮추면 구멍이 커지고, 높이면 작아집니다.</p>
-            <div class="michelson-controls"><button @click="equipment.fNumber=2">f/2 · 넓게</button><button @click="equipment.fNumber=4">f/4 · 기준</button><button @click="equipment.fNumber=8">f/8 · 좁게</button><button @click="equipment.fNumber=16">f/16 · 더 좁게</button></div>
+            <Teleport defer to="#experiment-controls"><div class="michelson-controls"><button @click="equipment.fNumber=2">f/2 · 넓게</button><button @click="equipment.fNumber=4">f/4 · 기준</button><button @click="equipment.fNumber=8">f/8 · 좁게</button><button @click="equipment.fNumber=16">f/16 · 더 좁게</button></div></Teleport>
           </template>
           <template v-else-if="equipment.equipmentType==='telescope'">
-            <label>굴절망원경 종류<select v-model="equipment.telescopeModel"><option value="kepler">케플러식 · 볼록 대물 + 볼록 접안 · 도립</option><option value="galilean">갈릴레이식 · 볼록 대물 + 오목 접안 · 정립</option></select></label>
+            <Teleport defer to="#experiment-controls"><label>굴절망원경 종류<select v-model="equipment.telescopeModel"><option value="kepler">케플러식 · 볼록 대물 + 볼록 접안 · 도립</option><option value="galilean">갈릴레이식 · 볼록 대물 + 오목 접안 · 정립</option></select></label></Teleport>
             <p>현재 두 종류의 굴절망원경을 비교합니다. 반사·굴절반사 망원경의 구조는 이 모형에 포함하지 않습니다.</p>
-            <label>대물 초점거리 {{ equipment.objective }} mm<input type="range" min="100" max="2000" step="10" v-model.number="equipment.objective"></label>
-            <label>접안 초점거리 {{ equipment.eyepiece }} mm<input type="range" min="5" max="80" v-model.number="equipment.eyepiece"></label>
-            <label>대물 구경 {{ equipment.diameter }} mm<input type="range" min="20" max="300" v-model.number="equipment.diameter"></label>
+            <Teleport defer to="#experiment-controls"><label>대물 초점거리 {{ equipment.objective }} mm<input type="range" min="100" max="2000" step="10" v-model.number="equipment.objective"></label></Teleport>
+            <Teleport defer to="#experiment-controls"><label>접안 초점거리 {{ equipment.eyepiece }} mm<input type="range" min="5" max="80" v-model.number="equipment.eyepiece"></label></Teleport>
+            <Teleport defer to="#experiment-controls"><label>대물 구경 {{ equipment.diameter }} mm<input type="range" min="20" max="300" v-model.number="equipment.diameter"></label></Teleport>
           </template>
           <template v-else-if="equipment.equipmentType==='microscope'">
-            <label>투과 광학현미경 모델<select v-model="equipment.microscopeModel"><option value="infinity">무한 보정 · 대물 + 튜브렌즈</option><option value="finite">유한 경통 · 대물이 중간상 형성</option></select></label>
+            <Teleport defer to="#experiment-controls"><label>투과 광학현미경 모델<select v-model="equipment.microscopeModel"><option value="infinity">무한 보정 · 대물 + 튜브렌즈</option><option value="finite">유한 경통 · 대물이 중간상 형성</option></select></label></Teleport>
             <p>이 화면은 중간상 형성 광학계입니다. 실체·공초점·전자현미경 등 다른 방식과 구분합니다.</p>
-            <label>대물 초점거리 {{ equipment.microF }} mm<input type="range" min="2" max="20" step=".1" v-model.number="equipment.microF"></label>
-            <label>{{ equipment.microscopeModel==='finite'?'대물→중간상 거리':'튜브렌즈 초점거리' }} {{ equipment.tube }} mm<input type="range" min="100" max="300" v-model.number="equipment.tube"></label>
-            <label>대물 NA {{ equipment.microNA }}<input type="range" min=".1" :max="equipment.medium" step=".01" v-model.number="equipment.microNA"></label>
-            <label>매질<select v-model.number="equipment.medium" @change="equipment.microNA=Math.min(equipment.microNA,equipment.medium)"><option :value="1">공기 n=1</option><option :value="1.33">가상 수침 n=1.33</option><option :value="1.515">가상 유침 n=1.515</option></select></label>
+            <Teleport defer to="#experiment-controls"><label>대물 초점거리 {{ equipment.microF }} mm<input type="range" min="2" max="20" step=".1" v-model.number="equipment.microF"></label></Teleport>
+            <Teleport defer to="#experiment-controls"><label>{{ equipment.microscopeModel==='finite'?'대물→중간상 거리':'튜브렌즈 초점거리' }} {{ equipment.tube }} mm<input type="range" min="100" max="300" v-model.number="equipment.tube"></label></Teleport>
+            <Teleport defer to="#experiment-controls"><label>대물 NA {{ equipment.microNA }}<input type="range" min=".1" :max="equipment.medium" step=".01" v-model.number="equipment.microNA"></label></Teleport>
+            <Teleport defer to="#experiment-controls"><label>매질<select v-model.number="equipment.medium" @change="equipment.microNA=Math.min(equipment.microNA,equipment.medium)"><option :value="1">공기 n=1</option><option :value="1.33">가상 수침 n=1.33</option><option :value="1.515">가상 유침 n=1.515</option></select></label></Teleport>
           </template>
 
-          <label >계산 파장 {{ equipment.wave }} nm<input type="range" min="400" max="700" v-model.number="equipment.wave"></label>
+          <Teleport defer to="#experiment-controls"><label >계산 파장 {{ equipment.wave }} nm<input type="range" min="400" max="700" v-model.number="equipment.wave"></label></Teleport>
           <div class="result"><div v-for="m in sim.metrics" :key="m.label">{{ m.label }}: {{ m.value===null?'실상 조건을 확인하세요':m.value+' '+m.unit }}</div></div>
           <details class="electron-concepts"><summary>파생값을 구하려면?</summary><p>카메라: 센서에 맞는 물체 거리·회절 한계 F수 / 망원경: 목표 배율의 접안렌즈·필요 구경 / 현미경: 목표 해상도의 NA·수광각을 물어보세요.</p></details>
           <div class="category-questions"><button v-for="q in sim.hints" :key="q" @click="input=q">{{ q }} →</button></div>
@@ -303,12 +337,20 @@
           <p class="model-note">광경로는 개념도, 수치는 이상적인 근축·회절 모델입니다. 수차·광원 대역폭·실제 조리개·검출 응답을 포함하지 않습니다. </p>
         </template>
         <template v-else>
-          <label>슬릿 폭 <b>{{ slit.toFixed(2) }} mm</b><input type="range" min="0.05" max="0.50" step="0.01" v-model.number="slit"></label>
-          <label>스크린 거리 <b>{{ distance.toFixed(1) }} m</b><input type="range" min="1" max="3" step="0.1" v-model.number="distance"></label>
+          <Teleport defer to="#experiment-controls"><label>슬릿 폭 <b>{{ slit.toFixed(2) }} mm</b><input type="range" min="0.05" max="0.50" step="0.01" v-model.number="slit"></label></Teleport>
+          <Teleport defer to="#experiment-controls"><label>스크린 거리 <b>{{ distance.toFixed(1) }} m</b><input type="range" min="1" max="3" step="0.1" v-model.number="distance"></label></Teleport>
           <svg viewBox="0 0 500 250" class="sim-svg" aria-label="단일슬릿 상대 세기 그래프"><path d="M30 30V190H470" fill="none" stroke="#7897ae"/><path :d="sim.path" fill="none" :stroke="lightColor" stroke-width="2"/><text x="30" y="220">−20 mm</text><text x="240" y="220">0</text><text x="422" y="220">+20 mm</text><text x="32" y="20">상대 세기 I/I(0)</text></svg>
           <div class="result">중앙 최대 전체 폭 ≈ {{ sim.width.toFixed(3) }} mm</div><p>W ≈ 2λL/a. 단일슬릿 원거리 회절, 위치 변환에는 작은 각도 근사를 사용합니다.</p>
         </template>
-        <button class="transfer" @click="transferResult">현재 조건·결과를 채팅에 넣기 →</button><p class="model-note">입력창에만 넣습니다. 질문을 수정한 뒤 보내기를 누르세요.</p>
+        <section v-if="activeIssues" :key="issueKey" class="experiment-issues" aria-label="실험 유의사항과 확인 문제">
+          <details><summary><strong>유의사항 · 자주 생기는 문제</strong><span>열어서 확인하기</span></summary>
+            <p class="issue-notice"><strong>먼저 알아두기</strong><br>{{ activeIssues.notice }}</p>
+            <details v-for="(item,index) in activeIssues.questions" :key="item[0]" class="issue-question"><summary>문제 {{ index+1 }}. {{ item[0] }}</summary><ul><li v-for="line in item[1]" :key="line">{{ line }}</li></ul></details>
+            <p class="model-note">학습용 확인 문제입니다. 실제 장비에 이상이 있으면 해당 실험실의 절차와 담당자 안내를 따르세요.</p>
+          </details>
+        </section>
+
+      </div>
       </div>
     </section><div class="conversation-pane">
     <div class="panel-title">ASK THE LAB <span>{{ sending ? '답변 작성 중…' : '질문을 기다리고 있어요' }}</span></div>
@@ -349,7 +391,7 @@
     </section><div class="status">{{ backendLabel }}</div></div></div>
   </main>
   <!-- 우측: 관련 질문의 분류 메뉴. 문서·실험 메뉴와 역할이 다르다. -->
-  <aside class="rightbar"><div class="right-heading">EXPLORE EXPERIMENTS</div>
+  <aside v-show="view!=='simulation'" class="rightbar"><div class="right-heading">EXPLORE EXPERIMENTS</div>
     <button v-for="topic in topics" :key="topic.title" class="experiment"  :class="{'category-active':selectedTopic?.slug===topic.slug}" @click="openCategory(topic)"><span class="experiment-icon" aria-hidden="true">
       <svg v-if="topic.slug==='lenses-and-optical-instruments'" viewBox="0 0 48 48" class="topic-art"><defs><linearGradient id="lensGlass" x1="0" x2="1"><stop stop-color="#d8f5ff"/><stop offset=".5" stop-color="#7ec5e2"/><stop offset="1" stop-color="#e8faff"/></linearGradient></defs><path d="M3 24H45" stroke="#a4b5c2" stroke-dasharray="2 2"/><path d="M24 5Q13 24 24 43Q35 24 24 5Z" fill="url(#lensGlass)" stroke="#267496" stroke-width="1.5"/><path d="M2 12H23L44 24M2 36H23L44 24" fill="none" stroke="#d18b28" stroke-width="1.7"/><path d="M24 7V41" stroke="#fff" stroke-opacity=".7"/><circle cx="44" cy="24" r="2" fill="#bf6142"/></svg>
       <svg v-else-if="topic.slug==='polarization-and-reflection'" viewBox="0 0 48 48" class="topic-art"><path d="M2 27H46V46H2Z" fill="#c4e4f2"/><path d="M2 27H46" stroke="#4487a8" stroke-width="1.4"/><path d="M24 3V45" stroke="#9aafbd" stroke-dasharray="2 2"/><path d="M5 7L24 27L43 7" fill="none" stroke="#b96b42" stroke-width="2"/><path d="M24 27L32 45" stroke="#2b86b4" stroke-width="2"/><path d="M37 8L43 7L42 13M27 41L32 45L33 39" fill="none" stroke="#3b6d86" stroke-width="1.3"/><circle cx="12" cy="14" r="3.5" fill="white" stroke="#b96b42"/><circle cx="12" cy="14" r="1.2" fill="#b96b42"/></svg>
@@ -374,8 +416,10 @@ const STEP_LABELS = {
   TaskCompleted: e => (e.source === 'monitoring'
       ? `모니터링 지표 확인 (시스템: ${e.target})`
       : `학습·점검 자료 조회 (유형: ${e.target})`) + (e.retries ? ' (재시도 성공)' : ''),
-  ReplanCheck: e => e.is_sufficient ? null : `정보 부족 → 점검 유형 "${e.target}"로 추가 조사`,
+  ReplanCheck: e => e.is_sufficient ? null : (e.reason || '관련 자료 확인 필요'),
   DraftWritten: e => `답변 초안 작성 (시도 ${e.attempt})`,
+  CalculationCompleted: e => e.ok ? `MCP 계산 완료: ${e.operation}` : `계산 조건 확인: ${e.status}`,
+  CalculationValidated: e => e.ok ? '단위·입력 조건·계산 결과 확인 완료' : '입력 부족 또는 계산 불가 조건 확인',
   Validation: e => e.verdict === '합격' ? '응답 형식 확인 완료' : '응답 형식 보완 중',
   Finalize: () => '최종 답변 완성',
 };
@@ -514,6 +558,100 @@ createApp({
     watch([absorptionWave,threshold,intensity],()=>{photonShot.value=0;shotCount.value=0;});
     const equipment=reactive({equipmentType:'camera',telescopeModel:'kepler',microscopeModel:'infinity',stageX:0,focusOffset:0,f:50,u:1000,sensor:36,fNumber:4,objective:500,eyepiece:25,diameter:80,microF:4,tube:200,microNA:.65,medium:1,wave:550,lithoWave:13.5,na:.33,k1:.4,k2:.5,reduction:4,mask:100});
     watch(()=>equipment.lithoWave,()=>{equipment.na=Math.min(equipment.na,equipment.lithoWave<20?.95:1.35);});
+    // 질문과 해설은 학습용 사례다. 실제 장비의 고장 진단 결과가 아니다.
+    const experimentIssues={
+      polarization:{notice:'I₀는 두 번째 편광판 직전의 선편광 세기입니다. 레이저 직접광·반사광을 눈으로 보지 마세요.',questions:[
+        ['두 편광판을 90°로 맞췄는데도 밝다면?', ['두 판의 투과축 기준과 영점이 맞는지 확인합니다.','주변광·검출기 영점·편광판의 유한 소광비를 구분합니다. 이 앱은 이상적인 편광판이라 90°에서 0입니다.']],
+        ['45°에서는 빛의 세기가 절반인데 90°에서는 왜 0일까요?', ['전기장의 투과축 방향 성분은 cosθ, 세기는 그 제곱에 비례합니다.','I/I₀=cos²θ이므로 45°는 1/2, 90°는 0입니다. 밝기를 각도에 단순 비례시키지 않습니다.']]]},
+      lens:{notice:'실상·허상과 거리의 부호를 구분하세요. 태양을 렌즈로 모아 보거나 광원을 직접 들여다보지 마세요.',questions:[
+        ['볼록렌즈를 옮겨도 스크린에 상이 안 맺힌다면?', ['물체가 초점 안에 있으면 허상이므로 스크린에 직접 맺히지 않습니다.','물체가 초점에 있으면 유한한 상 거리가 없습니다. 물체 거리와 초점거리를 먼저 비교합니다.']],
+        ['초점 근처에서 상 거리가 갑자기 크게 변하는 이유는?', ['1/f=1/u+1/v에서 u가 f에 가까워지면 v의 크기가 급격히 커집니다.','계산 발산과 실제 렌즈의 유한 크기·수차를 구분하고 거리 판독의 민감도를 확인합니다.']]]},
+      'concave-lens':{notice:'오목렌즈의 초점거리는 이 화면의 부호 규약에서 음수입니다.',questions:[
+        ['오목렌즈 뒤에 스크린을 놓아도 상이 안 보이면 고장일까요?', ['실물체에 대한 이상적인 단일 오목렌즈의 상은 정립·축소 허상입니다.','점선은 광선의 역연장이며 실제 빛이 그 경로로 진행한다는 뜻이 아닙니다.']],
+        ['오목렌즈인데 계산 결과가 실상으로 나온다면?', ['f의 부호, 물체가 실물체인지, 렌즈를 여러 개 결합했는지 확인합니다.','앱의 단일 렌즈 모델과 실제 복합 광학계를 같은 조건으로 비교하지 않습니다.']]]},
+      'concave-mirror':{notice:'거울 앞 실상은 양의 상 거리, 거울 뒤 허상은 음의 상 거리로 표시합니다.',questions:[
+        ['오목거울인데 정립상이 보이는 이유는?', ['물체가 초점 안쪽에 있으면 정립·확대 허상이 가능합니다.','물체를 초점 밖으로 옮겼을 때 실상·도립으로 바뀌는지 비교하세요.']],
+        ['광선이 한 점에 정확히 모이지 않는다면?', ['이 앱은 근축 구면거울 모델입니다. 실제 큰 입사각에서는 구면수차 등이 생길 수 있습니다.','정렬·거리 기준·입사각을 구분해 확인하며 반사광을 직접 보지 않습니다.']]]},
+      'convex-mirror':{notice:'볼록거울은 실물체에 대해 정립·축소 허상을 만드는 이상 모델입니다.',questions:[
+        ['상은 보이는데 스크린에는 왜 안 잡힐까요?', ['거울 뒤의 허상 위치는 반사광을 뒤로 연장해 얻습니다. 실제 빛이 그곳으로 모이지 않습니다.']],
+        ['오목거울과 같은 양의 초점거리를 넣어도 될까요?', ['이 앱에서 볼록거울 f는 음수입니다. 초점거리 크기와 부호를 구분하세요.','거울의 앞·뒤와 렌즈의 좌·우 부호 규약을 섞지 않습니다.']]]},
+      michelson:{notice:'무늬 한 주기는 밝음→어두움→다음 밝음입니다. 정렬은 실험실의 승인된 절차로 수행합니다.',questions:[
+        ['빛은 도달하는데 간섭무늬가 안 보인다면?', ['두 빔의 공간적 겹침·편광·세기 균형·결맞음 길이를 구분해 확인합니다.','앱의 가시도 슬라이더는 대비만 나타내며 실제 정렬 상태를 측정하지 않습니다.']],
+        ['계산 파장이 2배 또는 10배 어긋난다면?', ['거울 이동의 왕복 계수 2, 밝음에서 다음 밝음까지의 계수 기준을 확인합니다.','mm·µm·nm와 미동대 눈금·감속비를 확인합니다. 이론값에 맞추려고 임의의 보정 계수를 넣지 않습니다.']],
+        ['거울을 그대로 두었는데 무늬가 흔들린다면?', ['진동·공기 흐름·온도 변화·마운트 상태를 원인 후보로 검토합니다.','한 번에 여러 요소를 바꾸지 말고 기준 상태와 변화를 기록합니다.']]]},
+      xrd:{notice:'θ는 결정면 기준 각도이고 측정 축은 2θ입니다. 실제 XRD는 방사선 안전장치·인터록을 우회하지 않습니다.',questions:[
+        ['검출기를 움직여도 선택한 피크가 없다면?', ['이론 각도와 현재 2θ, 파장·면간격 단위를 먼저 비교합니다.','금지 반사, 시료 배향·측정 배치도 확인합니다. 앱의 피크 막대는 실측 강도나 검출 신호가 아닙니다.']],
+        ['면간격을 바꿨더니 각도가 사라졌다면?', ['nλ>2d이면 sinθ가 1보다 커져 가능한 실수 각이 없습니다.','임의의 각도를 출력할 문제가 아니라 입력 조건을 확인해야 합니다.']],
+        ['분말 이론표의 피크가 단결정 웨이퍼에서도 모두 보일까요?', ['아닙니다. 단결정은 시료 배향과 스캔 기하에 따라 관측 가능한 반사가 제한됩니다.','피크 위치·강도·폭·허용 반사를 구분해서 해석합니다.']]]},
+      fresnel:{notice:'s·p의 기준은 물질 표면이 아닌 입사면입니다. 두 편광 모두 E는 진행 방향 k에 수직입니다.',questions:[
+        ['p편광은 빛의 진행 방향으로 진동하는 종파일까요?', ['아닙니다. p는 전기장이 입사면 안에 있다는 뜻이며 여전히 k와 수직입니다.','s는 입사면 밖 방향의 전기장입니다. 화면을 돌려 두 방향을 비교하세요.']],
+        ['입사각을 키웠는데 전반사가 안 생기는 이유는?', ['전반사는 n₁>n₂ 조건에서 법선 기준 임계각을 넘을 때 가능합니다.','n₁≤n₂라면 각도만 키워도 전반사가 생기지 않습니다.']],
+        ['브루스터 각에서 s도 반사가 0일까요?', ['이상적인 비흡수 유전체의 브루스터 각은 p 반사가 0인 조건입니다.','전반사는 두 세기 반사율이 1인 다른 현상입니다. 위상 변화는 이 그래프가 계산하지 않습니다.']]]},
+      prism:{notice:'굴절각·반사각은 표면이 아니라 법선 기준입니다. 프리즘 분산과 입자에 의한 산란을 구분하세요.',questions:[
+        ['색별로 출사 방향이 다른 이유는?', ['굴절률 n(λ)이 파장에 따라 달라지기 때문입니다. 앱의 정상분산 모델에서는 짧은 파장이 더 크게 편이됩니다.','두 경계면에서 Snell 법칙을 적용해야 하며 내부 광선을 임의로 수평으로 그리면 안 됩니다.']],
+        ['각도를 조절하면 최소 편이 조건도 그대로일까요?', ['이 앱은 각 꼭지각에서 550 nm가 최소 편이인 입사각을 다시 정합니다. 따라서 꼭지각만 바꾸고 입사 방향을 고정한 실제 실험과는 다릅니다.','다른 파장까지 동시에 최소 편이인 것은 아닙니다.']],
+        ['단색광을 넣으면 무지개가 생길까요?', ['이상적인 단색광은 하나의 파장이므로 색별 분리 띠가 생기지 않습니다.','무지개 관찰에는 여러 파장이 포함된 광원이 필요합니다.']]]},
+      diffraction:{notice:'폭 식은 원거리 단일슬릿과 작은 각도 근사입니다. 슬릿 폭·파장·스크린 거리의 단위를 맞추세요.',questions:[
+        ['슬릿을 좁혔는데 중앙 무늬가 넓어져도 정상일까요?', ['정상입니다. 중앙 최대 전체 폭 W≈2λL/a이므로 슬릿 폭 a가 작을수록 넓어집니다.']],
+        ['실험 무늬가 이론 그래프와 다른 이유는?', ['원거리 조건·입사 빔의 균일성·슬릿 형상·주변광·검출기 포화를 구분해 확인합니다.','이 앱의 정규화 그래프는 실제 밝기와 장비 잡음을 재현하지 않습니다.']]]},
+      absorption:{notice:'밴드갭 Eg를 넘는 내부 들뜸과 일함수 Φ를 넘는 표면 밖 방출은 다른 과정입니다.',questions:[
+        ['빛을 강하게 했는데 금속에서 전자가 안 나오면?', ['단일 광자 모형에서는 광자 하나의 에너지가 일함수보다 커야 양의 방출 운동에너지를 얻습니다.','세기는 같은 파장에서 광자 수를 바꾸며, 광자 하나의 에너지는 바꾸지 않습니다. 다광자·강전계 효과는 이 앱의 범위 밖입니다.']],
+        ['같은 빨간빛인데 Si와 GaN의 반응 조건이 다른 이유는?', ['물질별 Eg가 다르기 때문입니다. 광자 에너지와 선택한 Eg를 비교합니다.','E≥Eg는 단순 에너지 조건입니다. 직접·간접 전이, 포논·결함·흡수 계수까지 같다는 뜻은 아닙니다.']],
+        ['애니메이션의 전자 수와 속도를 실측값으로 봐도 될까요?', ['안 됩니다. 대표 전자의 상태 변화와 내부·외부를 구분하는 개념도입니다.','에너지 눈금은 자동 확대되므로 그림의 높이만 비교하지 말고 eV 값을 읽습니다.']]]},
+      camera:{notice:'센서 폭·초점거리·조리개는 서로 다른 값입니다. 사진 밝기는 고정 노출의 개념 예시입니다.',questions:[
+        ['센서를 넓히면 물체 자체가 커지는 걸까요?', ['같은 위치·렌즈에서는 더 넓은 영역이 기록됩니다. 물체 자체의 크기가 변하는 것은 아닙니다.']],
+        ['F수를 키웠더니 어두워지는 이유는?', ['F수=f/D이므로 같은 초점거리에서 F수가 커지면 구멍 지름 D가 작아집니다.','자동 노출·감도 보정은 생략했습니다. 실제 카메라는 자동 노출 때문에 밝기가 유지될 수 있습니다.']]]},
+      telescope:{notice:'현재 케플러식·갈릴레이식 굴절망원경의 무한대 초점 모델입니다. 태양을 직접 관측하지 마세요.',questions:[
+        ['배율만 키우면 작은 물체를 계속 구분할 수 있나요?', ['아닙니다. 회절 한계는 구경·파장에, 실제 관측은 대기·수차 등에도 영향을 받습니다.','배율 증가와 각분해능 개선을 구분합니다.']],
+        ['렌즈 두 개를 썼는데 상이 뒤집히기도 안 뒤집히기도 하는 이유는?', ['케플러식은 볼록 접안렌즈로 도립, 갈릴레이식은 오목 접안렌즈로 정립입니다.','경통 길이도 각각 fₒ+fₑ와 fₒ−|fₑ|로 다릅니다.']]]},
+      microscope:{notice:'중간상 배율이며 접안렌즈 각배율은 포함하지 않습니다. NA≤매질 굴절률 n이어야 합니다.',questions:[
+        ['확대했는데 새로운 세부 구조가 안 보이는 이유는?', ['배율 증가만으로 분해능이 좋아지지는 않습니다. 파장·NA·조명·수차를 함께 봅니다.','앱의 Abbe 분해 거리는 이상 모델이며 실제 시료 대비와 검출 조건은 생략합니다.']],
+        ['유한 경통식과 무한 보정식의 렌즈를 그대로 바꿔 써도 될까요?', ['각 구조의 상 위치·튜브렌즈 유무·보정 조건이 다릅니다.','실제 대물렌즈의 지정 경통·커버글라스·매질·호환 조건을 확인해야 합니다.']]]}
+    };
+    const theory=(principle,formulas,conditions)=>[
+      {title:'원리',body:principle},{title:'공식·기호·단위',body:formulas},{title:'적용 조건·모형의 한계',body:conditions}
+    ];
+    const experimentTheories={
+      polarization:theory('첫 편광판이 만든 선편광을 두 번째 편광판의 투과축 방향으로 투영합니다. 축이 일치하면 최대, 직교하면 차단됩니다.',String.raw`\[I=I_0\cos^2\theta\]
+I₀: 두 번째 판 직전 세기, I: 투과 세기, θ: 두 투과축의 상대각. 계산 시 도(deg)와 라디안(rad)을 구분합니다.`,'이상적인 선형 편광판입니다. 실제 소광비·흡수·검출기 배경을 생략합니다. 상대 세기와 눈의 밝기 반응은 다릅니다.'),
+      lens:theory('볼록렌즈는 평행광을 모읍니다. 물체가 초점 밖이면 실상, 초점 안이면 허상이 됩니다.',String.raw`\[\frac1f=\frac1u+\frac1v,\qquad m=-\frac vu\]
+f: 초점거리, u: 실물체 거리, v: 상 거리(모두 cm), m: 횡배율. f>0, v>0은 실상·v<0은 허상입니다.`,'공기 중 얇은 렌즈·근축 광선입니다. u=f에서는 유한한 상 거리가 없습니다. 수차·렌즈 두께는 생략합니다.'),
+      'concave-lens':theory('오목렌즈는 빛을 퍼뜨립니다. 실물체에 대해 정립·축소 허상을 형성합니다.',String.raw`\[\frac1f=\frac1u+\frac1v,\qquad m=-\frac vu\]
+f<0, u>0, v<0. 거리는 cm, 배율은 무차원입니다.`,'단일 얇은 렌즈·근축 모델입니다. 허상으로 향하는 점선은 실제 광선이 아닌 역연장선입니다.'),
+      'concave-mirror':theory('오목거울은 평행 입사광을 모읍니다. 물체가 초점 안에 있으면 정립 허상, 밖이면 도립 실상을 만들 수 있습니다.',String.raw`\[\frac1f=\frac1u+\frac1v,\qquad m=-\frac vu,\qquad f\approx\frac R2\]
+f>0, 거울 앞 실상 v>0·거울 뒤 허상 v<0. R: 구면거울 곡률반경. 길이는 같은 단위입니다.`,'근축 구면거울의 이상 모형입니다. 실제 큰 구경·큰 입사각의 구면수차는 생략합니다.'),
+      'convex-mirror':theory('볼록거울은 반사광을 퍼뜨립니다. 실물체의 상은 거울 뒤의 정립·축소 허상입니다.',String.raw`\[\frac1f=\frac1u+\frac1v,\qquad m=-\frac vu\]
+f<0, u>0, v<0. f·u·v는 같은 길이 단위입니다.`,'근축 구면거울 모델입니다. 허상 위치에서 실제로 빛이 모이는 것은 아닙니다.'),
+      michelson:theory('빔스플리터가 나눈 빛은 두 거울에서 왕복해 합쳐집니다. 한 거울의 이동이 두 팔 사이 광경로차와 관측 세기를 바꿉니다.',String.raw`\[\Delta\mathrm{OPL}=2n\Delta x,\quad N=\frac{2n\Delta x}{\lambda_0},\quad\lambda_0=\frac{2n\Delta x}{N}\]
+\[I=I_1+I_2+2\sqrt{I_1I_2}\cos\Delta\phi,\quad\Delta\phi=\frac{2\pi\Delta\mathrm{OPL}}{\lambda_0}+\phi_0\]
+Δx: 거울 이동, n: 매질 굴절률, λ₀: 진공 파장, N: 주기 수. Δx와 λ는 같은 단위로 변환합니다. 밝음→다음 밝음이 1주기입니다.`,'공기 n≈1, 안정적인 결맞음·공간 겹침·편광 조건을 전제합니다. 앱의 등경사 무늬와 가시도는 정렬 상태의 실측이 아닙니다.'),
+      xrd:theory('결정면에서 산란한 파동의 경로차가 파장의 정수배가 되면 보강간섭 조건을 만족합니다.',String.raw`\[2d\sin\theta=n\lambda,\qquad d_{hkl}=\frac a{\sqrt{h^2+k^2+l^2}}\]
+θ: 결정면 기준 Bragg 각, 검출 축: 2θ. d: 면간격, a: 입방 결정 격자상수, λ: X선 파장. d와 λ는 nm 또는 Å로 통일합니다. n은 양의 정수입니다.`,'두 번째 식은 입방 결정에 적용합니다. nλ>2d이면 실수 해가 없습니다. 피크 위치와 소멸 규칙·세기·시료 배향을 구분합니다. 그래프 막대 높이는 실측 강도가 아닙니다.'),
+      fresnel:theory('입사면은 진행 방향 k와 표면 법선을 포함합니다. s는 E가 입사면에 수직, p는 E가 입사면에 평행입니다. 둘 다 E⊥k인 횡파입니다.',String.raw`\[n_1\sin\theta_i=n_2\sin\theta_t\]
+\[R_s=\left|\frac{n_1\cos\theta_i-n_2\cos\theta_t}{n_1\cos\theta_i+n_2\cos\theta_t}\right|^2,\quad R_p=\left|\frac{n_2\cos\theta_i-n_1\cos\theta_t}{n_2\cos\theta_i+n_1\cos\theta_t}\right|^2\]
+\[\theta_B=\tan^{-1}\!\frac{n_2}{n_1},\qquad\theta_c=\sin^{-1}\!\frac{n_2}{n_1}\ (n_1>n_2)\]
+각도는 법선 기준입니다. n은 무차원, R은 세기 반사율입니다.`,'평면 경계의 비흡수·비자성 유전체입니다. 전반사에서 Rs=Rp=1이지만 위상은 다를 수 있습니다. 분산·복소 굴절률·소멸파는 생략합니다.'),
+      prism:theory('굴절률이 파장에 의존해 두 경계면에서 굴절한 빛이 색마다 다른 방향으로 나옵니다. 산란과는 다른 현상입니다.',String.raw`\[\sin i=n\sin r_1,\quad n\sin r_2=\sin e,\quad r_1+r_2=A,\quad\delta=i+e-A\]
+\[n(\lambda)=1.50+\frac{0.004}{\lambda[\mathrm{\mu m}]^2}\]
+A: 꼭지각, i: 입사각, e: 출사각, δ: 편이각. i·e는 각 면의 법선 기준입니다.`,'공기 중 가상 Cauchy 분산 모델입니다. 각 꼭지각에서 550 nm가 최소 편이인 입사각을 사용합니다. 다른 파장까지 동시에 최소 편이는 아닙니다.'),
+      diffraction:theory('단일슬릿을 통과한 파동이 간섭해 중앙 최대와 양쪽 부극대를 만듭니다. 슬릿이 좁을수록 중앙 무늬가 넓어집니다.',String.raw`\[\frac I{I(0)}=\left(\frac{\sin\beta}{\beta}\right)^2,\quad\beta=\frac{\pi a\sin\theta}{\lambda},\quad W\approx\frac{2\lambda L}{a}\]
+a: 슬릿 폭, L: 스크린 거리, W: 중앙 최대 전체 폭. 길이를 같은 단위로 변환합니다. β=0에서 세기 비의 극한은 1입니다.`,'원거리 회절과 중앙 부근 작은 각도 근사입니다. 실제 광원 분포·슬릿 불균일·검출기 잡음은 생략합니다.'),
+      absorption:theory('반도체 내부 들뜸은 전자가 물질 안의 높은 상태로 이동하는 것, 외부 광전효과는 전자가 표면에서 진공으로 나오는 것입니다. 밴드갭과 일함수는 서로 다른 양입니다.',String.raw`\[E=h\nu=\frac{hc}{\lambda_0},\quad E[\mathrm{eV}]\approx\frac{1239.84}{\lambda_0[\mathrm{nm}]}\]
+\[E\ge E_g\quad\text{(내부 들뜸의 단순 에너지 조건)},\qquad K_{\max}=E-\Phi\]
+Eg: 밴드갭, Φ: 일함수, Kmax: 최대 방출 운동에너지(단위 eV). 양의 운동에너지로 외부 방출하려면 E>Φ여야 합니다.`,'E≥Eg는 실제 흡수의 충분조건이 아닙니다. 직접·간접 전이·포논·결함을 구분합니다. 세기와 광자 에너지는 다르며 실제 흡수율·전류는 계산하지 않습니다.'),
+      camera:theory('렌즈가 물체의 상을 센서에 만듭니다. 센서 폭은 기록 범위, 초점거리는 배율, F수는 개구 지름과 관련됩니다.',String.raw`\[\frac1f=\frac1u+\frac1v,\quad m=-\frac vu,\quad F_\#=\frac fD\]
+\[\mathrm{FOV}\approx2\tan^{-1}\frac S{2f},\quad W_{\mathrm{object}}=\frac{Su}{v}\]
+f: 초점거리, u: 물체 거리, v: 상 거리, S: 센서 폭, D: 개구 지름(단위 mm). F수·배율은 무차원입니다.`,'얇은 렌즈·근축 모델입니다. FOV 식은 무한대 초점 근사이며 유한 거리의 촬영 범위는 Wobject를 사용합니다. F수 밝기는 고정 노출의 개념 예시입니다.'),
+      telescope:theory('케플러식은 볼록 대물·볼록 접안으로 도립, 갈릴레이식은 볼록 대물·오목 접안으로 정립입니다. 대물 구경과 배율은 서로 다릅니다.',String.raw`\[|M_\theta|=\frac{f_o}{|f_e|},\quad L_{\mathrm{Kepler}}=f_o+f_e,\quad L_{\mathrm{Galileo}}=f_o-|f_e|\]
+\[\theta_R\approx1.22\frac\lambda D\]
+fo: 대물 초점거리, fe: 접안 초점거리, D: 대물 구경. 길이를 통일하면 θR은 rad입니다. 1 rad≈206265초각입니다.`,'무한대 물체·최종상 무한대의 이상적 굴절망원경입니다. 반사식·굴절반사식·대기·수차·눈의 동공 제한은 생략합니다.'),
+      microscope:theory('무한 보정식은 대물 뒤의 평행광을 튜브렌즈가 중간상으로 만듭니다. 유한 경통식은 대물이 유한 거리에 중간상을 만듭니다.',String.raw`\[|M_{\infty}|=\frac{f_{\mathrm{tube}}}{f_{\mathrm{obj}}},\quad |M_{\mathrm{finite}}|=\frac v{f_{\mathrm{obj}}}-1\]
+\[\mathrm{NA}=n\sin\theta,\quad d_{\mathrm{Abbe}}=\frac{\lambda_0}{2\mathrm{NA}}\]
+v: 유한 모델의 대물→중간상 거리, θ: 수광 반각. NA≤n이어야 합니다. λ₀와 d는 같은 단위이며 접안 배율은 포함하지 않습니다.`,'유한 모델은 얇은 렌즈 상 공식, 무한 모델은 이상적인 튜브렌즈계를 사용합니다. Abbe 분해능과 점광원 Rayleigh 기준의 정의는 다릅니다. 실제 시료 대비·조명·수차는 생략합니다.')
+    };
+    const activeTheory=computed(()=>experimentTheories[issueKey.value]);
+    const activeIssues=computed(()=>experimentIssues[simKind.value==='equipment'?equipment.equipmentType:simKind.value]);
+    const issueKey=computed(()=>simKind.value==='equipment'?equipment.equipmentType:simKind.value);
     const labs = [{id:'equipment',title:'광학장비'},{id:'polarization',title:'편광판'},{id:'lens',title:'볼록렌즈'},{id:'concave-lens',title:'오목렌즈'},{id:'concave-mirror',title:'오목거울'},{id:'convex-mirror',title:'볼록거울'},{id:'diffraction',title:'단일슬릿'},{id:'michelson',title:'마이켈슨 간섭계'},{id:'xrd',title:'XRD'},{id:'fresnel',title:'s·p 편광 / 전반사'},{id:'prism',title:'프리즘 분산'},{id:'absorption',title:'광흡수 / 광전효과'}];
     // computed는 슬라이더가 변할 때만 다시 계산한다. 조작 자체로 API를 호출하지 않는다.
     const lensOptions=labs.filter(lab=>['lens','concave-lens','concave-mirror','convex-mirror'].includes(lab.id));
@@ -558,6 +696,14 @@ createApp({
     watch(simKind,kind=>{if(lensOptions.some(lab=>lab.id===kind))lastLens.value=kind;});
     function openSimulation(kind) { simKind.value = kind==='lens-group'?lastLens.value:kind; view.value = 'simulation'; }
     /** 현재 결과를 미전송 질문 초안으로 복사한다. AI 호출은 보내기 시점에만 수행한다. */
+    function calculationSnapshot(){
+      const entry=(value,unit)=>({value,unit});
+      if(simKind.value==='polarization')return {default_operation:'malus',parameters:{angle:entry(angle.value,'deg')}};
+      if(simKind.value==='xrd')return {default_operation:'bragg_angle',parameters:{wavelength:entry(xray.value,'nm'),spacing:entry(sim.value.spacing,'nm'),order:entry(material.value==='custom'?order.value:1,'count')}};
+      if(simKind.value==='michelson')return {default_operation:'michelson_fringes',parameters:{displacement:entry(displacement.value,'µm'),wavelength:entry(wavelength.value,'nm'),fringes:entry(sim.value.cycles,'count')}};
+      if(['lens','concave-lens'].includes(simKind.value))return {default_operation:'thin_lens',parameters:{focal:entry(sim.value.signedF,'cm'),object_distance:entry(object.value,'cm')}};
+      return null;
+    }
     function transferResult() { input.value = sim.value.summary; }
     const docContent=ref(''), docLoading=ref(false), docError=ref(''), docSlug=ref('');
     let docRequest=0;
@@ -602,7 +748,7 @@ createApp({
       await nextTick();
       logEl.value?.scrollIntoView?.({behavior:'smooth',block:'center'});
     }
-    const equipmentLessons=[{slug:'lithography-process',title:'빛으로 패턴 만들기'},{slug:'resolution-and-focus',title:'해상도와 초점'},{slug:'pattern-quality',title:'패턴 품질 읽기'},{slug:'alignment-and-verification',title:'정렬 · 교정 · 검증'}];
+    const equipmentLessons=[{slug:'lithography-process',title:'노광 · 정밀장비 핵심 정리'}];
     const topics = [
       {icon:'≋', title:'회절격자 · 분광기', slug:'grating-prism-spectrometer', subtitle:'GRATINGS & SPECTRA', question:'회절격자와 프리즘 분광기의 원리를 알려줘'},
       {icon:'◒', title:'그림자와 회절', slug:'shadow-and-diffraction', subtitle:'SHADOW & DIFFRACTION', question:'그림자와 회절 실험 이론 알려줘'},
@@ -655,7 +801,9 @@ createApp({
       stopAnswer();
 
       // 전송 시점의 값을 문자열로 복사한다. 이후 슬라이더 변경은 이 요청에 영향을 주지 않는다.
-      const context = view.value === 'simulation' ? (simKind.value==='equipment'?opticsSimulation('equipment',{...equipment,question:text}).summary:sim.value.summary) : '';
+      let context = view.value === 'simulation' ? (simKind.value==='equipment'?opticsSimulation('equipment',{...equipment,question:text}).summary:sim.value.summary) : '';
+      const snapshot=view.value==='simulation'?calculationSnapshot():null;
+      if(context&&snapshot)context+='\n[광학 계산 입력]\n'+JSON.stringify(snapshot);
       const experiment = labs.find(lab => lab.id === simKind.value)?.title || '';
       const message = context
         ? `[사용자 질문]\n${text}\n\n[현재 가상 실험]\n실험: ${experiment}\n${context}\n\n위 내용은 가상 모델의 조건과 계산 결과입니다. 참고 자료의 설명 요청 문구보다 사용자 질문에 우선 답하세요. 실제 측정이나 센서 관측으로 표현하지 마세요.`
@@ -726,7 +874,7 @@ createApp({
       };
     }
 
-    return { chooseAbsorptionExample, absorptionProgress, stopAbsorptionAnimation, scanTwoTheta, startXrdDrag, dragXrd, endXrdDrag, keyXrd, startMirrorDrag, dragMirror, endMirrorDrag, keyMirror, startPolarizerDrag, dragPolarizer, endPolarizerDrag, polMode, viewYaw, viewTilt, polPhase, equipment, intensity, shotCount, emissionDuration, fireLightPulse, bandMaterials, bandMaterial, selectedBandMaterial, chooseBandMaterial, backendLabel, log, input, sending, logEl, onSubmit, stopAnswer, topics, equipmentLessons, selectedTopic, categoryQuestions, openCategory, askRelated, ask, view, simKind, fermiPosition, electronTemperature, absorptionType, threshold, absorptionWave, photonShot, firePhoton, prismMode, lightOptions, selectedLight, lightColor, chooseLight, playing, playbackRate, pauseMichelson, playMichelson, stepMichelson, resetMichelson, material, plane, materials, n1, n2, incidence, apex, opticalDepth, xray, spacing, order, displacement, visibility, imageX, angle, focal, object, wavelength, slit, distance, labs, navigationLabs, lensOptions, activeLabId, sim, apparatusSvg, lensTransform, lensRays, transferResult, openSimulation, openDoc, docContent, docLoading, docError, docSlug };
+    return { activeTheory, activeIssues, issueKey, chooseAbsorptionExample, absorptionProgress, stopAbsorptionAnimation, scanTwoTheta, startXrdDrag, dragXrd, endXrdDrag, keyXrd, startMirrorDrag, dragMirror, endMirrorDrag, keyMirror, startPolarizerDrag, dragPolarizer, endPolarizerDrag, polMode, viewYaw, viewTilt, polPhase, equipment, intensity, shotCount, emissionDuration, fireLightPulse, bandMaterials, bandMaterial, selectedBandMaterial, chooseBandMaterial, backendLabel, log, input, sending, logEl, onSubmit, stopAnswer, topics, equipmentLessons, selectedTopic, categoryQuestions, openCategory, askRelated, ask, view, simKind, fermiPosition, electronTemperature, absorptionType, threshold, absorptionWave, photonShot, firePhoton, prismMode, lightOptions, selectedLight, lightColor, chooseLight, playing, playbackRate, pauseMichelson, playMichelson, stepMichelson, resetMichelson, material, plane, materials, n1, n2, incidence, apex, opticalDepth, xray, spacing, order, displacement, visibility, imageX, angle, focal, object, wavelength, slit, distance, labs, navigationLabs, lensOptions, activeLabId, sim, apparatusSvg, lensTransform, lensRays, transferResult, openSimulation, openDoc, docContent, docLoading, docError, docSlug };
   },
 }).directive('answer', {mounted: renderAnswer, updated: renderAnswer}).mount('#app');
 </script>

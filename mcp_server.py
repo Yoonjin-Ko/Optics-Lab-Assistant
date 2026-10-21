@@ -31,6 +31,17 @@ class SystemStatus(BaseModel):
 
 
 @mcp.tool()
+def calculate_optics(operation: str, parameters: dict) -> dict:
+    """광자 에너지·Bragg 각·Michelson 파장/주기·Malus·얇은 렌즈를 계산한다.
+
+    parameters의 각 항목은 {value: 유한 숫자, unit: 명시 단위} 형식이다.
+    지원식·단위·물리 조건을 검증하고 입력 부족/불가능 조건에서는 결과를 만들지 않는다.
+    """
+    from agent.optics_calculations import calculate_optics as calculate
+    return calculate(operation, parameters)
+
+
+@mcp.tool()
 def get_monitoring_status(system_name: str) -> SystemStatus:
     """지정된 시스템의 현재 모니터링 상태를 조회합니다 (호출마다 값이 달라지는 동적 Tool)."""
     # 실제 센서 조회가 아니다. legacy 서버 장애 실습의 예제 수치를 읽는다.

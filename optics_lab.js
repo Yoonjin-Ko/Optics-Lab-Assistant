@@ -450,11 +450,12 @@ function instrumentScene(p,type) {
  if(telescope){
   const H=p.diameter*.23,rayH=H*.8,fo=p.objective,fe=p.eyepiece,L=galilean?fo-fe:fo+fe;
   const x1=150,x2=x1+330*L/(fo+fe),focus=x1+330*fo/(fo+fe),outH=rayH*fe/fo;
-  const eyepieceH=Math.max(12,outH+8);geometry={objectiveRadius:H+8,rayRadius:rayH,eyepieceRadius:eyepieceH,outRadius:outH};
+  // 접안렌즈의 표시 크기는 고정한다. 지원 범위의 최대 출사 광선 높이(44.16)를 수용한다.
+  const eyepieceH=52;geometry={objectiveRadius:H+8,rayRadius:rayH,eyepieceRadius:eyepieceH,outRadius:outH};
   body+=`<rect x="${x1}" y="${155-H-15}" width="${x2-x1}" height="${2*H+30}" rx="7" fill="#e7edf3" stroke="#c0cdd7"/>`;
   for(const sign of [-1,0,1]){const y=155+sign*rayH,out=155+(galilean?1:-1)*sign*outH;body+=line([[25,y],[x1,y],[x2,out],[570,out]],sign===0?'#dda757':'#5489b5');if(galilean)body+=line([[x2,out],[focus,155]],'#9b7fa8',true);}
   body+=lens(x1,H+8,'objective')+lens(x2,eyepieceH,'eyepiece',galilean)+`<circle cx="${focus}" cy="155" r="4" fill="#b69262"/>`;
-  body+=txt(150,60,'大物 구경 D = '+p.diameter+' mm').replace('大物','대물')+txt(x1,270,'대물: 볼록렌즈')+txt(x2,292,galilean?'접안: 오목렌즈':'접안: 볼록렌즈')+txt(390,45,galilean?'정립상 · 내부 실상 없음':'도립상 · 두 렌즈 사이 실상')+txt(330,328,'광선은 대물 유효 구경 안에서 출발 · 구경·초점거리에 따라 위치와 폭 변화');
+  body+=txt(150,60,'大物 구경 D = '+p.diameter+' mm').replace('大物','대물')+txt(x1,270,'대물: 볼록렌즈')+txt(x2,292,galilean?'접안: 오목렌즈':'접안: 볼록렌즈')+txt(390,45,galilean?'정립상 · 내부 실상 없음':'도립상 · 두 렌즈 사이 실상')+txt(330,328,'대물 구경: 집광 폭 변화 · 접안렌즈 크기 고정 · 렌즈 크기는 개념 축척');
  }else{
   const h=18+42*p.microNA/p.medium,rayH=h*.82,x1=180,x2=400,imageX=560;
   geometry={objectiveRadius:h,rayRadius:rayH};

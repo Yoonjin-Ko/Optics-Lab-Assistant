@@ -76,7 +76,11 @@ class OpticsIntegration(unittest.IsolatedAsyncioTestCase):
             ]:
                 theory = await graph.ainvoke(dict(query=query, history=prior, events=[], cost_usd=0))
                 self.assertEqual(theory['optics_mode'], 'theory')
-                self.assertIn('실험 원리', theory['final'])
+                if query=='532 nm 광자 에너지는?':
+                    self.assertIn('2.33053 eV', theory['final'])
+                    self.assertTrue(theory['calculation_result']['ok'])
+                else:
+                    self.assertIn('실험 원리', theory['final'])
                 self.assertNotIn('먼저 문서의 확인 질문에 답해', theory['final'])
                 self.assertNotIn('CPU', theory['final'])
             for query in ['빛의 속도는?', '렌즈란?', '편광이 뭐야?', '회절격자란?']:

@@ -32,6 +32,7 @@ for(const telescopeModel of ['kepler','galilean'])for(const diameter of [20,80,3
 }
 const small=eq({equipmentType:'telescope',diameter:20}),large=eq({equipmentType:'telescope',diameter:300});
 assert.ok(large.instrumentGeometry.objectiveRadius>small.instrumentGeometry.objectiveRadius);
+assert.equal(large.instrumentGeometry.eyepieceRadius,small.instrumentGeometry.eyepieceRadius);
 const galilean=eq({equipmentType:'telescope',telescopeModel:'galilean',objective:500,eyepiece:25});
 assert.equal(galilean.metrics[0].value,20);assert.equal(galilean.metrics[1].value,475);
 const finite=eq({equipmentType:'microscope',microscopeModel:'finite',microF:4,tube:200});
