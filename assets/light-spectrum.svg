@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="700" viewBox="0 0 960 700" role="img" aria-labelledby="title desc">
+<title id="title">빛의 종류와 파장별 광자 에너지 — EUV·DUV 포함</title><desc id="desc">전자기파 종류의 개략도와 10~2000 나노미터 로그 축에서 표시한 EUV 13.5, DUV 193과 248, 가시광과 적외선. 짧은 파장일수록 광자 에너지가 크다.</desc>
+<defs><linearGradient id="visible"><stop stop-color="#773bb2"/><stop offset=".2" stop-color="#3659ce"/><stop offset=".4" stop-color="#279ad2"/><stop offset=".55" stop-color="#42ad69"/><stop offset=".7" stop-color="#edcf47"/><stop offset=".85" stop-color="#ec9146"/><stop offset="1" stop-color="#ca5057"/></linearGradient><linearGradient id="uv"><stop stop-color="#51478c"/><stop offset="1" stop-color="#ba9bdb"/></linearGradient><linearGradient id="ir"><stop stop-color="#c76a65"/><stop offset="1" stop-color="#91495b"/></linearGradient></defs>
+<style>text{font-family:Arial,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;fill:#284962}.title{font-size:26px;font-weight:bold}.sub{font-size:13px;fill:#698397}.small{font-size:12px}.label{font-size:15px;font-weight:bold}.white{fill:white}.rule{stroke:#b9cedc;stroke-width:1}</style>
+<rect width="960" height="700" rx="8" fill="#f4f8fb"/><rect x="20" y="20" width="920" height="660" rx="6" fill="white" stroke="#b5cedf"/>
+<text x="50" y="62" class="title">LIGHT SPECTRUM</text><text x="50" y="88" class="sub">빛의 종류 · 진공 파장 λ₀ · 광자 한 개의 에너지 E</text>
+<text x="50" y="124" class="label">01 / 전자기 스펙트럼 전체 보기</text><text x="890" y="124" text-anchor="end" class="small">영역 폭은 실제 비율이 아닌 개략도</text>
+
+<rect x="50.0" y="140" width="122.85714285714286" height="46" fill="#625a8f"/><text x="111.42857142857143" y="169" text-anchor="middle" class="label white">감마선</text>
+<rect x="172.85714285714286" y="140" width="122.85714285714286" height="46" fill="#617ca4"/><text x="234.28571428571428" y="169" text-anchor="middle" class="label white">X선</text>
+<rect x="295.7142857142857" y="140" width="122.85714285714286" height="46" fill="#9271bd"/><text x="357.14285714285717" y="169" text-anchor="middle" class="label white">자외선</text>
+<rect x="418.57142857142856" y="140" width="122.85714285714286" height="46" fill="url(#visible)"/><text x="480.0" y="169" text-anchor="middle" class="label white">가시광</text>
+<rect x="541.4285714285714" y="140" width="122.85714285714286" height="46" fill="#c57978"/><text x="602.8571428571429" y="169" text-anchor="middle" class="label white">적외선</text>
+<rect x="664.2857142857143" y="140" width="122.85714285714286" height="46" fill="#b1977a"/><text x="725.7142857142858" y="169" text-anchor="middle" class="label white">마이크로파</text>
+<rect x="787.1428571428571" y="140" width="122.85714285714286" height="46" fill="#829a9a"/><text x="848.5714285714286" y="169" text-anchor="middle" class="label white">전파</text>
+<path d="M70 209H890M70 209l10 -5M70 209l10 5" stroke="#417a9f" fill="none"/><text x="480" y="232" text-anchor="middle" class="small">← 짧은 파장 · 높은 진동수 · 높은 광자 에너지</text>
+<text x="50" y="275" class="label">02 / 노광 파장과 가시광 확대</text><text x="890" y="275" text-anchor="end" class="small">파장 로그 축 · 10–2,000 nm</text>
+<rect x="70.0" y="300" width="562.975081449114" height="50" fill="url(#uv)"/><text x="351.487540724557" y="330" text-anchor="middle" class="small white">자외선 영역</text>
+<rect x="632.975081449114" y="300" width="111.2958220722852" height="50" fill="url(#visible)"/><text x="688.6229924852566" y="330" text-anchor="middle" class="small white">가시광</text>
+<rect x="744.2709035213992" y="300" width="145.7290964786008" height="50" fill="url(#ir)"/><text x="817.1354517606997" y="330" text-anchor="middle" class="small white">적외선</text>
+<path d="M70.0 350v9" class="rule"/><text x="70.0" y="376" text-anchor="middle" class="small">10 nm</text>
+<path d="M426.36215153439673 350v9" class="rule"/><text x="426.36215153439673" y="376" text-anchor="middle" class="small">100 nm</text>
+<path d="M632.975081449114 350v9" class="rule"/><text x="632.975081449114" y="376" text-anchor="middle" class="small">380 nm</text>
+<path d="M744.2709035213992 350v9" class="rule"/><text x="744.2709035213992" y="376" text-anchor="middle" class="small">780 nm</text>
+<path d="M890.0 350v9" class="rule"/><text x="890.0" y="376" text-anchor="middle" class="small">2,000 nm</text>
+<circle cx="116.44602215846636" cy="299" r="4" fill="#51478c"/><path d="M116.44602215846636 300V392" stroke="#51478c" stroke-dasharray="3 4"/><rect x="42.44602215846636" y="394" width="148" height="46" rx="4" fill="#f1f5fa" stroke="#bed0de"/><text x="116.44602215846636" y="411" text-anchor="middle" class="small">EUV · 13.5 nm</text><text x="116.44602215846636" y="429" text-anchor="middle" class="small">91.840 eV / photon</text>
+<circle cx="528.1239685587796" cy="299" r="4" fill="#6956a0"/><path d="M528.1239685587796 300V392" stroke="#6956a0" stroke-dasharray="3 4"/><rect x="454.12396855877955" y="394" width="148" height="46" rx="4" fill="#f1f5fa" stroke="#bed0de"/><text x="528.1239685587796" y="411" text-anchor="middle" class="small">DUV · 193 nm</text><text x="528.1239685587796" y="429" text-anchor="middle" class="small">6.424 eV / photon</text>
+<circle cx="566.9298011899864" cy="299" r="4" fill="#6956a0"/><path d="M566.9298011899864 300V444" stroke="#6956a0" stroke-dasharray="3 4"/><rect x="492.9298011899864" y="446" width="148" height="46" rx="4" fill="#f1f5fa" stroke="#bed0de"/><text x="566.9298011899864" y="463" text-anchor="middle" class="small">DUV · 248 nm</text><text x="566.9298011899864" y="481" text-anchor="middle" class="small">4.999 eV / photon</text>
+<circle cx="685.049582642906" cy="299" r="4" fill="#2c8656"/><path d="M685.049582642906 300V392" stroke="#2c8656" stroke-dasharray="3 4"/><rect x="611.049582642906" y="394" width="148" height="46" rx="4" fill="#f1f5fa" stroke="#bed0de"/><text x="685.049582642906" y="411" text-anchor="middle" class="small">녹색 · 532 nm</text><text x="685.049582642906" y="429" text-anchor="middle" class="small">2.331 eV / photon</text>
+<rect x="50" y="519" width="860" height="68" rx="4" fill="#eaf2f9"/>
+<text x="480" y="548" text-anchor="middle" class="label">E = hν = hc / λ₀ ≈ 1239.842 / λ₀[nm] eV</text>
+<text x="480" y="572" text-anchor="middle" class="small">파장 절반 → 광자 에너지 두 배  |  광자 에너지는 빔의 출력(W)·눈에 보이는 밝기와 다릅니다.</text>
+<text x="50" y="616" class="small">• 가시광은 약 380–780 nm로 표시했습니다. 영역 경계는 분야와 정의에 따라 달라집니다.</text>
+<text x="50" y="637" class="small">• EUV·DUV는 보이지 않습니다. 자외선·적외선의 색은 구분용이며 실제 보이는 색이 아닙니다.</text>
+<text x="50" y="658" class="small">• EUV 13.5 nm, DUV 193·248 nm는 대표 노광 파장입니다. 영역 전체를 뜻하는 경계값이 아닙니다.</text>
+</svg>

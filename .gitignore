@@ -1,0 +1,8 @@
+# Local environment files (may contain secrets)
+.env
+.env.*
+!.env.example
+.venv/
+session.db
+__pycache__/
+*.log

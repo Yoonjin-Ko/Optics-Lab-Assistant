@@ -1,0 +1,734 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<title>광학 실험 점검 도우미</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+/* 기본 포털 테마. 아래 미디어 쿼리와 후속 규칙이 화면별 배치를 덮어쓴다. */
+:root{color-scheme:light}*{box-sizing:border-box}body{margin:0;background:#a0aaba;color:#263c50;font:13px Arial,"Apple SD Gothic Neo",sans-serif}button,input{font:inherit}button{cursor:pointer}button:disabled{cursor:default;opacity:.5}#app{max-width:1200px;margin:18px auto;background:#fff;border:1px solid #536c8e;box-shadow:0 3px 15px #30456644}.utility{background:linear-gradient(#2568b8,#07387c);padding:5px 14px;color:white;font-size:10px;letter-spacing:1.2px;display:flex;justify-content:space-between}.utility b{color:#ffe257}.masthead{height:133px;background:linear-gradient(110deg,#e3f5fd,#c1dded 55%,#eaf5fa);position:relative;overflow:hidden;padding:23px 25px;border-bottom:4px solid #165b9d;display:flex;align-items:center;justify-content:space-between}.branding{z-index:1}.eyebrow{font-size:10px;letter-spacing:3px;color:#437b9c}.branding h1{font-size:36px;letter-spacing:-2px;color:#066a93;margin:3px 0;line-height:1}.branding h1 em{font-style:normal;color:#2e9a80}.branding p{margin:9px 0 0;font-size:11px;color:#426480}.hero-optics{width:310px;height:110px;position:relative;background:repeating-linear-gradient(0deg,transparent 0 9px,#fff5 9px 10px);transform:skew(-8deg)}.hero-optics:before{content:"";position:absolute;left:40px;top:13px;width:80px;height:80px;border:2px solid #267bb5;border-radius:50%;box-shadow:0 0 0 8px #fff7,inset 0 0 25px #fff;background:linear-gradient(135deg,#8dc7e577,#fff8)}.hero-optics:after{content:"";position:absolute;left:0;right:0;top:53px;height:3px;background:linear-gradient(90deg,#fff,#327fc0,#4bb795,#f4d14d,#e76d78);box-shadow:0 -17px 0 #3587bc33,0 17px 0 #3587bc33}.hero-label{position:absolute;bottom:4px;right:8px;font-size:10px;letter-spacing:2px;color:#48799c}.layout{display:grid;grid-template-columns:166px minmax(0,1fr) 230px;min-height:570px}.sidebar{background:#9ca8b8;border-right:1px solid #7388a0}.side-heading,.right-heading{background:#78889c;color:#fff;padding:7px 10px;font-weight:bold;font-size:11px;letter-spacing:.7px}.nav-link{display:block;width:100%;background:transparent;border:0;border-bottom:1px solid #c0cad6;text-align:left;padding:9px 12px;color:#123f63;font-weight:bold;font-size:12px}.nav-link:hover{background:#cddce8}.nav-link.active{background:#e3f2fa;border-left:4px solid #1474ba;padding-left:8px}.side-note{margin:15px 9px;background:#eef7fb;border:1px solid #547999;padding:12px 9px;line-height:1.7;font-size:11px}.side-note strong{display:block;background:#10569c;color:white;margin:-12px -9px 9px;padding:7px;font-size:14px}.workspace{padding:12px;min-width:0}.panel-title{margin:0;background:linear-gradient(#4bafe0 0%,#0870b9 50%,#2364a7 51%,#1c6db2);border:1px solid #2379b6;color:#fff;font-size:12px;font-weight:bold;letter-spacing:1px;padding:5px 9px;clip-path:polygon(0 0,60% 0,62% 4px,100% 4px,100% 100%,0 100%)}.panel-title span{font-size:10px;float:right;letter-spacing:0;font-weight:normal}.welcome{border:1px solid #8eb8d3;border-top:0;padding:17px;display:flex;gap:14px;align-items:center;margin-bottom:16px;background:linear-gradient(90deg,#fff,#f0f8fb)}.welcome-icon{border:1px solid #7c9eb4;font:italic 34px Georgia;color:#1385b1;width:64px;height:64px;flex-shrink:0;display:grid;place-items:center;background:#eaf5fb}.welcome h2{font: bold 17px Georgia,serif;color:#126386;margin:0 0 7px}.welcome p{margin:0;font-size:12px;line-height:1.7;color:#5c7385}.chat-panel{border:1px solid #8eb8d3;border-top:0}#log{height:440px;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:12px;background:#fff}.empty{margin:auto;text-align:center;color:#788b9c;line-height:1.9}.empty b{font:24px Georgia;color:#92afc5;display:block}.row{display:flex;flex-shrink:0;min-width:0}.row.user{justify-content:flex-end}.bubble{max-width:100%;padding:12px;border:1px solid #b7ccdb;line-height:1.75;font-size:13px;white-space:pre-wrap;min-width:0}.row.user .bubble{background:#e8f3fc;border-left:3px solid #2b80b7;max-width:88%}.row.agent .bubble{background:#fafcfd;white-space:normal;overflow-wrap:anywhere;width:100%;border-top:3px solid #6e9dbd}.bubble p{margin:0 0 .7em}.bubble p:last-child{margin:0}.bubble h1,.bubble h2,.bubble h3{color:#176385;font-size:16px}.bubble pre,.katex-display{overflow-x:auto}.bubble table{border-collapse:collapse;display:block;overflow:auto}.bubble td,.bubble th{border:1px solid #b3c7d7;padding:6px}.bubble a{color:#096fae}.math-block{display:block;max-width:100%;overflow-x:auto;padding:4px 0}.math-inline .katex{font-size:1.08em}.math-error{color:#9b640c;white-space:pre-wrap}.steps{font-size:10px;color:#678096;line-height:1.6;flex-shrink:0}.steps .step:before{content:"› ";color:#287aab}.prompt-box{border:1px solid #bfd1dd;font-size:11px;flex-shrink:0}.prompt-box summary{padding:6px;cursor:pointer;color:#587b94}.prompt-box pre{white-space:pre-wrap;word-break:break-word;max-height:200px;overflow:auto;padding:8px;background:#eff4f7}form{padding:10px;background:#edf2f6;border-top:1px solid #b7cbd9;display:flex;gap:6px}input{min-width:0;flex:1;padding:9px;border:1px solid #7e9bb4;background:white;color:#243e53}input:focus{outline:2px solid #74b5db;outline-offset:1px}form button{padding:7px 10px;border:1px solid #9b852f;background:linear-gradient(#fff4aa,#e7be37);color:#3e402b;font-weight:bold;white-space:nowrap}.rightbar{border-left:1px solid #9cabb9;background:#f5f3ec}.experiment{width:100%;display:flex;gap:10px;text-align:left;border:0;border-bottom:1px solid #d2d9dc;background:transparent;padding:13px 10px}.experiment:hover{background:#e3edf3}.experiment-icon{width:34px;height:34px;flex-shrink:0;display:grid;place-items:center;background:white;border:1px solid #7d9bb3;color:#1777a1;font:italic 22px Georgia}.experiment strong{display:block;color:#205e7b;font-size:12px;margin:1px 0 4px}.experiment small{font-size:10px;color:#758b98}.quick-formula{margin:16px 10px;border:1px solid #a1b8c9;padding:12px;background:#fff;font-size:11px;line-height:1.8}.quick-formula b{display:block;color:#247398;letter-spacing:1px}.quick-formula .equation{font:italic 23px Georgia;color:#194d78;margin:9px 0}.footer{border-top:1px solid #92a6bb;background:#e8edf2;padding:10px 13px;color:#52748a;font-size:10px;display:flex;justify-content:space-between;gap:12px}.footer strong{background:#104b91;color:#ffe052;padding:3px 7px;letter-spacing:1px}.status{font-size:10px;color:#617c91;margin-top:9px;overflow-wrap:anywhere}@media(min-height:850px){#log{height:52vh}}@media(max-width:950px){#app{margin:0}.layout{grid-template-columns:145px minmax(0,1fr)}.rightbar{display:none}.hero-optics{width:240px}}@media(max-width:600px){.layout{display:block}.sidebar{display:flex;overflow:auto;border:0}.side-heading,.side-note{display:none}.nav-link{width:auto;white-space:nowrap;padding:10px}.masthead{height:115px;padding:18px}.branding h1{font-size:30px}.hero-optics{display:none}.workspace{padding:8px}#log{height:53vh}.panel-title span{display:none}.footer{flex-wrap:wrap}form{flex-wrap:wrap}input{flex-basis:65%}}
+
+#app{max-width:1550px}.layout{grid-template-columns:145px minmax(0,1fr) 185px}.desk{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}.learning-pane,.conversation-pane{min-width:0}.simulation-pane,.document-pane{border:1px solid #8eb8d3;border-top:0;padding:14px;background:#fafcfd}.document-pane{max-height:650px;overflow:auto}.document-pane .bubble{border:0;padding:0;margin-top:14px;width:100%;white-space:normal;overflow-wrap:anywhere}.simulation-pane label{display:block;margin:14px 0;color:#30647f}.simulation-pane label b{float:right}.simulation-pane input[type=range]{display:block;width:100%;margin:8px 0;padding:0;accent-color:#197aa9}.sim-tabs{display:flex;gap:5px}.sim-tabs button,.small-action{padding:7px 10px;border:1px solid #8baac1;background:#edf4f8;color:#215b80}.sim-tabs .selected{background:#216da3;color:white}.sim-svg{display:block;width:100%;background:#fff;border:1px solid #c9dbe7;margin:14px 0}.sim-svg text{font:11px Arial;fill:#50758c}.result{padding:12px;border-left:3px solid #1e80ac;background:#e9f3fa;font-weight:bold;line-height:1.8}.model-note{font-size:11px;color:#728697;line-height:1.7}.transfer{width:100%;padding:11px;border:1px solid #9b852f;background:linear-gradient(#fff4aa,#e7be37);font-weight:bold;color:#454426}#log{height:480px}.rightbar{display:block}.simulation-pane p{line-height:1.7} @media(max-width:1150px){.layout{grid-template-columns:135px minmax(0,1fr)}.rightbar{display:none}}@media(max-width:800px){.desk{grid-template-columns:1fr}.document-pane{max-height:450px}.sim-svg{max-height:230px}#log{height:350px}}@media(max-width:600px){.layout{display:block}}
+
+.home-layout{grid-template-columns:145px minmax(0,1fr)}.desk{grid-template-columns:minmax(0,1fr) minmax(280px,360px)}.desk.ask-only{display:block;max-width:790px;margin:auto}.sim-tabs{flex-wrap:wrap}.conversation-pane form{flex-wrap:wrap}.conversation-pane input{flex-basis:100%}.conversation-pane #log{height:570px}.ask-only input{flex-basis:auto}.ask-only #log{height:58vh}.home-layout .workspace{padding:20px}.sim-svg{max-height:290px}@media(max-width:1000px){.desk{grid-template-columns:minmax(0,1fr) 300px}}@media(max-width:800px){.desk{grid-template-columns:1fr}.home-layout{grid-template-columns:135px minmax(0,1fr)}.conversation-pane #log{height:350px}}@media(max-width:600px){.home-layout{display:block}}
+
+.sim-table{width:100%;border-collapse:collapse;margin-top:12px}.sim-table td,.sim-table th{padding:6px;border:1px solid #b3c7d7;text-align:left}
+
+.home-layout{grid-template-columns:145px minmax(0,1fr) 210px}.home-layout .workspace{padding:14px}.desk.ask-only{max-width:none}.home-intro .welcome{margin-bottom:12px}.home-shortcuts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:16px}.home-shortcuts button{text-align:left;background:linear-gradient(#fff,#eef5f9);border:1px solid #a6c0d2;padding:12px 10px;color:#275c7c}.home-shortcuts button:hover{background:#e5f3fc;border-color:#4088b8}.home-shortcuts span{display:block;color:#7894aa;font:9px Arial;letter-spacing:1px;margin-bottom:8px}.home-shortcuts strong{display:block;font-size:12px;margin-bottom:7px}.home-shortcuts small{font-size:10px;color:#658196}.ask-only #log{height:330px;min-height:250px;background:linear-gradient(#fff,#fbfdff)}.suggested-questions{display:flex;justify-content:center;flex-wrap:wrap;gap:7px;margin-top:18px}.suggested-questions button{background:white;border:1px solid #b4cddd;padding:7px 9px;color:#376b8c;font-size:11px}.suggested-questions button:hover{background:#e7f3fb}.empty{padding:24px 8px}.rightbar .experiment{padding:15px 10px}@media(max-width:1150px){.home-layout{grid-template-columns:135px minmax(0,1fr) 185px}.home-layout .rightbar{display:block}}@media(max-width:800px){.home-layout{grid-template-columns:120px minmax(0,1fr)}.home-layout .rightbar{grid-column:2;border-top:1px solid #9cabb9}.home-shortcuts{grid-template-columns:1fr}.home-shortcuts button{padding:9px}.home-shortcuts span{margin-bottom:4px}.ask-only #log{height:330px}}@media(max-width:600px){.home-layout{display:block}.home-layout .rightbar{display:block}.welcome h2{font-size:15px}}
+
+.category-panel{margin-bottom:14px;border:1px solid #8eb8d3}.category-questions{display:grid;gap:6px;padding:12px}.category-questions button{text-align:left;padding:10px;background:#f0f7fb;border:1px solid #bfd4e1;color:#285e80}.category-panel p{font-size:11px;color:#728697;margin:0 12px 12px}.category-close{float:right;background:transparent;border:0;color:white;font-size:15px}.experiment.category-active{background:#dbeef9;border-left:3px solid #2375ae}
+
+.context-notice{padding:7px 10px;background:#edf7f4;color:#357263;border-top:1px solid #bfd5cc;font-size:11px}.attached-context{margin-top:8px;font-size:11px;color:#526e83;white-space:normal}.attached-context summary{cursor:pointer}.attached-context p{margin:8px 0 0;font-weight:normal}
+
+.math-block{overflow-x:auto;overflow-y:hidden}.math-block .katex-display{overflow:visible;margin:.6em 0;padding:3px 0}.math-block .katex{line-height:1.5}
+
+.topic-art{display:block;width:38px;height:38px}.experiment-icon:has(.topic-art){width:44px;height:44px;background:linear-gradient(#fff,#eef6fa)}
+
+.apparatus-panel{margin-top:14px;border:1px solid #9cb9cc;background:#f5f9fc}.apparatus-title{padding:8px 10px;background:#e3edf4;color:#35677f;font-size:10px;font-weight:bold;letter-spacing:1px}.apparatus-title span{float:right;font-weight:normal;letter-spacing:0}.apparatus-art svg{display:block;width:100%;height:auto;max-height:none}.apparatus-art text{font:11px Arial,"Apple SD Gothic Neo",sans-serif;fill:#36596d;text-anchor:middle}.apparatus-panel p{margin:0;padding:8px 12px;border-top:1px solid #d3e0e9;font-size:10px;color:#718697}
+
+.bubble img{display:block;max-width:100%;height:auto;margin:14px auto;border:1px solid #c2d5e2}.document-pane .bubble img{background:white}
+
+.simulation-pane select{display:block;width:100%;margin:8px 0;padding:9px;border:1px solid #8caac1;background:white;color:#315d79}.xrd-peaks{max-height:460px;overflow:auto;margin:14px 0;border-top:1px solid #b7ccdb}
+
+.michelson-controls{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0}.michelson-controls button{padding:8px 10px;border:1px solid #7e9cb4;background:#eaf3f9;color:#285c80}.michelson-screen{max-height:none!important}.fringe-counter{display:flex;align-items:center;gap:14px;background:#eaf3f9;padding:12px}.fringe-counter strong{font-size:32px;color:#256e9b}.fringe-counter span{font-size:11px;line-height:1.7}.phase-track{flex:1;height:8px;background:#c7dae6}.phase-track div{height:100%;background:#2d8ab8}
+
+.bubble{line-height:1.85}.bubble strong{font-weight:700;color:#155b83}.bubble h2{font-size:17px;margin:24px 0 10px;padding-bottom:7px;border-bottom:1px solid #d6e2eb}.bubble h3{font-size:14px;margin:18px 0 8px}.bubble ul,.bubble ol{padding-left:22px}.bubble li{margin:6px 0}.bubble blockquote{margin:12px 0;padding:9px 12px;border-left:3px solid #6ca3bf;background:#eef5f9;color:#59748a;font-size:12px}.document-pane .bubble>details{margin:18px 0;border:1px solid #c3d7e4;padding:12px;background:#fff}.document-pane .bubble>details>summary{cursor:pointer;color:#276f96;font-size:13px}.document-pane .bubble>details[open]>summary{margin-bottom:16px}.bubble p{margin-bottom:12px}.bubble a{overflow-wrap:anywhere}
+
+.light-picker{padding:10px 12px;border:1px solid #b8cddd;margin:12px 0;background:#f1f7fb}.light-chip{display:flex;align-items:center;gap:8px;font-size:12px}.light-chip i{width:21px;height:21px;display:inline-block;border:1px solid #a5b4c2;border-radius:50%}
+
+.electron-concepts{border:1px solid #b8cddd;padding:12px;margin:12px 0;background:#f4f8fb}.electron-concepts summary{cursor:pointer;color:#276b91}.electron-concepts li{margin:9px 0;line-height:1.75}.band-diagram{max-height:none!important}
+.absorption-scene{max-height:none!important}.sidebar .nav-link{white-space:normal}
+
+.apparatus-art .camera-preview{max-height:none;height:auto}.camera-preview text{font-family:Arial,"Apple SD Gothic Neo",sans-serif}
+.polarization-guide{padding:12px;border:1px solid #b4cbdc;background:#f2f7fc}.polarization-guide h3{margin:0 0 8px}.s-legend{border-left:4px solid #168ac5;padding-left:10px}.p-legend{border-left:4px solid #d07849;padding-left:10px}.polarization-3d{max-height:none!important}
+.polarizer-experiment{max-height:none!important}.polarizer-experiment text{fill:#e0edf9!important;font:13px Arial,"Apple SD Gothic Neo",sans-serif;}.polarizer-experiment g:focus ellipse{stroke:white;stroke-width:5}
+.equipment-intro{padding:12px;background:#edf5fa;border-left:3px solid #3781ac;margin-top:12px}.equipment-intro p{margin-bottom:0}
+.michelson-device{margin:12px 0;border:1px solid #a6c3d5}.michelson-device svg{display:block;width:100%;height:auto;max-height:none}.michelson-device text{font:11px Arial,"Apple SD Gothic Neo",sans-serif;fill:#36596d;text-anchor:middle}.michelson-device [data-michelson-mirror]:focus line{stroke:#df9953}
+.xrd-device{margin:12px 0;border:1px solid #a6c3d5}.xrd-device svg{display:block;width:100%;height:auto;max-height:none}.xrd-device text{font:11px Arial,"Apple SD Gothic Neo",sans-serif;fill:#36596d;text-anchor:middle}
+.absorption-energy-scene{max-height:none!important}
+
+
+.apparatus-art .instrument-scene{max-height:none;height:auto}
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="utility"><span><b>OPTICS LAB ONLINE</b> &nbsp; / &nbsp; EXPLORE · LEARN · EXPERIMENT</span><span>한국어</span></div>
+  <header class="masthead"><div class="branding"><div class="eyebrow">THE EXPLORER'S GUIDE TO LIGHT</div><h1>OPTICS <em>LAB</em></h1></div><div class="hero-optics" aria-hidden="true"><span class="hero-label">DISCOVER THE SPECTRUM</span></div></header>
+  <div class="layout" :class="{'home-layout':view==='ask'}">
+  <!-- 좌측: 가상 실험 선택과 로컬 문서 탐색. 클릭만으로 LLM을 호출하지 않는다. -->
+  <nav class="sidebar" aria-label="학습 메뉴"><div class="side-heading">CONTENTS</div>
+    <button class="nav-link" :class="{active:view==='ask'}" @click="view='ask'">ASK / 메인</button>
+    <div class="side-heading">장비 시뮬레이션</div>
+    <button class="nav-link" @click="absorptionType='metal';absorptionWave=193;openSimulation('absorption')">광전효과 · 전자 방출</button>
+    <div class="side-heading">가상 실험</div>
+    <button v-for="lab in navigationLabs" :key="lab.id" class="nav-link" :class="{active:view==='simulation' && activeLabId===lab.id}" :aria-current="view==='simulation' && activeLabId===lab.id ? 'page' : undefined" @click="openSimulation(lab.id)">{{ lab.title }} 실험</button>
+    <div class="side-heading">학습 문서</div>
+    <button class="nav-link" @click="openDoc('experiment-intake')">Home / 실험 안내</button>
+    <button class="nav-link" @click="openDoc('light-fundamentals')">빛의 기초</button>
+    <button class="nav-link" @click="openDoc('shadow-and-diffraction')">이론 알아보기</button>
+    <button class="nav-link" @click="openDoc('experiment-intake')">실험 문제 해결</button>
+    <button class="nav-link" @click="openDoc('electron-energy-levels')">전자 · 에너지 준위</button>
+    <button class="nav-link" @click="openDoc('absorption-photoelectric')">광흡수 · 광전효과</button>
+    <button class="nav-link" @click="openDoc('measurement-and-uncertainty')">측정 · 오차 · 교정</button>
+    <button class="nav-link" @click="openDoc('ising-and-monte-carlo')">Ising · Monte Carlo</button>
+    <button class="nav-link" @click="openDoc('data-and-model-validation')">데이터 · 모델 검증</button>
+    <div class="side-heading">노광 · 정밀장비 이해</div>
+    <button v-for="lesson in equipmentLessons" :key="lesson.slug" class="nav-link" @click="openDoc(lesson.slug)">{{ lesson.title }}</button>
+    <div class="side-note"><strong>FOLLOW THE LIGHT!</strong>궁금한 개념을 질문하거나<br>실험에서 관찰한 현상을<br>이야기해 보세요.</div>
+  </nav>
+  <!-- view가 화면을 선택한다. 채팅은 같은 Vue 상태에 남아 화면 이동 중에도 유지된다. -->
+  <main class="workspace">
+    <section v-show="view==='ask'" class="home-intro">
+      <div class="panel-title">SPOTLIGHT <span>WELCOME TO OPTICS LAB</span></div>
+      <div class="welcome"><div class="welcome-icon" aria-hidden="true">λ</div><div><h2>A little curiosity. A new discovery.</h2><p>빛의 원리부터 실험의 해답까지.<br>질문하고, 직접 실험하고, 결과를 함께 해석해 보세요.</p></div></div>
+      <div class="home-shortcuts">
+        <button @click="openDoc('light-fundamentals')"><span>01 / LEARN</span><strong>빛을 이해하는 첫걸음</strong><small>파장 · 에너지 · 빛의 특성 →</small></button>
+        <button @click="openSimulation('prism')"><span>02 / EXPERIMENT</span><strong>빛을 나누는 프리즘</strong><small>클릭으로 만나는 가상 실험 →</small></button>
+        <button @click="input='Michelson 간섭계에서 간섭무늬가 안 보여요'"><span>03 / DISCOVER</span><strong>실험이 예상과 다르다면?</strong><small>질문을 입력창에 준비하기 →</small></button>
+      </div>
+    </section>
+    <section v-if="view==='ask' && selectedTopic" class="category-panel">
+      <div class="panel-title">{{ selectedTopic.title }} · 관련 질문 <button class="category-close" @click="selectedTopic=null" aria-label="질문 분류 닫기">×</button></div>
+      <div class="category-questions"><button v-for="question in categoryQuestions" :key="question" type="button" @click="askRelated(question)">{{ question }} →</button></div>
+      <p>질문을 누르면 바로 답변을 요청합니다. 기존 대화는 유지됩니다.</p>
+    </section>
+    <!-- 실험·문서는 v-show로 표시만 전환해 슬라이더와 대화 상태를 보존한다. -->
+    <div class="desk" :class="{'ask-only':view==='ask'}"><section v-show="view!=='ask'" class="learning-pane">
+      <div class="panel-title">{{ view === 'document' ? 'REFERENCE LIBRARY' : 'VIRTUAL OPTICS LAB' }}</div>
+      <div v-show="view === 'document'" class="document-pane">
+        <button class="small-action" @click="view='simulation'">← 가상 실험으로 돌아가기</button>
+        <p v-if="docLoading">문서를 불러오는 중입니다…</p>
+        <p v-if="docError">{{ docError }} <button @click="openDoc(docSlug)">다시 시도</button></p>
+        <article v-if="!docLoading && !docError" class="bubble" v-answer="docContent"></article>
+      </div>
+      <div v-show="view === 'simulation'" class="simulation-pane">
+        <div class="sim-tabs"><button v-for="lab in navigationLabs" :key="lab.id" :class="{selected:activeLabId===lab.id}" @click="openSimulation(lab.id)">{{ lab.title }}</button></div>
+
+        <p class="model-note">공식 기반의 이상적 모델입니다. 실제 장비의 오차·손상·안전 조건을 재현하지 않습니다.</p>
+        <div class="light-picker" v-if="simKind!=='xrd' && simKind!=='absorption' && simKind!=='equipment'">
+          <label v-if="simKind==='prism'">입사광 종류<select v-model="prismMode"><option value="white">백색광 · 스펙트럼 분리</option><option value="mono">단색광 · 파장별 굴절 비교</option></select></label>
+          <template v-if="simKind!=='prism'||prismMode==='mono'">
+            <label>광원 선택<select :value="selectedLight" @change="chooseLight($event.target.value)"><option v-for="light in lightOptions" :key="light.value" :value="light.value">{{ light.label }}</option><option value="custom">직접 조절</option></select></label>
+            <label>파장 <b>{{ wavelength }} nm</b><input type="range" min="380" max="750" step="0.1" v-model.number="wavelength"></label>
+            <div class="light-chip"><i :style="{background:lightColor}"></i>{{ wavelength }} nm · 광자 에너지 {{ (1239.841984/wavelength).toFixed(3) }} eV</div>
+            <p class="model-note">색은 설명용입니다. 렌즈·거울은 색수차를, 이상적 편광판은 파장 의존성을 생략합니다. s/p 실험의 굴절률은 고정값입니다.</p>
+          </template>
+        </div>
+        <template v-if="simKind==='polarization'">
+          <p><strong>두 번째 편광판을 돌려 보세요.</strong> 첫 번째 판과 방향이 같으면 밝고, 90°로 교차하면 빛이 차단됩니다.</p>
+          <div class="michelson-controls"><button @click="angle=0">0° · 최대</button><button @click="angle=45">45° · 절반</button><button @click="angle=90">90° · 차단</button></div>
+          <svg viewBox="0 0 640 330" class="sim-svg polarizer-experiment" aria-label="두 편광판과 검출기가 연결된 회전 실험" @pointermove="dragPolarizer" @pointerup="endPolarizerDrag" @pointercancel="endPolarizerDrag">
+            <rect width="640" height="330" rx="8" fill="#14283e"/>
+            <path d="M45 250H600" stroke="#58758a" stroke-width="8"/>
+            <path d="M210 205V250M385 205V250M550 185V250" stroke="#a0b4c2" stroke-width="6"/>
+            <rect x="20" y="115" width="80" height="60" rx="8" fill="#536d85" stroke="#b1ccdf"/><text x="33" y="150">광원</text>
+            <path d="M100 145H210" :stroke="lightColor" stroke-width="13" opacity=".7"/>
+            <path d="M210 145H385" :stroke="lightColor" stroke-width="10"/>
+            <path d="M385 145H550" stroke="#8299ad" stroke-dasharray="3 6"/>
+            <path d="M385 145H550" :stroke="lightColor" stroke-width="10" :opacity="sim.ratio"/>
+            <ellipse cx="210" cy="145" rx="30" ry="70" fill="#426b8a" fill-opacity=".8" stroke="#a7d9f7" stroke-width="3"/>
+            <path d="M210 90V200M202 103L210 90L218 103" stroke="#79d6ff" stroke-width="4" fill="none"/>
+            <g role="slider" tabindex="0" aria-label="두 번째 편광판 회전" :aria-valuenow="angle" aria-valuemin="0" aria-valuemax="180" @pointerdown="startPolarizerDrag" @keydown.right.prevent="angle=Math.min(180,angle+5)" @keydown.left.prevent="angle=Math.max(0,angle-5)" style="cursor:grab;touch-action:none">
+              <ellipse cx="385" cy="145" rx="40" ry="80" fill="#315f7c" fill-opacity=".75" stroke="#ffcd7a" stroke-width="3"/>
+              <path :d="'M'+(385-30*Math.sin(angle*Math.PI/180))+' '+(145+65*Math.cos(angle*Math.PI/180))+'L'+(385+30*Math.sin(angle*Math.PI/180))+' '+(145-65*Math.cos(angle*Math.PI/180))" stroke="#ffcd7a" stroke-width="5"/>
+              <circle :cx="385+30*Math.sin(angle*Math.PI/180)" :cy="145-65*Math.cos(angle*Math.PI/180)" r="8" fill="#ffcd7a"/>
+            </g>
+            <rect x="530" y="100" width="65" height="90" rx="7" fill="#07111c" stroke="#9cb6cc"/>
+            <circle cx="562" cy="145" r="22" :fill="lightColor" :opacity="sim.ratio"/>
+            <text x="145" y="37">① 고정 편광판</text><text x="320" y="37">② 회전 편광판</text><text x="515" y="73">③ 검출기</text>
+            <text x="167" y="285">기준 방향 ↑</text><text x="315" y="285">θ = {{ angle }}° · 드래그</text>
+            <text x="22" y="313">회전판의 노란 손잡이를 움직이거나 아래 슬라이더를 조절하세요.</text>
+          </svg>
+          <label>두 편광판 사이 각도 <b>{{ angle }}°</b><input type="range" min="0" max="180" step="1" v-model.number="angle"></label>
+          <div class="result">검출기 밝기: 기준의 {{ (sim.ratio*100).toFixed(1) }}%<br>{{ Math.abs(angle-90)<1?'두 판이 교차하여 이상적으로 차단됩니다.':angle===0||angle===180?'두 판의 투과축이 일치합니다.':'입사 전기장의 투과축 방향 성분만 남습니다.' }}</div>
+          <p>파란 화살표는 첫 판의 고정 투과축, 노란 선은 두 번째 판의 투과축입니다. 판 사이 빛의 세기를 I₀로 놓으면 <strong>I/I₀ = cos²θ</strong>입니다. 표시 밝기는 상대 세기이며 실제 눈의 밝기 반응과 같지는 않습니다.</p>
+
+        </template>
+        <template v-else-if="['lens','concave-lens','concave-mirror','convex-mirror'].includes(simKind)">
+          <label>렌즈 / 거울 종류<select v-model="simKind" aria-label="렌즈 또는 거울 종류"><option v-for="item in lensOptions" :key="item.id" :value="item.id">{{ item.title }}</option></select></label>
+          <label>초점거리 |f| <b>{{ focal }} cm</b><input type="range" min="5" max="30" step="1" v-model.number="focal"></label>
+          <label>물체 거리 s <b>{{ object }} cm</b><input type="range" min="5" max="60" step="1" v-model.number="object"></label>
+          <svg viewBox="0 0 500 260" class="sim-svg" aria-label="수렴렌즈의 주요 광선과 상" ><g :transform="lensTransform"><path d="M-80 0H80" stroke="#819aaa" stroke-width=".4"/><path v-if="sim.mirror" :d="sim.signedF>0?'M-2 -18Q6 0 -2 18':'M2 -18Q-6 0 2 18'" fill="none" stroke="#286b96" stroke-width="1"/><path v-else-if="sim.signedF<0" d="M-3 -18Q0 0 -3 18L3 18Q0 0 3 -18Z" fill="#aed5e8" stroke="#286b96" stroke-width=".6"/><ellipse v-else cx="0" cy="0" rx="2" ry="18" fill="#aed5e8" stroke="#286b96" stroke-width=".6"/><path :d="'M'+(-object)+' 0V-10'" stroke="#168c72" stroke-width="1.3"/><circle :cx="sim.signedF" cy="0" r="1" fill="#276da1"/><circle :cx="-sim.signedF" cy="0" r="1" fill="#276da1"/><path :d="lensRays" fill="none" :stroke="lightColor" stroke-width=".6"/><path v-if="sim.image!==null && sim.image<0" :d="'M0 -10L'+imageX+' '+(-10*sim.magnification)+' M0 0L'+imageX+' '+(-10*sim.magnification)" fill="none" stroke="#a261ad" stroke-dasharray="2 1" stroke-width=".6"/><path v-if="sim.image!==null" :d="'M'+imageX+' 0V'+(-10*sim.magnification)" stroke="#b54b57" stroke-width="1.3"/></g></svg>
+          <div class="result" v-if="sim.image===null">물체가 초점에 있습니다. 유한한 상 거리가 없습니다.</div><div class="result" v-else>s′ = {{ sim.image.toFixed(2) }} cm · M = {{ sim.magnification.toFixed(2) }}<br>{{ sim.image>0?'도립 실상':'정립 허상 (점선은 광선의 역연장)' }}</div><p>1/f = 1/s + 1/s′ · M = −s′/s. f = {{ sim.signedF }} cm. 거울은 앞쪽 실상 거리 양수, 뒤쪽 허상 거리 음수입니다. 광선도는 자동 축척됩니다.</p>
+        </template>
+        <template v-else-if="simKind==='xrd'">
+          <p><strong>검출기를 끌어 회절각을 바꿔 보세요.</strong> 중앙 결정 시료를 기준으로 광원과 검출기가 대칭으로 움직입니다. 아래 피크는 이론 위치, 점선은 현재 검출각입니다.</p>
+          <div class="xrd-device" @pointerdown="startXrdDrag" @pointermove="dragXrd" @pointerup="endXrdDrag" @pointercancel="endXrdDrag" @keydown="keyXrd" v-html="apparatusSvg"></div>
+          <label>현재 스캔 각도 2θ <b>{{ scanTwoTheta.toFixed(2) }}°</b><input type="range" min="0" max="180" step=".01" v-model.number="scanTwoTheta"></label>
+          <button class="small-action" :disabled="sim.twoTheta===null" @click="scanTwoTheta=sim.twoTheta">선택한 결정면의 이론 각도에 맞추기</button>
+          <p v-if="sim.angularError!==null">선택한 반사의 이론 위치와 차이: <strong>{{ sim.angularError.toFixed(3) }}°</strong>. 이는 각도 비교이며 실측 회절 세기가 아닙니다.</p>
+          <label>결정 시료<select v-model="material"><option value="custom">수동 면간격</option><option v-for="sample in materials" :key="sample.id" :value="sample.id">{{ sample.name }} · {{ sample.structure }}</option></select></label>
+          <div v-if="material!=='custom'"><label>결정면 (hkl)<select v-model="plane"><option v-for="hkl in ['111','200','220','222','311','400']" :key="hkl" :value="hkl">({{ hkl }})</option></select></label><p class="model-note">a = {{ sim.preset.a }} nm · d = a/√(h²+k²+l²) = {{ sim.spacing.toFixed(6) }} nm. 프리셋은 n=1과 소멸 규칙을 적용합니다. 격자상수 출처는 XRD 학습 문서에 있습니다.</p></div>
+          <label>X선 파장 선택<select :value="xray" @change="xray=Number($event.target.value)"><option :value="xray">현재 {{ xray }} nm</option><option :value="0.15406">0.15406 nm · Cu Kα₁ 근사</option><option :value="0.1">0.10000 nm · 비교용</option><option :value="0.2">0.20000 nm · 비교용</option></select></label>
+          <label>X선 파장 λ <b>{{ xray.toFixed(3) }} nm</b><input type="range" min="0.05" max="0.4" step="0.001" v-model.number="xray"></label>
+          <label v-if="material==='custom'">결정면 간격 d <b>{{ spacing.toFixed(3) }} nm</b><input type="range" min="0.05" max="0.6" step="0.001" v-model.number="spacing"></label>
+          <label v-if="material==='custom'">회절 차수 n <b>{{ order }}</b><input type="range" min="1" max="3" step="1" v-model.number="order"></label>
+          <svg viewBox="0 0 500 230" class="sim-svg" aria-label="XRD 회절 피크 위치"><path d="M30 25V190H470" fill="none" stroke="#7897ae"/><path v-if="sim.twoTheta!==null" :d="'M'+(30+sim.twoTheta/180*440)+' 190V45'" stroke="#2785b4" stroke-width="3"/><text x="30" y="218">0°</text><text x="430" y="218">180° · 2θ</text><path :d="'M'+(30+scanTwoTheta/180*440)+' 25V160'" stroke="#d57d37" stroke-width="2" stroke-dasharray="4 3"/></svg>
+          <div class="result" v-if="sim.theta===null">{{ !sim.allowed?'이상적 결정의 소멸 규칙상 금지 반사입니다.':'nλ > 2d: 가능한 브래그 각이 없습니다.' }}</div><div class="result" v-else>θ = {{ sim.theta.toFixed(3) }}° · 2θ = {{ sim.twoTheta.toFixed(3) }}°</div>
+          <div v-if="material!=='custom'" class="xrd-peaks"><h3>결정별 이론 반사 위치</h3><svg viewBox="0 0 500 200" class="sim-svg" aria-label="이론적 분말 반사 위치 표시"><path d="M30 25V160H470" fill="none" stroke="#819bad"/><path v-for="peak in sim.peaks" :key="peak.hkl" :d="'M'+(30+peak.twoTheta/180*440)+' 160V50'" stroke="#367da9" stroke-width="2"/><text x="30" y="184">0°</text><text x="235" y="184">2θ (세기 아님)</text><text x="435" y="184">180°</text><path :d="'M'+(30+scanTwoTheta/180*440)+' 25V160'" stroke="#d57d37" stroke-width="2" stroke-dasharray="4 3"/></svg><table class="sim-table"><tr><th>(hkl)</th><th>d (nm)</th><th>2θ</th></tr><tr v-for="peak in sim.peaks" :key="peak.hkl"><td>({{ peak.hkl }})</td><td>{{ peak.spacing.toFixed(5) }}</td><td>{{ peak.twoTheta.toFixed(3) }}°</td></tr></table><p class="model-note">h,k,l≤5 중 동일 d는 한 대표 표기로 묶었습니다. 막대 높이는 모두 같으며 세기를 뜻하지 않습니다. 분말 반사 후보이며 실제 단결정 웨이퍼에서는 배향·측정 배치에 따라 관측 피크가 제한됩니다.</p></div>
+          <p>nλ = 2d sinθ. θ는 결정면 기준 입사각, 측정 축은 2θ입니다. 격자상수 기반 위치를 계산하며 실제 세기·폭·물질 동정은 예측하지 않습니다.</p>
+        </template>
+        <template v-else-if="simKind==='michelson'">
+          <p><strong>이동 거울 M₂를 좌우로 끌어 보세요.</strong> 빛은 두 팔에서 왕복한 뒤 빔스플리터에서 합쳐집니다. 거울 이동과 장치의 관찰 화면·아래 확대 무늬가 같은 값으로 움직입니다.</p>
+          <div class="michelson-device" @pointerdown="startMirrorDrag" @pointermove="dragMirror" @pointerup="endMirrorDrag" @pointercancel="endMirrorDrag" @keydown="keyMirror" v-html="apparatusSvg"></div>
+          <label>거울 이동 Δx <b>{{ displacement.toFixed(4) }} µm</b><input type="range" min="0" max="5" step="0.0001" v-model.number="displacement" @input="pauseMichelson"></label>
+          <label>가시도 V <b>{{ visibility.toFixed(2) }}</b><input type="range" min="0" max="1" step="0.01" v-model.number="visibility"></label>
+          <div class="michelson-controls"><button @click="playing?pauseMichelson():playMichelson()">{{ playing?'Ⅱ 일시정지':'▶ 느리게 재생' }}</button><button @click="stepMichelson(-.25)">− ¼주기</button><button @click="stepMichelson(.25)">+ ¼주기</button><button @click="resetMichelson">처음으로</button></div>
+          <label>재생 속도 <b>{{ playbackRate }} 주기/초</b><input type="range" min="0.1" max="1" step="0.05" v-model.number="playbackRate"></label>
+          <svg viewBox="0 0 500 390" class="sim-svg michelson-screen" aria-label="거울 이동에 따라 중심에서 이동하는 등경사 간섭무늬"><defs><radialGradient id="michelson-fringes"><stop v-for="(sample,i) in sim.radial" :key="i" :offset="sample.offset+'%'" :stop-color="sample.color"/></radialGradient></defs><rect width="500" height="390" fill="#0d1822"/><circle cx="250" cy="187" r="167" fill="url(#michelson-fringes)"/><path d="M250 175V199M238 187H262" stroke="#fa815c" stroke-width="1"/><circle cx="250" cy="187" r="6" fill="none" stroke="#fa815c"/><text x="250" y="374" style="fill:#d8e6ee;text-anchor:middle">중심 관측점 + · 선택한 단색광의 상대 세기</text></svg>
+          <div class="fringe-counter"><strong>{{ sim.completed }}</strong><span>완료 주기<br>현재 주기 {{ (sim.fraction*100).toFixed(1) }}%</span><div class="phase-track"><div :style="{width:(sim.fraction*100)+'%'}"></div></div></div>
+          <svg viewBox="0 0 500 145" class="sim-svg" aria-label="화면 중심을 지나는 세기 단면"><path d="M30 20V110H470" fill="none" stroke="#819bad"/><path :d="sim.profile" fill="none" stroke="#277eac" stroke-width="2"/><text x="30" y="132">−30 mm</text><text x="240" y="132">중심</text><text x="423" y="132">+30 mm</text></svg>
+          <div class="result">N = {{ sim.cycles.toFixed(4) }} 주기 · 중심 상대 세기 = {{ sim.intensity.toFixed(4) }}<br>한 주기 거울 이동 λ/2 = {{ (wavelength/2000).toFixed(4) }} µm</div><p>+¼주기를 누르면 중심이 밝음 → 중간 → 어두움 → 중간 → 밝음으로 변합니다. 한 주기는 밝음에서 다음 밝음까지이며 밝음→어두움은 반 주기입니다.</p><p class="model-note">공기 중 등경사 간섭 모델: 유효 팔 길이 차이 20 µm+Δx, 관찰 렌즈 f=100 mm, 화면 반경 30 mm. 기준 위상을 보정해 Δx=0에서 중심을 밝게 맞췄습니다. 흑백은 파장에 상관없이 세기만 표시하며 실제 장비의 수차·정렬·결맞음은 생략합니다.</p>
+        </template>
+        <template v-else-if="simKind==='fresnel'">
+          <div class="polarization-guide">
+            <h3>그림은 이렇게 보세요</h3>
+            <p><strong>입사면 = 빛이 들어오는 방향과 표면의 수직선(법선)을 함께 포함하는 면.</strong> 그림의 보라색 면입니다. 빛이 닿는 물질 표면과는 다른 면입니다.</p>
+            <p class="s-legend"><strong>파란 물결 = s편광</strong><br>전기장이 보라색 입사면을 뚫고 앞뒤로 진동합니다. 입사면에 <strong>수직</strong>입니다.</p>
+            <p class="p-legend"><strong>주황 물결 = p편광</strong><br>전기장이 보라색 입사면 안에서 진동합니다. 입사면에 <strong>평행</strong>입니다.</p>
+            <p>노란 선은 빛의 진행 경로입니다. 물결은 빛이 구불구불 이동한다는 뜻이 아니라 <strong>전기장 방향</strong>을 보여줍니다. s와 p 모두 전기장은 빛의 진행 방향에 수직입니다.</p>
+          </div>
+          <div class="michelson-controls"><button @click="polMode='s'">파란 s만 보기</button><button @click="polMode='p'">주황 p만 보기</button><button @click="polMode='both'">둘 다 비교</button></div>
+          <label>전기장 표시<select v-model="polMode"><option value="both">s · p 함께 비교</option><option value="s">s편광만</option><option value="p">p편광만</option></select></label>
+          <label>3D 좌우 회전 {{ viewYaw }}°<input type="range" min="-80" max="80" v-model.number="viewYaw"></label>
+          <label>3D 위에서 보기 {{ viewTilt }}°<input type="range" min="10" max="70" v-model.number="viewTilt"></label>
+          <label>진동 위상<input type="range" min="0" max="6.283" step=".05" v-model.number="polPhase"></label>
+          <div v-html="sim.polarization3d"></div>
+          <p class="model-note">3차원 좌표를 회전 투영한 그림입니다. 함께 표시는 두 기저 방향 비교이며, 특정 위상차의 타원편광 합성을 뜻하지 않습니다. 정상 입사에서는 입사면 선택이 유일하지 않습니다.</p>
+          <p><strong>브루스터 각:</strong> 이상적인 유전체에서 p 반사는 0이 되고 s 반사는 남습니다. <strong>정상 입사:</strong> s·p 반사율이 같습니다. <strong>전반사:</strong> 둘 다 세기 반사율은 100%지만 위상 변화는 다를 수 있습니다. 지진의 S파·P파와는 다릅니다.</p>
+          <label>입사 매질 n₁ <b>{{ n1.toFixed(2) }}</b><input type="range" min="1" max="2" step="0.01" v-model.number="n1"></label>
+          <label>투과 매질 n₂ <b>{{ n2.toFixed(2) }}</b><input type="range" min="1" max="2" step="0.01" v-model.number="n2"></label>
+          <label>법선 기준 입사각 <b>{{ incidence.toFixed(1) }}°</b><input type="range" min="0" max="89.5" step="0.5" v-model.number="incidence"></label>
+          <button class="small-action" @click="n1=1;n2=1.5;incidence=Math.atan(1.5)*180/Math.PI">브루스터 각: p 반사 최소</button>
+          <button class="small-action" @click="n1=1.5;n2=1;incidence=50">유리 → 공기 전반사 예시</button>
+          <svg viewBox="0 0 500 240" class="sim-svg" aria-label="입사각에 따른 s·p 편광 반사율"><path d="M35 30V185H465" fill="none" stroke="#819aaa"/><path :d="sim.sPath" fill="none" stroke="#267fb3" stroke-width="2"/><path :d="sim.pPath" fill="none" stroke="#c26555" stroke-width="2"/><path :d="'M'+(35+incidence/89.5*430)+' 30V185'" stroke="#75899a" stroke-dasharray="4 4"/><text x="40" y="22">반사율: 파랑 s / 빨강 p</text><text x="35" y="212">0°</text><text x="405" y="212">89.5°</text></svg>
+          <div class="result">Rₛ = {{ (sim.rs*100).toFixed(2) }}% · Rₚ = {{ (sim.rp*100).toFixed(2) }}%<br>{{ sim.tir?'전반사 발생':'굴절각 '+sim.transmitted.toFixed(2)+'°' }}<br>브루스터 각 {{ sim.brewster.toFixed(2) }}° · 임계각 {{ sim.critical===null?'없음':sim.critical.toFixed(2)+'°' }}</div><p>비흡수·비자성 유전체의 프레넬 반사율. 전반사에서도 경계 밖 소멸파와 반사 위상 변화가 있지만 이 모델에서는 생략합니다.</p>
+        </template>
+        <template v-else-if="simKind==='prism'">
+          <label>프리즘 꼭지각 A (정삼각형 60°) <b>{{ apex }}°</b><input type="range" min="30" max="70" step="1" v-model.number="apex"></label>
+          <svg viewBox="0 0 560 360" class="sim-svg" aria-label="각도에 따라 변하는 프리즘과 연속 무지개 스펙트럼">
+          <defs><linearGradient id="prism-glass" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#d9f6ff" stop-opacity=".7"/><stop offset="1" stop-color="#6ca7df" stop-opacity=".2"/></linearGradient></defs>
+          <rect width="560" height="360" rx="8" fill="#14283e"/>
+          <polygon :points="sim.prismPoints" fill="url(#prism-glass)" stroke="#aee4ff" stroke-width="2"/>
+
+          <path :d="'M20 '+sim.sourceY+'L'+sim.entryX+' '+sim.entryY" :stroke="prismMode==='white'?'white':lightColor" stroke-width="7"/>
+          <rect x="520" y="60" width="8" height="265" fill="#e8edf3" stroke="#8ca5b9"/><text x="502" y="53" style="fill:#d0e3ef;font-size:12px">스크린</text>
+          <path v-for="r in (prismMode==='white'?sim.spectrum:sim.rays)" :key="r.lambda" :d="r.path" :stroke="r.color" stroke-width="1.5" fill="none"/>
+          <path :d="sim.entryNormal+' '+sim.exitNormal" stroke="#b7c7d6" stroke-dasharray="5 4" fill="none"/>
+          <path :d="sim.reflectionPath" stroke="#f0c391" stroke-dasharray="3 3" stroke-width="2" fill="none"/>
+          <text x="22" y="304" style="fill:#d0e3ef;font-size:11px">회색 점선: 법선 / 주황 점선: 첫 면의 반사 방향</text>
+          <text x="24" y="35" fill="white">{{ prismMode==='white'?'백색광 → 연속 무지개':'단색광 → 한 파장' }}</text><text x="25" y="341" fill="#d0e3ef">경계면의 실제 굴절 경로 · 분산 간격을 각도에 임의로 더하지 않음</text></svg>
+          <p><strong>통과하는 빛은 ‘굴절각’, 표면에서 되돌아가는 빛은 ‘반사각’</strong>입니다. 각도는 프리즘 표면이 아니라 점선 법선을 기준으로 잽니다.</p>
+          <div class="result">첫 면 입사각 = 반사각 {{ sim.incomingAngle.toFixed(2) }}°<br>550 nm 기준: 첫 굴절각 {{ sim.reference.entryRefraction.toFixed(2) }}° · 둘째 면 입사각 {{ sim.reference.exitIncidence.toFixed(2) }}° · 출사 굴절각 {{ sim.reference.exitRefraction.toFixed(2) }}°</div>
+          <div class="result">{{ prismMode==='white'?'400 nm와 700 nm의 편이각 차이 ≈ '+sim.spread.toFixed(3)+'°':'선택 파장의 편이각 ≈ '+sim.rays[0].deviation.toFixed(3)+'°' }}</div>
+          <table class="sim-table"><tr><th>파장</th><th>가상 굴절률</th><th>편이각</th></tr><tr v-for="ray in sim.rays" :key="ray.lambda"><td>{{ ray.lambda }} nm</td><td>{{ ray.index.toFixed(4) }}</td><td>{{ ray.deviation.toFixed(3) }}°</td></tr></table><p>가상 정상분산 n=1.50+0.004/λ[µm]², 550 nm의 최소 편이 입사각을 고정하고 두 면의 Snell 법칙으로 계산합니다. 특정 유리의 데이터나 프리즘 내부의 정밀 광선 추적은 아닙니다.</p>
+        </template>
+        <template v-else-if="simKind==='absorption'">
+          <label>과정 선택<select v-model="absorptionType"><option value="semiconductor">반도체 · 밴드 사이 전자 들뜸</option><option value="metal">금속 · 진공으로 전자 방출</option><option value="insulator">부도체 · 큰 밴드갭의 들뜸</option></select></label>
+          <div class="michelson-controls"><button @click="chooseAbsorptionExample('semiconductor','si',650)">Si + 빨강 · 들뜸 조건</button><button @click="chooseAbsorptionExample('semiconductor','gan',650)">GaN + 빨강 · 부족</button><button @click="chooseAbsorptionExample('semiconductor','gan',300)">GaN + UV · 들뜸 조건</button><button @click="chooseAbsorptionExample('metal','na',450)">Na + 파랑 · 방출 조건</button><button @click="chooseAbsorptionExample('metal','cu',450)">Cu + 파랑 · 방출 불가</button></div>
+          <label>물질 선택 · 기준값<select v-model="bandMaterial" @change="chooseBandMaterial"><option value="custom">직접 설정 · 가상 물질</option><option v-for="m in bandMaterials.filter(m=>m.type===absorptionType)" :key="m.id" :value="m.id">{{ m.name }} · {{ m.gap }} eV</option></select></label>
+          <p v-if="selectedBandMaterial" class="model-note"><strong>{{ selectedBandMaterial.name }}</strong> · {{ selectedBandMaterial.transition }} · {{ absorptionType==='metal'?'표면 일함수 대표값':'약 300 K 밴드갭 대표값' }}. <a :href="selectedBandMaterial.source" target="_blank" rel="noopener">출처</a><br>문턱 파장 {{ (1239.841984/selectedBandMaterial.gap).toFixed(1) }} nm · 점유 분포 온도를 바꿔도 기준 밴드갭은 고정됩니다.</p>
+          <label>입사 파장 <b>{{ absorptionWave }} nm</b><input type="range" min="100" max="2000" step="1" v-model.number="absorptionWave"></label>
+          <div class="michelson-controls"><button @click="absorptionWave=193">자외선 193 nm</button><button @click="absorptionWave=450">파랑 450 nm</button><button @click="absorptionWave=650">빨강 650 nm</button><button @click="absorptionWave=1550">적외선 1550 nm</button></div>
+          <label>{{ absorptionType==='metal'?'일함수 Φ':'밴드갭 Eg' }} · {{ selectedBandMaterial?'물질 기준값':'직접 설정' }} <b>{{ threshold.toFixed(3) }} eV</b><input type="range" min="0.5" max="10" step="0.001" v-model.number="threshold" @input="bandMaterial='custom'"></label>
+          <p class="model-note">반도체·부도체에서는 전자가 물질 안의 높은 에너지 상태로 이동합니다. 금속 모드는 표면 밖 진공 방출을 별도로 다룹니다. 물질 선택값은 출처의 대표값이며, 직접 설정은 가상 물질입니다.</p>
+          <details class="electron-concepts"><summary><strong>전자 들뜸 · 밴드갭 · 페르미 준위 알아보기</strong></summary>
+            <ul><li><strong>가전자대:</strong> 원자가 결합과 관련된 전자들이 차지하는 에너지 띠.</li><li><strong>전도대:</strong> 전기 전도에 참여할 수 있는 전자 상태의 띠.</li><li><strong>밴드갭 Eg:</strong> 가전자대 꼭대기 Ev와 전도대 바닥 Ec 사이의 에너지 간격.</li><li><strong>페르미 준위 EF:</strong> 열평형 전자 점유를 설명하는 화학 퍼텐셜. 유한 온도에서 f(EF)=½이며, 그 에너지에 실제 상태가 있다는 뜻은 아닙니다.</li><li><strong>전자 들뜸:</strong> 에너지를 받아 높은 허용 상태로 이동하는 것. 낮은 상태에 남은 빈자리는 정공으로 다룹니다.</li><li><strong>일함수 Φ:</strong> 금속의 페르미 준위에서 진공 준위까지의 에너지 차이. Eg와 다릅니다.</li></ul>
+            <button class="small-action" @click="openDoc('electron-energy-levels')">전체 개념 문서 보기 →</button>
+          </details>
+          <label>빛의 세기 · 상대 광자 유입률 <b>{{ intensity }}배</b><input type="range" min="0" max="10" step="1" v-model.number="intensity"></label>
+          <p class="model-note">동일 파장에서 세기를 높이면 광자 수가 늘며, 광자 하나의 에너지는 변하지 않습니다. 단일 광자 모델에서는 문턱 미만의 빛을 강하게 쏴도 외부 방출되지 않습니다.</p>
+          <div class="michelson-controls"><button @click="firePhoton">▶ 광자 1개 쏘기</button><button @click="fireLightPulse">▶ 현재 세기로 반응 보기</button><button @click="absorptionType='metal';absorptionWave=193">금속 방출 예제 · 193 nm</button></div>
+          <div v-html="sim.energyScene"></div>
+          <label>전자 반응 진행 · 직접 움직여 보기 {{ (absorptionProgress*100).toFixed(0) }}%<input type="range" min="0" max="1" step=".01" v-model.number="absorptionProgress" @input="stopAbsorptionAnimation"></label>
+          <p v-if="absorptionType==='metal'" class="result">{{ sim.emits?(shotCount?'방출 조건 충족 · 대표 전자 1개의 이동 표시':'빛을 쏘면 표면 밖으로 전자가 이동합니다'):'방출 없음: 광자 에너지가 문턱을 넘어야 합니다' }}<br>방출 속도는 Kmax의 증가 경향을 느리게 표현한 예시이며 실제 전자 속도·개수·전류가 아닙니다.</p>
+          <div class="result">광자 E = {{ sim.energy.toFixed(3) }} eV · 문턱 {{ threshold.toFixed(2) }} eV<br>문턱 파장 λ₀ ≈ {{ sim.cutoff.toFixed(1) }} nm<br><template v-if="absorptionType==='metal'">{{ sim.emits?'방출 에너지 조건 충족':'양의 운동에너지 방출 조건 미충족' }} · Kmax = {{ sim.kinetic.toFixed(3) }} eV</template><template v-else>{{ sim.allowed?'밴드 간 들뜸 조건 충족 (물질 내부)':'밴드 간 들뜸 에너지 부족' }}</template></div>
+          <p>광자 에너지 E=hc/λ. 금속은 Kmax=E−Φ, 내부 들뜸은 E≥Eg를 비교합니다. <strong>밴드갭을 넘었다고 물질 밖으로 전자가 방출되는 것은 아닙니다.</strong></p><p class="model-note">빛이 물질 내부를 통과·흡수하는 실제 비율과 전류는 계산하지 않습니다. 허용 전이·간접 밴드갭의 포논·반사·결함·다광자 과정·수집 전압을 생략한 모델입니다. 문턱과 같으면 금속의 최대 운동에너지는 0입니다.</p>
+          <details><summary>페르미 준위·점유 분포 자세히 보기</summary>
+          <label v-if="absorptionType!=='metal'">밴드갭 안의 EF 위치 · 개념 조절 <b>{{ (fermiPosition*100).toFixed(0) }}%</b><input type="range" min="0.1" max="0.9" step="0.05" v-model.number="fermiPosition"></label>
+          <label>점유 분포 계산 온도 <b>{{ electronTemperature }} K</b><input type="range" min="50" max="600" step="10" v-model.number="electronTemperature"></label>
+          <svg viewBox="0 0 560 280" class="sim-svg band-diagram" aria-label="페르미 준위와 밴드갭 에너지 도표">
+            <path d="M65 235V25L60 35M65 25L70 35" fill="none" stroke="#6c8da5"/><text x="15" y="28">에너지 ↑</text>
+            <template v-if="absorptionType!=='metal'">
+              <rect x="95" y="35" width="285" height="55" fill="#d6edf7"/><rect x="95" y="205" width="285" height="45" fill="#b1cde1"/>
+              <path d="M95 90H380M95 205H380" stroke="#4a84a8" stroke-width="2"/>
+              <path :d="'M95 '+(205-fermiPosition*115)+'H380'" stroke="#bc7853" stroke-width="2" stroke-dasharray="6 4"/>
+              <text x="390" y="94">Ec = {{ threshold.toFixed(2) }} eV</text><text x="390" y="210">Ev = 0 eV</text><text x="105" :y="197-fermiPosition*115" fill="#b6754e">EF = {{ sim.fermiEnergy.toFixed(3) }} eV</text>
+              <text x="205" y="62">전도대</text><text x="205" y="232">가전자대</text><text x="205" y="155">밴드갭 · 허용 상태 없음</text>
+            </template>
+            <template v-else><rect x="95" y="145" width="285" height="100" fill="#b1cde1"/><rect x="95" y="75" width="285" height="70" fill="#e1edf5"/><path d="M95 145H380" stroke="#bc7853" stroke-dasharray="6 4" stroke-width="2"/><path d="M95 45H380" stroke="#4a84a8" stroke-width="2"/><text x="390" y="49">E_vac = {{ threshold.toFixed(2) }} eV</text><text x="390" y="149">EF = 0 eV</text><text x="190" y="102">Φ = E_vac − EF</text><text x="130" y="224">EF 근처에 허용 전자 상태가 존재</text></template>
+          </svg>
+          <div class="result" v-if="absorptionType!=='metal'">전도대 바닥의 점유 확률 f(Ec) ≈ {{ sim.conductionOccupation.toExponential(3) }}<br>가전자대 꼭대기 f(Ev) ≈ {{ sim.valenceOccupation.toFixed(6) }}</div>
+          <p class="model-note">f(E)=1/{1+exp[(E−EF)/(kBT)]}. EF 위치는 설명용으로 조절하며 도핑 농도를 계산한 결과가 아닙니다. 점유 확률은 전자 농도나 광자 흡수 확률과 다릅니다. 이 도표는 열평형 참고용이며 광조사 후 준페르미 준위·파울리 차단·밴드갭의 온도 변화는 광흡수 애니메이션에 연동하지 않습니다.</p>
+
+          </details>
+        </template>
+        <template v-else-if="simKind==='equipment'">
+          <label>광학장비<select v-model="equipment.equipmentType"><option value="camera">카메라 · 상 형성</option><option value="telescope">망원경 · 각배율</option><option value="microscope">현미경 · 중간상 / 분해능</option></select></label>
+          <div class="equipment-intro"><strong>{{ {camera:'카메라: 무엇이 사진에 담길까?',telescope:'망원경: 멀리 있는 물체를 얼마나 크게 볼까?',microscope:'현미경: 작은 구조를 얼마나 구분할까?'}[equipment.equipmentType] }}</strong><p>{{ {camera:'센서 길이를 바꾸고 사진에 들어오는 건물 수를 비교하세요. F수는 오른쪽 조리개 구멍과 사진 밝기를 바꿉니다.',telescope:'대물렌즈는 빛을 모으고 접안렌즈는 중간상을 확대합니다. 접안 초점거리를 줄이면 각배율이 커집니다.',microscope:'대물렌즈가 시료 빛을 받아 튜브렌즈가 중간상을 만듭니다. NA를 바꾸면 아래 분해 가능 거리가 달라집니다.'}[equipment.equipmentType] }}</p></div>
+        <div v-if="apparatusSvg" class="apparatus-panel" ><div class="apparatus-title">조절 중인 장비 <span>장치와 광경로</span></div><div class="apparatus-art"  v-html="apparatusSvg"></div><p>장치 배치는 원리 학습용 개념도입니다. 실제 장비의 기구 치수·안전 절차를 재현하지 않습니다.</p></div>
+          <template v-if="equipment.equipmentType==='camera'">
+            <label>렌즈 초점거리 {{ equipment.f }} mm<input type="range" min="10" max="200" v-model.number="equipment.f"></label>
+            <label>물체 거리 {{ equipment.u }} mm<input type="range" min="250" max="5000" step="10" v-model.number="equipment.u"></label>
+            <label>사진을 받는 센서의 가로 길이 {{ equipment.sensor }} mm<input type="range" min="5" max="50" step=".1" v-model.number="equipment.sensor"></label>
+            <p>센서를 넓히면 사진에 건물이 더 많이 들어옵니다. 초점거리를 늘리면 확대되고, 거리가 멀어지면 더 넓게 보입니다.</p>
+            <label>조리개 · 빛이 들어오는 구멍 크기 <b>f/{{ equipment.fNumber }}</b><input type="range" min="1" max="22" step=".1" v-model.number="equipment.fNumber"></label>
+            <p><strong>f/4는 초점거리 ÷ 구멍 지름이 4라는 뜻</strong>입니다. 예: 50 mm 렌즈의 f/4는 구멍 지름 12.5 mm. 숫자를 낮추면 구멍이 커지고, 높이면 작아집니다.</p>
+            <div class="michelson-controls"><button @click="equipment.fNumber=2">f/2 · 넓게</button><button @click="equipment.fNumber=4">f/4 · 기준</button><button @click="equipment.fNumber=8">f/8 · 좁게</button><button @click="equipment.fNumber=16">f/16 · 더 좁게</button></div>
+          </template>
+          <template v-else-if="equipment.equipmentType==='telescope'">
+            <label>굴절망원경 종류<select v-model="equipment.telescopeModel"><option value="kepler">케플러식 · 볼록 대물 + 볼록 접안 · 도립</option><option value="galilean">갈릴레이식 · 볼록 대물 + 오목 접안 · 정립</option></select></label>
+            <p>현재 두 종류의 굴절망원경을 비교합니다. 반사·굴절반사 망원경의 구조는 이 모형에 포함하지 않습니다.</p>
+            <label>대물 초점거리 {{ equipment.objective }} mm<input type="range" min="100" max="2000" step="10" v-model.number="equipment.objective"></label>
+            <label>접안 초점거리 {{ equipment.eyepiece }} mm<input type="range" min="5" max="80" v-model.number="equipment.eyepiece"></label>
+            <label>대물 구경 {{ equipment.diameter }} mm<input type="range" min="20" max="300" v-model.number="equipment.diameter"></label>
+          </template>
+          <template v-else-if="equipment.equipmentType==='microscope'">
+            <label>투과 광학현미경 모델<select v-model="equipment.microscopeModel"><option value="infinity">무한 보정 · 대물 + 튜브렌즈</option><option value="finite">유한 경통 · 대물이 중간상 형성</option></select></label>
+            <p>이 화면은 중간상 형성 광학계입니다. 실체·공초점·전자현미경 등 다른 방식과 구분합니다.</p>
+            <label>대물 초점거리 {{ equipment.microF }} mm<input type="range" min="2" max="20" step=".1" v-model.number="equipment.microF"></label>
+            <label>{{ equipment.microscopeModel==='finite'?'대물→중간상 거리':'튜브렌즈 초점거리' }} {{ equipment.tube }} mm<input type="range" min="100" max="300" v-model.number="equipment.tube"></label>
+            <label>대물 NA {{ equipment.microNA }}<input type="range" min=".1" :max="equipment.medium" step=".01" v-model.number="equipment.microNA"></label>
+            <label>매질<select v-model.number="equipment.medium" @change="equipment.microNA=Math.min(equipment.microNA,equipment.medium)"><option :value="1">공기 n=1</option><option :value="1.33">가상 수침 n=1.33</option><option :value="1.515">가상 유침 n=1.515</option></select></label>
+          </template>
+
+          <label >계산 파장 {{ equipment.wave }} nm<input type="range" min="400" max="700" v-model.number="equipment.wave"></label>
+          <div class="result"><div v-for="m in sim.metrics" :key="m.label">{{ m.label }}: {{ m.value===null?'실상 조건을 확인하세요':m.value+' '+m.unit }}</div></div>
+          <details class="electron-concepts"><summary>파생값을 구하려면?</summary><p>카메라: 센서에 맞는 물체 거리·회절 한계 F수 / 망원경: 목표 배율의 접안렌즈·필요 구경 / 현미경: 목표 해상도의 NA·수광각을 물어보세요.</p></details>
+          <div class="category-questions"><button v-for="q in sim.hints" :key="q" @click="input=q">{{ q }} →</button></div>
+          <button class="small-action" @click="openDoc('optical-equipment')">장비별 식·가정·계산 문서 보기 →</button>
+          <p>질문을 누르면 옆 입력창에 준비됩니다. 목표 수치를 바꾸고 보내세요. 전송 시 현재 장비 조건과 지원되는 역산 결과를 함께 전달합니다.</p>
+          <p class="model-note">광경로는 개념도, 수치는 이상적인 근축·회절 모델입니다. 수차·광원 대역폭·실제 조리개·검출 응답을 포함하지 않습니다. </p>
+        </template>
+        <template v-else>
+          <label>슬릿 폭 <b>{{ slit.toFixed(2) }} mm</b><input type="range" min="0.05" max="0.50" step="0.01" v-model.number="slit"></label>
+          <label>스크린 거리 <b>{{ distance.toFixed(1) }} m</b><input type="range" min="1" max="3" step="0.1" v-model.number="distance"></label>
+          <svg viewBox="0 0 500 250" class="sim-svg" aria-label="단일슬릿 상대 세기 그래프"><path d="M30 30V190H470" fill="none" stroke="#7897ae"/><path :d="sim.path" fill="none" :stroke="lightColor" stroke-width="2"/><text x="30" y="220">−20 mm</text><text x="240" y="220">0</text><text x="422" y="220">+20 mm</text><text x="32" y="20">상대 세기 I/I(0)</text></svg>
+          <div class="result">중앙 최대 전체 폭 ≈ {{ sim.width.toFixed(3) }} mm</div><p>W ≈ 2λL/a. 단일슬릿 원거리 회절, 위치 변환에는 작은 각도 근사를 사용합니다.</p>
+        </template>
+        <button class="transfer" @click="transferResult">현재 조건·결과를 채팅에 넣기 →</button><p class="model-note">입력창에만 넣습니다. 질문을 수정한 뒤 보내기를 누르세요.</p>
+      </div>
+    </section><div class="conversation-pane">
+    <div class="panel-title">ASK THE LAB <span>{{ sending ? '답변 작성 중…' : '질문을 기다리고 있어요' }}</span></div>
+    <section class="chat-panel" aria-label="광학 학습 대화">
+  <div id="log" ref="logEl" role="log" aria-live="polite">
+    <div v-if="!log.length" class="empty"><b>What are you curious about?</b><div class="suggested-questions"><button @click="input='빛의 속도는?'">빛의 속도는?</button><button @click="input='하늘은 왜 파란색이야?'">하늘은 왜 파랄까?</button><button @click="input='간섭과 회절의 차이를 설명해줘'">간섭과 회절의 차이</button></div></div>
+    <template v-for="item in log" :key="item.id">
+      <div v-if="item.kind === 'user'" class="row user">
+        <div class="bubble">{{ item.text }}<details v-if="item.context" class="attached-context"><summary>함께 전달한 실험 조건 · {{ item.experiment }}</summary><p>{{ item.context }}</p></details></div>
+      </div>
+
+      <div v-else-if="item.kind === 'steps'" class="steps">
+        <div v-for="(step, i) in item.steps" :key="i" class="step">{{ step }}</div>
+      </div>
+
+      <div v-else-if="item.kind === 'agent'" class="row agent">
+        <div class="bubble" v-answer="item.text"></div>
+      </div>
+
+      <details v-else-if="item.kind === 'prompt'" class="prompt-box">
+        <summary>LLM에 전달된 최종 프롬프트 보기</summary>
+        <pre>{{ item.text }}</pre>
+      </details>
+    </template>
+  </div>
+  <div v-if="view==='simulation'" class="context-notice">현재 실험의 조건과 계산 결과가 질문에 자동으로 첨부됩니다.</div>
+  <!-- Enter/보내기는 같은 핸들러 사용. 새 요청은 기존 스트림을 먼저 닫는다. -->
+  <form @submit.prevent="onSubmit">
+    <input
+      v-model="input"
+      aria-label="광학 질문"
+      autocomplete="off"
+      placeholder="예: Michelson 간섭계에서 간섭무늬가 안 보여요"
+    />
+    <button v-if="sending" type="button" @click="stopAnswer">■ 중지</button>
+    <button type="submit" :disabled="!input.trim()">{{ sending ? '중지 후 보내기' : '보내기' }}</button>
+  </form>
+    </section><div class="status">{{ backendLabel }}</div></div></div>
+  </main>
+  <!-- 우측: 관련 질문의 분류 메뉴. 문서·실험 메뉴와 역할이 다르다. -->
+  <aside class="rightbar"><div class="right-heading">EXPLORE EXPERIMENTS</div>
+    <button v-for="topic in topics" :key="topic.title" class="experiment"  :class="{'category-active':selectedTopic?.slug===topic.slug}" @click="openCategory(topic)"><span class="experiment-icon" aria-hidden="true">
+      <svg v-if="topic.slug==='lenses-and-optical-instruments'" viewBox="0 0 48 48" class="topic-art"><defs><linearGradient id="lensGlass" x1="0" x2="1"><stop stop-color="#d8f5ff"/><stop offset=".5" stop-color="#7ec5e2"/><stop offset="1" stop-color="#e8faff"/></linearGradient></defs><path d="M3 24H45" stroke="#a4b5c2" stroke-dasharray="2 2"/><path d="M24 5Q13 24 24 43Q35 24 24 5Z" fill="url(#lensGlass)" stroke="#267496" stroke-width="1.5"/><path d="M2 12H23L44 24M2 36H23L44 24" fill="none" stroke="#d18b28" stroke-width="1.7"/><path d="M24 7V41" stroke="#fff" stroke-opacity=".7"/><circle cx="44" cy="24" r="2" fill="#bf6142"/></svg>
+      <svg v-else-if="topic.slug==='polarization-and-reflection'" viewBox="0 0 48 48" class="topic-art"><path d="M2 27H46V46H2Z" fill="#c4e4f2"/><path d="M2 27H46" stroke="#4487a8" stroke-width="1.4"/><path d="M24 3V45" stroke="#9aafbd" stroke-dasharray="2 2"/><path d="M5 7L24 27L43 7" fill="none" stroke="#b96b42" stroke-width="2"/><path d="M24 27L32 45" stroke="#2b86b4" stroke-width="2"/><path d="M37 8L43 7L42 13M27 41L32 45L33 39" fill="none" stroke="#3b6d86" stroke-width="1.3"/><circle cx="12" cy="14" r="3.5" fill="white" stroke="#b96b42"/><circle cx="12" cy="14" r="1.2" fill="#b96b42"/></svg>
+      <template v-else>{{ topic.icon }}</template>
+    </span><span><strong>{{ topic.title }}</strong><small>{{ topic.subtitle }}</small></span></button>
+    <div class="quick-formula"><b>LIGHT FACT / 01</b><div class="equation">E = hν = hc / λ₀</div>파장이 짧을수록<br>광자 하나의 에너지는 커집니다.</div>
+  </aside></div>
+  <footer class="footer"><span>학습용 안내 · 실제 실험은 소속 실험실 안전 지침을 따르세요.</span><strong>OPTICS LAB ONLINE</strong></footer>
+</div>
+
+<script src="/optics_lab.js"></script>
+<script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked@15.0.12/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.6/dist/purify.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script>
+const { createApp, ref, reactive, nextTick, computed, watch, onBeforeUnmount } = Vue;
+
+const STEP_LABELS = {
+  PlanCreated: e => `자료 확인: 항목 ${e.task_count}가지${e.targets?.length ? ` (주제: ${e.targets.join(', ')})` : ''}`,
+  GateApplied: e => e.removed_analysis_tasks ? `불필요한 작업 ${e.removed_analysis_tasks}건 제거` : null,
+  TaskCompleted: e => (e.source === 'monitoring'
+      ? `모니터링 지표 확인 (시스템: ${e.target})`
+      : `학습·점검 자료 조회 (유형: ${e.target})`) + (e.retries ? ' (재시도 성공)' : ''),
+  ReplanCheck: e => e.is_sufficient ? null : `정보 부족 → 점검 유형 "${e.target}"로 추가 조사`,
+  DraftWritten: e => `답변 초안 작성 (시도 ${e.attempt})`,
+  Validation: e => e.verdict === '합격' ? '응답 형식 확인 완료' : '응답 형식 보완 중',
+  Finalize: () => '최종 답변 완성',
+};
+
+/**
+ * Vue 지시자의 문자열 값을 안전한 Markdown과 LaTeX로 표시한다.
+ * @param {HTMLElement} el - 답변 또는 문서의 출력 요소.
+ * @param {Object} binding - value에 원문 텍스트를 담은 Vue 지시자 인자.
+ * @returns {void} 요소의 DOM만 갱신한다. 정화 전에 수식을 보호하고 이후 KaTeX를 적용한다.
+ */
+function renderAnswer(el, binding) {
+  // 모델이 제목 앞에 잘못 붙인 서식 지시어만 제거한다. 일반 문장의 단어는 보존한다.
+  const raw = (binding.value || '').replace(/^(\s*(?:#{1,6}\s*)?(?:\*{1,3}|_{1,3})?)굵게\s*[:：]?\s*(?=(?:\*|_)*\s*(?:기본 원리|기본원리|작동 방식|작동방식|주요 차이|핵심 개념))/gm, '$1');
+  if (!window.marked || !window.DOMPurify) { el.textContent = raw; return; }
+  const math = [];
+  // 코드 예제는 유지하고 Markdown 처리 전에 수식을 보호한다.
+  const protectedText = raw.replace(/```[\s\S]*?```|`[^`\n]+`|\\\[([\s\S]*?)\\\]|\\\(([\s\S]*?)\\\)|\$\$([\s\S]*?)\$\$|\$([^$\n]+)\$/g,
+    (match, displayBracket, inlineBracket, displayDollar, inlineDollar) => {
+      if (match.startsWith('`')) return match;
+      const id = math.length;
+      math.push({text: displayBracket ?? inlineBracket ?? displayDollar ?? inlineDollar,
+        raw: match, display: displayBracket !== undefined || displayDollar !== undefined});
+      return `OPTICSMATHPLACEHOLDER${id}END`;
+    });
+  // Markdown을 먼저 정화한 뒤 KaTeX로 수식을 렌더링해 MathML과 스타일을 보존한다.
+  el.innerHTML = DOMPurify.sanitize(marked.parse(protectedText.replace(/~/g, '&#126;'), {breaks: true}));
+  const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+  const nodes = [];
+  while (walker.nextNode()) nodes.push(walker.currentNode);
+  for (const node of nodes) {
+    if (node.parentElement.closest('pre, code')) continue;
+    const pattern = /OPTICSMATHPLACEHOLDER(\d+)END/g;
+    const fragment = document.createDocumentFragment();
+    let end = 0;
+    let match;
+    while ((match = pattern.exec(node.textContent)) !== null) {
+      fragment.append(document.createTextNode(node.textContent.slice(end, match.index)));
+      const item = math[Number(match[1])];
+      const span = document.createElement('span');
+      span.className = item.display ? 'math-block' : 'math-inline';
+      if (window.katex) {
+        try {
+          katex.render(item.text.trim(), span, {displayMode: item.display,
+            throwOnError: true, trust: false, strict: 'warn', maxExpand: 1000,
+            output: 'htmlAndMathml'});
+        } catch {
+          span.textContent = item.raw;
+          span.className += ' math-error';
+          span.title = '수식 문법을 확인해 주세요.';
+        }
+      } else {
+        span.textContent = item.raw;
+        span.title = '수식 라이브러리를 불러오지 못했습니다. 새로고침해 주세요.';
+      }
+      fragment.append(span);
+      end = pattern.lastIndex;
+    }
+    if (end) {
+      fragment.append(document.createTextNode(node.textContent.slice(end)));
+      node.replaceWith(fragment);
+    }
+  }
+}
+
+createApp({
+  setup() {
+    // 화면 모드·슬라이더 값은 모두 동일한 setup 수명에 있어 메뉴 이동 시 유지된다.
+    const view = ref('ask');
+    const simKind = ref('polarization');
+    const angle = ref(45), focal = ref(10), object = ref(30);
+    const wavelength = ref(532), slit = ref(0.10), distance = ref(1);
+    const scanTwoTheta=ref(30);
+    const xray=ref(0.154), spacing=ref(0.3), order=ref(1), displacement=ref(0), visibility=ref(1);
+    const n1=ref(1), n2=ref(1.5), incidence=ref(45), apex=ref(60), opticalDepth=ref(.2);
+    const material=ref('custom'),plane=ref('111'),materials=xrdMaterials();
+    const playing=ref(false),playbackRate=ref(.25);
+    let michelsonFrame=null,lastMichelsonTime=null;
+    function pauseMichelson() {
+      playing.value=false;
+      if(michelsonFrame!==null) cancelAnimationFrame(michelsonFrame);
+      michelsonFrame=null;lastMichelsonTime=null;
+    }
+    function stepMichelson(cycles) {
+      pauseMichelson();
+      displacement.value=Math.min(5,Math.max(0,displacement.value+cycles*wavelength.value/2000));
+    }
+    function resetMichelson() { pauseMichelson();displacement.value=0; }
+    function playMichelson() {
+      if(playing.value)return;
+      if(displacement.value>=5)displacement.value=0;
+      playing.value=true;
+      const animate=(now)=>{
+        if(!playing.value)return;
+        if(lastMichelsonTime!==null){
+          const dt=Math.min((now-lastMichelsonTime)/1000,.1);
+          displacement.value=Math.min(5,displacement.value+dt*playbackRate.value*wavelength.value/2000);
+        }
+        lastMichelsonTime=now;
+        if(displacement.value>=5){pauseMichelson();return;}
+        michelsonFrame=requestAnimationFrame(animate);
+      };
+      michelsonFrame=requestAnimationFrame(animate);
+    }
+    watch([view,simKind,wavelength],pauseMichelson);
+    onBeforeUnmount(pauseMichelson);
+    const prismMode=ref('white');
+    const lightOptions=[{value:405,label:'보라 · 405 nm'},{value:450,label:'파랑 · 450 nm'},{value:532,label:'초록 · 532 nm'},{value:589.3,label:'노랑 · 589.3 nm'},{value:632.8,label:'빨강 · 632.8 nm'},{value:650,label:'빨강 · 650 nm'}];
+    const selectedLight=computed(()=>lightOptions.some(l=>l.value===wavelength.value)?wavelength.value:'custom');
+    const lightColor=computed(()=>wavelengthColor(wavelength.value));
+    function chooseLight(value){if(value!=='custom')wavelength.value=Number(value);}
+    const absorptionType=ref('semiconductor'),threshold=ref(1.12),absorptionWave=ref(532),photonShot=ref(0);
+    const bandMaterials=[
+      {id:'si',name:'실리콘 Si · diamond cubic',type:'semiconductor',gap:1.12,transition:'간접갭 · 포논을 포함한 전이 고려',source:'https://journals.ioffe.ru/articles/viewPDF/45185'},
+      {id:'gaas',name:'갈륨비소 GaAs · zinc blende',type:'semiconductor',gap:1.424,transition:'직접갭',source:'https://journals.ioffe.ru/articles/viewPDF/45185'},
+      {id:'gan',name:'질화갈륨 GaN · wurtzite',type:'semiconductor',gap:3.4,transition:'직접갭 · 육방정계',source:'https://arxiv.org/abs/0708.2211'},
+      {id:'na',name:'나트륨 Na · 표면 일함수 예시',type:'metal',gap:2.46,transition:'표면 상태에 따라 달라지는 대표값',source:'https://openstax.org/books/university-physics-volume-3/pages/6-2-photoelectric-effect'},
+      {id:'al',name:'알루미늄 Al · 표면 일함수 예시',type:'metal',gap:4.08,transition:'표면 상태에 따라 달라지는 대표값',source:'https://openstax.org/books/university-physics-volume-3/pages/6-2-photoelectric-effect'},
+      {id:'cu',name:'구리 Cu · 표면 일함수 예시',type:'metal',gap:4.7,transition:'표면 상태에 따라 달라지는 대표값',source:'https://openstax.org/books/university-physics-volume-3/pages/6-2-photoelectric-effect'},
+      {id:'sio2',name:'이산화규소 SiO₂',type:'insulator',gap:9,transition:'절연체 · 구조·결함에 따라 광학 흡수단 차이',source:'https://journals.ioffe.ru/articles/viewPDF/45185'}
+    ];
+    const bandMaterial=ref('si');
+    const selectedBandMaterial=computed(()=>bandMaterials.find(m=>m.id===bandMaterial.value));
+    function chooseBandMaterial(){if(selectedBandMaterial.value)threshold.value=selectedBandMaterial.value.gap;photonShot.value=0;}
+    async function chooseAbsorptionExample(kind,id,wave){absorptionType.value=kind;await nextTick();bandMaterial.value=id;chooseBandMaterial();absorptionWave.value=wave;absorptionProgress.value=0;}
+    const fermiPosition=ref(.5),electronTemperature=ref(300);
+    const absorptionProgress=ref(0);let absorptionFrame=null;
+    function stopAbsorptionAnimation(){if(absorptionFrame!==null)cancelAnimationFrame(absorptionFrame);absorptionFrame=null;}
+    function playAbsorptionAnimation(){stopAbsorptionAnimation();absorptionProgress.value=0;let start;const frame=(t)=>{if(start===undefined)start=t;absorptionProgress.value=Math.min(1,(t-start)/2500);if(absorptionProgress.value<1)absorptionFrame=requestAnimationFrame(frame);else absorptionFrame=null;};absorptionFrame=requestAnimationFrame(frame);}
+    onBeforeUnmount(stopAbsorptionAnimation);
+    watch([absorptionWave,threshold,absorptionType],()=>{stopAbsorptionAnimation();absorptionProgress.value=0;});
+    const intensity=ref(1),shotCount=ref(0);
+    const emissionDuration=computed(()=>Math.max(.45,Math.min(3,2/Math.sqrt(Math.max(.05,sim.value.kinetic||.05)))));
+    function firePhoton(){shotCount.value=1;photonShot.value++;playAbsorptionAnimation();}
+    function fireLightPulse(){shotCount.value=Math.round(intensity.value*3);photonShot.value++;if(shotCount.value)playAbsorptionAnimation();else absorptionProgress.value=0;}
+    watch(absorptionType,type=>{bandMaterial.value='custom';threshold.value={semiconductor:1.5,metal:4.5,insulator:8}[type];photonShot.value=0;});
+    watch([absorptionWave,threshold,intensity],()=>{photonShot.value=0;shotCount.value=0;});
+    const equipment=reactive({equipmentType:'camera',telescopeModel:'kepler',microscopeModel:'infinity',stageX:0,focusOffset:0,f:50,u:1000,sensor:36,fNumber:4,objective:500,eyepiece:25,diameter:80,microF:4,tube:200,microNA:.65,medium:1,wave:550,lithoWave:13.5,na:.33,k1:.4,k2:.5,reduction:4,mask:100});
+    watch(()=>equipment.lithoWave,()=>{equipment.na=Math.min(equipment.na,equipment.lithoWave<20?.95:1.35);});
+    const labs = [{id:'equipment',title:'광학장비'},{id:'polarization',title:'편광판'},{id:'lens',title:'볼록렌즈'},{id:'concave-lens',title:'오목렌즈'},{id:'concave-mirror',title:'오목거울'},{id:'convex-mirror',title:'볼록거울'},{id:'diffraction',title:'단일슬릿'},{id:'michelson',title:'마이켈슨 간섭계'},{id:'xrd',title:'XRD'},{id:'fresnel',title:'s·p 편광 / 전반사'},{id:'prism',title:'프리즘 분산'},{id:'absorption',title:'광흡수 / 광전효과'}];
+    // computed는 슬라이더가 변할 때만 다시 계산한다. 조작 자체로 API를 호출하지 않는다.
+    const lensOptions=labs.filter(lab=>['lens','concave-lens','concave-mirror','convex-mirror'].includes(lab.id));
+    const navigationLabs=labs.filter(lab=>!['concave-lens','concave-mirror','convex-mirror'].includes(lab.id)).map(lab=>lab.id==='lens'?{id:'lens-group',title:'렌즈/거울'}:lab);
+    const activeLabId=computed(()=>lensOptions.some(lab=>lab.id===simKind.value)?'lens-group':simKind.value);
+    const lastLens=ref('lens');
+    let xrdDragging=false;
+    function startXrdDrag(event){if(!event.target.closest('[data-xrd-detector]'))return;xrdDragging=true;event.currentTarget.setPointerCapture?.(event.pointerId);dragXrd(event);}
+    function dragXrd(event){if(!xrdDragging)return;const svg=event.currentTarget.querySelector('svg');const matrix=svg?.getScreenCTM?.();if(!matrix)return;const pt=svg.createSVGPoint();pt.x=event.clientX;pt.y=event.clientY;const local=pt.matrixTransform(matrix.inverse());scanTwoTheta.value=Math.round(Math.min(180,Math.max(0,2*Math.atan2(190-local.y,local.x-300)*180/Math.PI))*100)/100;}
+    function endXrdDrag(){xrdDragging=false;}
+    function keyXrd(event){if(!event.target.closest('[data-xrd-detector]'))return;if(event.key==='ArrowLeft'||event.key==='ArrowRight'){event.preventDefault();scanTwoTheta.value=Math.min(180,Math.max(0,scanTwoTheta.value+(event.key==='ArrowRight'?.5:-.5)));}}
+    let mirrorDragging=false;
+    function startMirrorDrag(event){if(!event.target.closest('[data-michelson-mirror]'))return;pauseMichelson();mirrorDragging=true;event.currentTarget.setPointerCapture?.(event.pointerId);dragMirror(event);}
+    function dragMirror(event){if(!mirrorDragging)return;const svg=event.currentTarget.querySelector('svg');const matrix=svg?.getScreenCTM?.();if(!matrix)return;const pt=svg.createSVGPoint();pt.x=event.clientX;pt.y=event.clientY;const local=pt.matrixTransform(matrix.inverse());displacement.value=Math.round(Math.min(5,Math.max(0,(local.x-410)/24))*10000)/10000;}
+    function endMirrorDrag(){mirrorDragging=false;}
+    function keyMirror(event){if(!event.target.closest('[data-michelson-mirror]'))return;if(event.key==='ArrowLeft'||event.key==='ArrowRight'){event.preventDefault();stepMichelson(event.key==='ArrowRight'?.25:-.25);}}
+    let polarizerDragging=false;
+    function startPolarizerDrag(event){polarizerDragging=true;event.currentTarget.ownerSVGElement.setPointerCapture?.(event.pointerId);dragPolarizer(event);}
+    function dragPolarizer(event){if(!polarizerDragging)return;const svg=event.currentTarget.ownerSVGElement||event.currentTarget;const point=svg.createSVGPoint?.();if(!point)return;point.x=event.clientX;point.y=event.clientY;const matrix=svg.getScreenCTM();if(!matrix)return;const local=point.matrixTransform(matrix.inverse());let degrees=Math.atan2((local.x-385)/30,(145-local.y)/65)*180/Math.PI;angle.value=Math.round((degrees+180)%180);}
+    function endPolarizerDrag(){polarizerDragging=false;}
+    const polMode=ref('both'),viewYaw=ref(-30),viewTilt=ref(25),polPhase=ref(0);
+    const sim = computed(()=>opticsSimulation(simKind.value, {...equipment,polMode:polMode.value,viewYaw:viewYaw.value,viewTilt:viewTilt.value,polPhase:polPhase.value,angle:angle.value, focal:focal.value,object:object.value,wavelength:wavelength.value,slit:slit.value,distance:distance.value,scanTwoTheta:scanTwoTheta.value,xray:xray.value,material:material.value,plane:plane.value,spacing:spacing.value,order:order.value,displacement:displacement.value,visibility:visibility.value,n1:n1.value,n2:n2.value,incidence:incidence.value,apex:apex.value,prismMode:prismMode.value,absorptionProgress:absorptionProgress.value,absorptionType:absorptionType.value,intensity:intensity.value,materialLabel:selectedBandMaterial.value?`${selectedBandMaterial.value.name}, ${selectedBandMaterial.value.transition}, 약 300 K 고정 기준값`:'',threshold:threshold.value,absorptionWave:absorptionWave.value,fermiPosition:fermiPosition.value,electronTemperature:electronTemperature.value,opticalDepth:opticalDepth.value}));
+    // 이 SVG는 자체 생성 함수의 숫자·고정 라벨만 포함한다. 외부 HTML을 여기로 넣지 않는다.
+    const apparatusSvg=computed(()=>opticsApparatus(simKind.value,{scanTwoTheta:scanTwoTheta.value,displacement:displacement.value,spacing:sim.value.spacing||spacing.value,n1:n1.value,n2:n2.value,incidence:incidence.value,apex:apex.value,prismMode:prismMode.value,absorptionType:absorptionType.value,threshold:threshold.value,absorptionWave:absorptionWave.value,fermiPosition:fermiPosition.value,electronTemperature:electronTemperature.value,opticalDepth:opticalDepth.value,wavelength:wavelength.value},sim.value));
+    const lensTransform = computed(()=>{
+      const image=sim.value.image;
+      const extent=Math.max(70,object.value, image===null?0:Math.abs(image),image===null?0:Math.abs(10*sim.value.magnification));
+      return `translate(250 130) scale(${210/extent})`;
+    });
+    // 거울의 실상은 왼쪽, 렌즈의 실상은 오른쪽이므로 물리 거리와 화면 x를 분리한다.
+    const imageX=computed(()=>sim.value.image===null?null:(sim.value.mirror?-sim.value.image:sim.value.image));
+    const lensRays = computed(()=>{
+      const mirror=sim.value.mirror;
+      const f=sim.value.signedF;
+      const end=mirror?-Math.max(70,sim.value.image||0):Math.max(70,sim.value.image||0);
+      const y1=-10+10*(mirror?-end:end)/f;
+      const y2=mirror?-10*end/object.value:10*end/object.value;
+      return `M${-object.value} -10L0 -10L${end} ${y1} M${-object.value} -10L0 0L${end} ${y2}`;
+    });
+    /** @param {string} kind 실험 ID. 계산값과 대화는 초기화하지 않고 표시 화면만 전환한다. */
+    // 그룹 메뉴를 다시 열면 마지막으로 선택한 렌즈/거울 종류로 돌아간다.
+    watch(simKind,kind=>{if(lensOptions.some(lab=>lab.id===kind))lastLens.value=kind;});
+    function openSimulation(kind) { simKind.value = kind==='lens-group'?lastLens.value:kind; view.value = 'simulation'; }
+    /** 현재 결과를 미전송 질문 초안으로 복사한다. AI 호출은 보내기 시점에만 수행한다. */
+    function transferResult() { input.value = sim.value.summary; }
+    const docContent=ref(''), docLoading=ref(false), docError=ref(''), docSlug=ref('');
+    let docRequest=0;
+    /**
+     * 로컬 문서를 가져온다. 연속 클릭 시 늦게 끝난 이전 응답이 새 문서를 덮지 않게 한다.
+     * @param {string} slug - 서버 허용 목록의 문서 ID.
+     * @returns {Promise<void>} 로딩·오류·본문 상태를 갱신하며 LLM은 호출하지 않는다.
+     */
+    async function openDoc(slug) {
+      view.value='document';docSlug.value=slug;docLoading.value=true;docError.value='';
+      const request=++docRequest;
+      try {
+        const response=await fetch('/documents/'+encodeURIComponent(slug));
+        if (!response.ok) throw new Error('문서를 불러오지 못했습니다.');
+        const data=await response.json();
+        if (request===docRequest) docContent.value=data.content;
+      } catch (error) { if(request===docRequest) docError.value=error.message; }
+      finally { if(request===docRequest) docLoading.value=false; }
+    }
+    const selectedTopic=ref(null);
+    // 우측 분류별 추천 질문. 문서 ID와 연결되지만 클릭 전에는 모델을 부르지 않는다.
+    const questionExamples={
+      'grating-prism-spectrometer':['회절격자와 프리즘의 차이는?','회절격자 실험에서 파장을 어떻게 계산해?','분광기의 스펙트럼 선이 흐릿해요'],
+      'shadow-and-diffraction':['간섭과 회절의 차이는?','단일슬릿 폭을 줄이면 무늬가 어떻게 변해?','이중슬릿에서 무늬가 안 보여요'],
+      'michelson-interferometer':['Michelson 간섭계의 원리를 알려줘','Michelson 거울 이동과 무늬 수는 어떤 관계야?','Michelson 간섭무늬가 흔들려요'],
+      'lenses-and-optical-instruments':['볼록렌즈와 오목렌즈의 차이는?','오목거울과 볼록거울은 어떤 상을 만들어?','렌즈의 상이 흐릿해요'],
+      'polarization-and-reflection':['s편광과 p편광의 차이는?','브루스터 각과 전반사 임계각의 차이는?','교차 편광판인데 빛이 남아요'],
+      'speed-of-light':['빛의 속도는?','매질에 들어가면 빛의 파장과 에너지는 어떻게 변해?','빛의 속도 측정값의 오차를 어떻게 점검해?'],
+    };
+    const categoryQuestions=computed(()=>selectedTopic.value ? questionExamples[selectedTopic.value.slug] || [selectedTopic.value.question] : []);
+    /** @param {Object} topic 우측 질문 분류. ASK로 돌아가 관련 질문만 보여준다. */
+    function openCategory(topic) { selectedTopic.value=topic; view.value='ask'; }
+    /**
+     * 관련 질문 클릭은 즉시 전송하고 채팅 위치로 스크롤한다.
+     * @param {string} question - 선택된 예시 질문. 메인 ASK이므로 실험 상태를 첨부하지 않는다.
+     * @returns {Promise<void>} 화면 갱신이 끝난 뒤 스크롤한다.
+     */
+    async function askRelated(question) {
+      view.value='ask';
+      input.value=question;
+      onSubmit();
+      await nextTick();
+      logEl.value?.scrollIntoView?.({behavior:'smooth',block:'center'});
+    }
+    const equipmentLessons=[{slug:'lithography-process',title:'빛으로 패턴 만들기'},{slug:'resolution-and-focus',title:'해상도와 초점'},{slug:'pattern-quality',title:'패턴 품질 읽기'},{slug:'alignment-and-verification',title:'정렬 · 교정 · 검증'}];
+    const topics = [
+      {icon:'≋', title:'회절격자 · 분광기', slug:'grating-prism-spectrometer', subtitle:'GRATINGS & SPECTRA', question:'회절격자와 프리즘 분광기의 원리를 알려줘'},
+      {icon:'◒', title:'그림자와 회절', slug:'shadow-and-diffraction', subtitle:'SHADOW & DIFFRACTION', question:'그림자와 회절 실험 이론 알려줘'},
+      {icon:'⊕', title:'Michelson 간섭계', slug:'michelson-interferometer', subtitle:'INTERFERENCE', question:'Michelson 간섭계 원리를 알려줘'},
+      {icon:'↔', title:'렌즈와 광학장치', slug:'lenses-and-optical-instruments', subtitle:'LENSES & IMAGING', question:'렌즈의 상 형성과 공식을 알려줘'},
+      {icon:'↗', title:'편광과 반사', slug:'polarization-and-reflection', subtitle:'POLARIZATION', question:'편광과 반사 실험 이론 알려줘'},
+      {icon:'c', title:'빛의 속도', slug:'speed-of-light', subtitle:'THE SPEED OF LIGHT', question:'빛의 속도는?'},
+    ];
+    /** @param {string} question 즉시 전송할 질문. 입력창 채우기 전용 동작과 구분한다. */
+    function ask(question) { input.value = question; onSubmit(); }
+    const backendLabel = ref('all_total_vue');
+    const log = ref([]);
+    const input = ref('');
+    const sending = ref(false);
+    const logEl = ref(null);
+    const thread = 't-web-' + Math.random().toString(36).slice(2, 8);
+    let nextId = 0;
+    let activeStream = null;
+    let activeSteps = null;
+
+    /** 활성 SSE를 닫고 입력을 다시 허용한다. 이미 도착한 부분 답변은 화면에 남긴다. */
+    function stopAnswer() {
+      if (!activeStream) return;
+      activeStream.close();
+      activeStream = null;
+      if (activeSteps) activeSteps.steps.push('답변을 중지했습니다. 새 질문을 입력하세요.');
+      activeSteps = null;
+      sending.value = false;
+      scrollToBottom();
+    }
+
+    fetch('/health').then(r => r.json()).then(h => {
+      backendLabel.value = `${h.llm_backend} 실모델(${h.fast_llm}/${h.quality_llm}) · all_total_vue`;
+    }).catch(() => {});
+
+    /** Vue가 DOM을 반영한 뒤 채팅 영역 내부만 마지막 메시지로 스크롤한다. */
+    async function scrollToBottom() {
+      await nextTick();
+      if (logEl.value) logEl.value.scrollTop = logEl.value.scrollHeight;
+    }
+
+    /**
+     * 질문 전송의 공통 진입점. 현재 실험 결과를 스냅샷으로 첨부하고 SSE를 구독한다.
+     * @returns {void} 사용자 메시지와 진행 상태를 갱신한다. 빈 질문은 전송하지 않는다.
+     * 실험 화면에서만 조건을 첨부하며, 이후 슬라이더 변경은 진행 중 요청에 영향을 주지 않는다.
+     */
+    function onSubmit() {
+      const text = input.value.trim();
+      if (!text) return;
+      stopAnswer();
+
+      // 전송 시점의 값을 문자열로 복사한다. 이후 슬라이더 변경은 이 요청에 영향을 주지 않는다.
+      const context = view.value === 'simulation' ? (simKind.value==='equipment'?opticsSimulation('equipment',{...equipment,question:text}).summary:sim.value.summary) : '';
+      const experiment = labs.find(lab => lab.id === simKind.value)?.title || '';
+      const message = context
+        ? `[사용자 질문]\n${text}\n\n[현재 가상 실험]\n실험: ${experiment}\n${context}\n\n위 내용은 가상 모델의 조건과 계산 결과입니다. 참고 자료의 설명 요청 문구보다 사용자 질문에 우선 답하세요. 실제 측정이나 센서 관측으로 표현하지 마세요.`
+        : text;
+      log.value.push({ id: nextId++, kind: 'user', text, context, experiment });
+      input.value = '';
+      sending.value = true;
+      scrollToBottom();
+
+      const stepsItem = reactive({ id: nextId++, kind: 'steps', steps: [] });
+      log.value.push(stepsItem);
+      scrollToBottom();
+
+      const url = `/chat/stream?message=${encodeURIComponent(message)}&thread_id=${encodeURIComponent(thread)}`;
+      const es = new EventSource(url);
+      activeStream = es;
+      activeSteps = stepsItem;
+      let streamItem = null;
+      let streamAttempt = null;   // write_node 재작성(attempt 증가) 시 새 말풍선으로 끊는다
+
+      // 닫힌 이전 요청의 지연 이벤트가 새 답변에 섞이지 않게 스트림 객체를 확인한다.
+      es.onmessage = (event) => {
+        if (activeStream !== es) return;
+        if (event.data === '[DONE]') {
+          es.close(); activeStream = null; activeSteps = null; sending.value = false; return;
+        }
+        let e;
+        try { e = JSON.parse(event.data); } catch { return; }
+
+        if (e.type === 'AnswerToken') {
+          if (!streamItem || streamAttempt !== e.attempt) {
+            streamItem = reactive({ id: nextId++, kind: 'agent', text: '' });
+            log.value.push(streamItem);
+            streamAttempt = e.attempt;
+          }
+          streamItem.text += e.delta;
+          scrollToBottom();
+          return;
+        }
+
+        // 최종 응답을 정본으로 사용해 토큰 누적 문자열과 서버 결과를 일치시킨다.
+        if (e.type === 'FinalAnswer') {
+          if (!streamItem) {
+            streamItem = reactive({ id: nextId++, kind: 'agent', text: '' });
+            log.value.push(streamItem);
+          }
+          streamItem.text = e.reply;   // 토큰 합산 결과와 서버의 최종 텍스트를 일치시킨다
+          if (e.prompt) log.value.push({ id: nextId++, kind: 'prompt', text: e.prompt });
+          streamItem = null;
+          streamAttempt = null;
+          scrollToBottom();
+          return;
+        }
+
+        const fn = STEP_LABELS[e.type];
+        if (!fn) return;
+        const label = fn(e);
+        if (!label) return;
+        stepsItem.steps.push(label);
+        scrollToBottom();
+      };
+
+      // EventSource의 자동 재접속은 닫아 중복 전송을 막고 재질문할 수 있게 한다.
+      es.onerror = () => {
+        if (activeStream !== es) return;
+        es.close(); activeStream = null; activeSteps = null; sending.value = false;
+        stepsItem.steps.push('연결이 종료되었습니다. 다시 질문할 수 있습니다.');
+      };
+    }
+
+    return { chooseAbsorptionExample, absorptionProgress, stopAbsorptionAnimation, scanTwoTheta, startXrdDrag, dragXrd, endXrdDrag, keyXrd, startMirrorDrag, dragMirror, endMirrorDrag, keyMirror, startPolarizerDrag, dragPolarizer, endPolarizerDrag, polMode, viewYaw, viewTilt, polPhase, equipment, intensity, shotCount, emissionDuration, fireLightPulse, bandMaterials, bandMaterial, selectedBandMaterial, chooseBandMaterial, backendLabel, log, input, sending, logEl, onSubmit, stopAnswer, topics, equipmentLessons, selectedTopic, categoryQuestions, openCategory, askRelated, ask, view, simKind, fermiPosition, electronTemperature, absorptionType, threshold, absorptionWave, photonShot, firePhoton, prismMode, lightOptions, selectedLight, lightColor, chooseLight, playing, playbackRate, pauseMichelson, playMichelson, stepMichelson, resetMichelson, material, plane, materials, n1, n2, incidence, apex, opticalDepth, xray, spacing, order, displacement, visibility, imageX, angle, focal, object, wavelength, slit, distance, labs, navigationLabs, lensOptions, activeLabId, sim, apparatusSvg, lensTransform, lensRays, transferResult, openSimulation, openDoc, docContent, docLoading, docError, docSlug };
+  },
+}).directive('answer', {mounted: renderAnswer, updated: renderAnswer}).mount('#app');
+</script>
+</body>
+</html>
