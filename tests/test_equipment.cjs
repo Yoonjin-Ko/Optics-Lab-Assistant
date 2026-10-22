@@ -39,3 +39,18 @@ const finite=eq({equipmentType:'microscope',microscopeModel:'finite',microF:4,tu
 assert.equal(finite.metrics[0].value,49);assert.ok(!finite.apparatus.includes('data-optic="tube"'));
 assert.ok(eq({equipmentType:'microscope'}).apparatus.includes('data-optic="tube"'));
 console.log('굴절망원경 2종·광학현미경 2종·구경 변화·극단 조절에서 광선의 유효 구경 통과 검증');
+for(const microscopeModel of ['infinity','finite']){
+ const base=eq({equipmentType:'microscope',microscopeModel,microF:4,tube:200});
+ const longer=eq({equipmentType:'microscope',microscopeModel,microF:8,tube:200});
+ const tube=eq({equipmentType:'microscope',microscopeModel,microF:4,tube:300});
+ assert.ok(longer.instrumentGeometry.imageHeight<base.instrumentGeometry.imageHeight);
+ assert.ok(tube.instrumentGeometry.imageHeight>base.instrumentGeometry.imageHeight);
+ assert.notEqual(tube.instrumentGeometry.imageX,base.instrumentGeometry.imageX);
+ near(base.instrumentGeometry.objectDistance,microscopeModel==='finite'?4*200/196:4);
+ for(const microF of [2,20])for(const tube of [100,300]){
+  const r=eq({equipmentType:'microscope',microscopeModel,microF,tube});
+  assert.ok(!r.apparatus.includes('NaN'));
+  assert.ok(r.instrumentGeometry.imageHeight>0 && r.instrumentGeometry.imageHeight<85);
+ }
+}
+console.log('현미경 초점거리·경통 변경에 따른 중간상 크기·위치·공액거리 연동 검증 통과');

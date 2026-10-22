@@ -51,3 +51,13 @@ k_BT_c/J=\frac2{\ln(1+\sqrt2)}\approx2.269185.
 
 ## 참고 자료
 - [Ising 모델 Monte Carlo 방법 입문](https://arxiv.org/abs/0803.0217)
+
+## 출처와 확인 범위
+
+아래 자료의 해당 절·표·초록을 확인해 사실과 공식을 요약했습니다. 점검 순서·가상 사례·시각화는 앱에서 작성한 학습용 구성입니다.
+
+| 확인 내용 | 근거 자료와 위치 |
+| --- | --- |
+| 모형·알고리즘·관측량 | [Jacques Kotze (2008), Introduction to Monte Carlo methods for an Ising Model of a Ferromagnet](https://arxiv.org/html/0803.0217v1) — §1.3, 1.5, 1.7–1.8, 2.3 |
+
+상세 서지·접근 범위는 `data/source_registry.json`에 기록합니다. 공식의 앱 내 적용 범위와 생략한 현상은 본문의 모델 설명을 따릅니다.

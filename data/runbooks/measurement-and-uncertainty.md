@@ -51,3 +51,22 @@ N을 크게 세면 상대 계수 오차가 작아질 수 있지만 드리프트�
 
 ## 참고 자료
 - [BIPM · 국제 측정학 용어집(VIM)](https://www.bipm.org/en/committees/jc/jcgm/publications)
+
+
+## 핵심 용어
+
+| 용어 | 뜻 |
+| --- | --- |
+| 정확도 | 정확도는 참값·기준과의 가까움, 정밀도는 반복 측정값끼리의 일치 정도를 가리킨다. 수치화 방법과 기준을 구분한다. |
+| 불확도 | 불확도는 측정값에 합리적으로 부여할 수 있는 값의 퍼짐을 표현한다. 입력 불확도와 상관관계가 계산 결과에 전달된다. |
+
+## 출처와 확인 범위
+
+아래 자료의 해당 절·표·초록을 확인해 사실과 공식을 요약했습니다. 점검 순서·가상 사례·시각화는 앱에서 작성한 학습용 구성입니다.
+
+| 확인 내용 | 근거 자료와 위치 |
+| --- | --- |
+| 측정 용어·교정 | [JCGM 200:2012, International vocabulary of metrology](https://www.bipm.org/documents/20126/2071204/JCGM_200_2012.pdf) — §2.13, 2.15, 2.26, 2.39, 2.44–2.45 |
+| 1차 테일러 근사와 공분산을 포함한 불확도 전파 | [NIST TN 1297: Appendix A](https://www.nist.gov/pml/nist-technical-note-1297/nist-tn-1297-appendix-law-propagation-uncertainty) — Eq. A-3–A-5 |
+
+상세 서지·접근 범위는 `data/source_registry.json`에 기록합니다. 공식의 앱 내 적용 범위와 생략한 현상은 본문의 모델 설명을 따릅니다.

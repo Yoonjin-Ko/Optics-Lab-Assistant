@@ -1,0 +1,578 @@
+{
+  "checked_on": "2026-10-21",
+  "method": "공개 본문·표·초록을 확인하고 사실·자체 모델을 구분. 원문 전체·이미지는 저장하지 않음",
+  "sources": {
+    "photoelectric": {
+      "title": "OpenStax: Photoelectric Effect",
+      "url": "https://openstax.org/books/university-physics-volume-3/pages/6-2-photoelectric-effect",
+      "location": "§6.2, Eq. 6.14–6.16, Table 6.1",
+      "supports": "단일광자 광전효과, 일함수와 정지전압, Na·Al·Cu 일함수",
+      "kind": "textbook",
+      "access": "content_checked",
+      "checked_on": "2026-10-21"
+    },
+    "bands": {
+      "title": "OpenStax: Band Theory of Solids",
+      "url": "https://openstax.org/books/university-physics-volume-3/pages/9-5-band-theory-of-solids",
+      "location": "§9.5",
+      "supports": "에너지 밴드·갭의 정성적 설명. 물질 구분의 단일 보편 문턱을 정하는 근거로 사용하지 않음",
+      "kind": "textbook",
+      "access": "content_checked",
+      "checked_on": "2026-10-21"
+    },
+    "fermi": {
+      "title": "OpenStax: Free Electron Model of Metals",
+      "url": "https://openstax.org/books/university-physics-volume-3/pages/9-4-free-electron-model-of-metals",
+      "location": "§9.4",
+      "supports": "자유전자 모형, T=0 페르미 에너지와 점유 분포",
+      "kind": "textbook",
+      "access": "content_checked",
+      "checked_on": "2026-10-21"
+    },
+    "doping": {
+      "title": "OpenStax: Semiconductors and Doping",
+      "url": "https://openstax.org/books/university-physics-volume-3/pages/9-6-semiconductors-and-doping",
+      "location": "§9.6",
+      "supports": "정공과 도너·억셉터의 정성적 설명",
+      "kind": "textbook",
+      "access": "content_checked",
+      "checked_on": "2026-10-21"
+    },
+    "michelson": {
+      "title": "OpenStax: The Michelson Interferometer",
+      "url": "https://openstax.org/books/university-physics-volume-3/pages/3-5-the-michelson-interferometer",
+      "location": "§3.5, Fig. 3.16, 광로차 설명",
+      "supports": "왕복 광로와 거울 변위에 따른 간섭 주기",
+      "kind": "textbook",
+      "access": "content_checked",
+      "checked_on": "2026-10-21"
+    },
+    "single-slit": {
+      "title": "OpenStax: Single-Slit Diffraction",
+      "url": "https://openstax.org/books/university-physics-volume-3/pages/4-1-single-slit-diffraction",
+      "location": "§4.1, Diffraction through a Single Slit",
+      "supports": "회절의 파동 중첩, 원거리 단일슬릿 암선 조건",
+      "kind": "textbook",
+      "access": "content_checked",
+      "checked_on": "2026-10-21"
+    },
+    "grating": {
+      "title": "OpenStax: Diffraction Gratings",
+      "url": "https://openstax.org/books/university-physics-volume-3/pages/4-4-diffraction-gratings",
+      "location": "§4.4",
+      "supports": "다중 슬릿 간섭과 격자의 주최대",
+      "kind": "textbook",
+      "access": "content_checked",
+      "checked_on": "2026-10-21"
+    },
+    "polarization": {
+      "title": "OpenStax: Polarization",
+      "url": "https://openstax.org/books/university-physics-volume-3/pages/1-7-polarization",
+      "location": "§1.7, Malus’s Law 및 반사 편광",
+      "supports": "전기장 기준 편광, 말뤼스 법칙·브루스터 각",
+      "kind": "textbook",
+      "access": "content_checked",
+      "checked_on": "2026-10-21"
+    },
+    "tir": {
+      "title": "OpenStax: Total Internal Reflection",
+      "url": "https://openstax.org/books/university-physics-volume-3/pages/1-4-total-internal-reflection",
+      "location": "§1.4",
+      "supports": "높은 굴절률에서 낮은 굴절률로 진행할 때 임계각·전반사",
+      "kind": "textbook",
+      "access": "content_checked",
+      "checked_on": "2026-10-21"
+    },
+    "lens": {
+      "title": "OpenStax: Thin Lenses",
+      "url": "https://openstax.org/books/university-physics-volume-3/pages/2-4-thin-lenses",
+      "location": "§2.4",
+      "supports": "근축 얇은 렌즈의 상 거리·횡배율·실상/허상",
+      "kind": "textbook",
+      "access": "content_checked",
+      "checked_on": "2026-10-21"
+    },
+    "mirror": {
+      "title": "OpenStax: Spherical Mirrors",
+      "url": "https://openstax.org/books/university-physics-volume-3/pages/2-2-spherical-mirrors",
+      "location": "§2.2",
+      "supports": "구면거울의 근축 상 형성과 부호 규약",
+      "kind": "textbook",
+      "access": "content_checked",
+      "checked_on": "2026-10-21"
+    },
+    "instrument": {
+      "title": "OpenStax: Microscopes and Telescopes",
+      "url": "https://openstax.org/books/university-physics-volume-3/pages/2-8-microscopes-and-telescopes",
+      "location": "§2.8",
+      "supports": "복합 현미경과 망원경의 상 형성·배율. 앱의 무한 보정 구성 전체를 직접 검증한 자료는 아님",
+      "kind": "textbook",
+      "access": "content_checked",
+      "checked_on": "2026-10-21"
+    },
+    "resolution": {
+      "title": "OpenStax: Circular Apertures and Resolution",
+      "url": "https://openstax.org/books/university-physics-volume-3/pages/4-5-circular-apertures-and-resolution",
+      "location": "§4.5, Eq. 4.5",
+      "supports": "원형 개구 Rayleigh 각도 1.22λ/D와 라디안 단위",
+      "kind": "textbook",
+      "access": "content_checked",
+      "checked_on": "2026-10-21"
+    },
+    "dispersion": {
+      "title": "OpenStax: Dispersion",
+      "url": "https://openstax.org/books/university-physics-volume-3/pages/1-5-dispersion",
+      "location": "§1.5, Table 1.2",
+      "supports": "파장에 따른 굴절률 차이. 앱의 가상 Cauchy 계수 출처는 아님",
+      "kind": "textbook",
+      "access": "content_checked",
+      "checked_on": "2026-10-21"
+    },
+    "refraction": {
+      "title": "OpenStax: Refraction",
+      "url": "https://openstax.org/books/university-physics-volume-3/pages/1-3-refraction",
+      "location": "§1.3, Eq. 1.4",
+      "supports": "Snell 법칙과 법선 기준 각도",
+      "kind": "textbook",
+      "access": "content_checked",
+      "checked_on": "2026-10-21"
+    },
+    "propagation": {
+      "title": "OpenStax: The Propagation of Light",
+      "url": "https://openstax.org/books/university-physics-volume-3/pages/1-1-the-propagation-of-light",
+      "location": "§1.1",
+      "supports": "빛 전파와 굴절률·속도의 관계",
+      "kind": "textbook",
+      "access": "content_checked",
+      "checked_on": "2026-10-21"
+    },
+    "constants": {
+      "title": "NIST: 2022 CODATA complete listing",
+      "url": "https://physics.nist.gov/cuu/Constants/Table/allascii.txt",
+      "location": "Bohr radius, speed of light, Planck constant, elementary charge 항목",
+      "supports": "상수와 단위. 보어 반지름 약 0.0529177 nm",
+      "kind": "reference_data",
+      "access": "content_checked",
+      "checked_on": "2026-10-21"
+    },
+    "si-units": {
+      "title": "NIST SP 330: SI defining constants",
+      "url": "https://www.nist.gov/pml/special-publication-330/sp-330-section-2",
+      "location": "§2.2, defining constants",
+      "supports": "c·h·e 등 SI 정의 상수",
+      "kind": "standard",
+      "access": "content_checked",
+      "checked_on": "2026-10-21"
+    },
+    "electron": {
+      "title": "CERN: The Standard Model",
+      "url": "https://home.web.cern.ch/science/physics/standard-model/",
+      "location": "물질 입자와 leptons 설명",
+      "supports": "전자가 기본 입자로 분류됨. 전자의 실측 지름을 제공하는 자료는 아님",
+      "kind": "institution",
+      "access": "content_checked",
+      "checked_on": "2026-10-21"
+    },
+    "sky": {
+      "title": "NASA: Why Is the Sky Blue?",
+      "url": "https://spaceplace.nasa.gov/blue-sky/en/",
+      "location": "The Short Answer 및 산란 설명",
+      "supports": "짧은 가시광 파장이 더 강하게 산란되는 하늘색 설명",
+      "kind": "institution",
+      "access": "content_checked",
+      "checked_on": "2026-10-21"
+    },
+    "rayleigh": {
+      "title": "Feynman Lectures Vol. I, Ch. 32",
+      "url": "https://www.feynmanlectures.caltech.edu/I_32.html",
+      "location": "§32–5 Scattering of light, Eq. 32.19의 낮은 진동수 근사",
+      "supports": "산란 주파수 의존성과 레일리 영역",
+      "kind": "lecture",
+      "access": "content_checked",
+      "checked_on": "2026-10-21"
+    },
+    "field-polarization": {
+      "title": "Feynman Lectures Vol. I, Ch. 33",
+      "url": "https://www.feynmanlectures.caltech.edu/I_33.html",
+      "location": "§33–1 전기장 벡터",
+      "supports": "직교 전기장 성분과 편광",
+      "kind": "lecture",
+      "access": "content_checked",
+      "checked_on": "2026-10-21"
+    },
+    "structure-factor": {
+      "title": "IUCr: Introduction to the calculation of structure factors",
+      "url": "https://www.iucr.org/what-we-do/education/pamphlets/introduction-calculation-of-structure-factors",
+      "location": "Bragg equation Eq. (5), 원자 산란인자·구조인자 설명",
+      "supports": "브래그 경로차와 결정 배열의 간섭",
+      "kind": "institution",
+      "access": "content_checked",
+      "checked_on": "2026-10-21"
+    },
+    "si-ge-lattice": {
+      "title": "Hom, Kiszenik & Post (1975), J. Appl. Cryst. 8, 457–458",
+      "url": "https://onlinelibrary.wiley.com/doi/abs/10.1107/s0021889875010965",
+      "location": "공개 Abstract",
+      "supports": "Si 5.430941 Å, Ge 5.657820 Å. 공개 초록의 값만 확인",
+      "kind": "paper",
+      "access": "abstract_checked",
+      "checked_on": "2026-10-21"
+    },
+    "al-lattice": {
+      "title": "Roach et al. (2013), J. Appl. Cryst. 46, 1755–1770",
+      "url": "https://journals.iucr.org/j/issues/2013/06/00/he5613/index.html",
+      "location": "Table 2, Experiment 열",
+      "supports": "Al 격자상수 4.0495 Å",
+      "kind": "paper",
+      "access": "content_checked",
+      "checked_on": "2026-10-21"
+    },
+    "cu-lattice": {
+      "title": "Hansford et al. (2017), Acta Cryst. A73, 293–311",
+      "url": "https://journals.iucr.org/a/issues/2017/04/00/sc5103/sc5103.pdf",
+      "location": "인쇄 p.306 (PDF p.14), pure copper 기준값 문장",
+      "supports": "Cu a=3.615 Å는 논문이 인용한 순수 Cu 기준값. 앱 시료를 측정한 결과가 아님",
+      "kind": "paper",
+      "access": "content_checked",
+      "checked_on": "2026-10-21"
+    },
+    "band-inputs": {
+      "title": "Hlali, Hizem & Kalboussi (2017), Charge density at the Al2O3/Si interface in MIS devices",
+      "url": "https://journals.ioffe.ru/articles/viewPDF/45185",
+      "location": "인쇄 p.1688, Physical Parameters (300 K) 표",
+      "supports": "Si 1.12, GaAs 1.424, SiO₂ 9.0의 논문 시뮬레이션 입력. 재료별 인증 표준값이 아님",
+      "kind": "paper",
+      "access": "content_checked",
+      "checked_on": "2026-10-21"
+    },
+    "gan-gap": {
+      "title": "Dhara et al. (2007), Optical characterization of GaN by N+ implantation into GaAs at elevated temperature",
+      "url": "https://arxiv.org/abs/0708.2211",
+      "location": "공개 Abstract의 hexagonal/cubic GaN 비교",
+      "supports": "육방정 GaN 약 3.4 eV라는 문헌 비교값. 논문 시료의 측정된 혼상 갭과 구분",
+      "kind": "preprint",
+      "access": "abstract_checked",
+      "checked_on": "2026-10-21"
+    },
+    "vim": {
+      "title": "JCGM 200:2012, International vocabulary of metrology",
+      "url": "https://www.bipm.org/documents/20126/2071204/JCGM_200_2012.pdf",
+      "location": "§2.13, 2.15, 2.26, 2.39, 2.44–2.45",
+      "supports": "정확도·정밀도·불확도·교정·검증의 구분",
+      "kind": "standard",
+      "access": "content_checked",
+      "checked_on": "2026-10-21"
+    },
+    "photolithography": {
+      "title": "EPFL CMi: Introduction to Photolitography",
+      "url": "https://www.epfl.ch/research/facilities/cmi/process/photolithography/introductiontophotolithography/",
+      "location": "Introduction, Photoresist chemistry, Photolithography steps",
+      "supports": "노광·현상·후속 식각 구분과 PR의 양성·음성 반응",
+      "kind": "institution",
+      "access": "content_checked",
+      "checked_on": "2026-10-21"
+    },
+    "sklearn": {
+      "title": "scikit-learn: Common pitfalls and recommended practices",
+      "url": "https://scikit-learn.org/stable/common_pitfalls.html",
+      "location": "Inconsistent preprocessing, Data leakage",
+      "supports": "분할 후 전처리 학습·테스트 누출 방지",
+      "kind": "official_docs",
+      "access": "content_checked",
+      "checked_on": "2026-10-21"
+    },
+    "numba": {
+      "title": "Numba: Performance Tips",
+      "url": "https://numba.readthedocs.io/en/stable/user/performance-tips.html",
+      "location": "Profiling, No Python mode, Fastmath, Parallel",
+      "supports": "실제 작업 기반 프로파일링과 수치 의미 변화 주의",
+      "kind": "official_docs",
+      "access": "content_checked",
+      "checked_on": "2026-10-21"
+    },
+    "ising": {
+      "title": "Jacques Kotze (2008), Introduction to Monte Carlo methods for an Ising Model of a Ferromagnet",
+      "url": "https://arxiv.org/html/0803.0217v1",
+      "location": "§1.3, 1.5, 1.7–1.8, 2.3",
+      "supports": "Ising 모형·Metropolis·관측량·유한 크기 비교",
+      "kind": "preprint",
+      "access": "content_checked",
+      "checked_on": "2026-10-21"
+    },
+    "mit-optics": {
+      "title": "MIT OCW 2.71 Optics (2009), Lecture Slides",
+      "url": "https://ocw.mit.edu/courses/2-71-optics-spring-2009/pages/lecture-slides/",
+      "location": "강의 목록 1–5, 14–17",
+      "supports": "추가 학습 자료 안내. 목록만 확인했으며 각 강의 PDF 내용 확인을 대신하지 않음",
+      "kind": "lecture_index",
+      "access": "index_checked",
+      "checked_on": "2026-10-21"
+    },
+    "microscope-resolution": {
+      "title": "Nikon MicroscopyU: Resolution",
+      "url": "https://www.microscopyu.com/microscopy-basics/resolution",
+      "location": "Formula 1–2",
+      "supports": "Abbe형 분해능과 개구수의 적용 조건",
+      "kind": "manufacturer_education",
+      "access": "content_checked",
+      "checked_on": "2026-10-21"
+    },
+    "infinity-optics": {
+      "title": "Nikon MicroscopyU: Infinity Optical Systems",
+      "url": "https://www.microscopyu.com/microscopy-basics/infinity-optical-systems",
+      "location": "무한 보정 대물렌즈·튜브렌즈 구성 설명",
+      "supports": "무한 보정 대물렌즈와 튜브렌즈 구성",
+      "kind": "manufacturer_education",
+      "access": "content_checked",
+      "checked_on": "2026-10-21"
+    },
+    "lithography-scaling": {
+      "title": "H. Kirchauer: Optical Lithography, §2.1",
+      "url": "https://iue.tuwien.ac.at/phd/kirchauer/node16.html",
+      "location": "Eq. 2.1–2.2",
+      "supports": "CD=k₁λ/NA, DOF=k₂λ/NA²와 공정 의존 계수",
+      "kind": "technical_reference",
+      "access": "content_checked",
+      "checked_on": "2026-10-21"
+    },
+    "uncertainty-law": {
+      "title": "NIST TN 1297: Appendix A",
+      "url": "https://www.nist.gov/pml/nist-technical-note-1297/nist-tn-1297-appendix-law-propagation-uncertainty",
+      "location": "Eq. A-3–A-5",
+      "supports": "1차 테일러 근사와 공분산을 포함한 불확도 전파",
+      "kind": "technical_reference",
+      "access": "content_checked",
+      "checked_on": "2026-10-21"
+    }
+  },
+  "documents": {
+    "absorption-photoelectric": [
+      {
+        "source": "photoelectric",
+        "supports": "광전효과·일함수·문턱"
+      },
+      {
+        "source": "bands",
+        "supports": "밴드 설명"
+      },
+      {
+        "source": "band-inputs",
+        "supports": "Si/GaAs/SiO₂ 프리셋 입력값"
+      },
+      {
+        "source": "gan-gap",
+        "supports": "GaN 근삿값"
+      }
+    ],
+    "electron-energy-levels": [
+      {
+        "source": "fermi",
+        "supports": "페르미 에너지·점유"
+      },
+      {
+        "source": "bands",
+        "supports": "밴드·갭"
+      },
+      {
+        "source": "doping",
+        "supports": "도핑·정공"
+      }
+    ],
+    "light-fundamentals": [
+      {
+        "source": "constants",
+        "supports": "상수·길이 척도"
+      },
+      {
+        "source": "si-units",
+        "supports": "SI 정의 상수"
+      },
+      {
+        "source": "electron",
+        "supports": "기본 입자 분류"
+      },
+      {
+        "source": "refraction",
+        "supports": "매질 내 빛 전파"
+      }
+    ],
+    "michelson-interferometer": [
+      {
+        "source": "michelson",
+        "supports": "광로차·거울 변위"
+      }
+    ],
+    "grating-prism-spectrometer": [
+      {
+        "source": "grating",
+        "supports": "격자의 주최대"
+      },
+      {
+        "source": "refraction",
+        "supports": "굴절 법칙"
+      },
+      {
+        "source": "dispersion",
+        "supports": "프리즘 분산"
+      }
+    ],
+    "shadow-and-diffraction": [
+      {
+        "source": "single-slit",
+        "supports": "원거리 단일슬릿"
+      },
+      {
+        "source": "grating",
+        "supports": "회절격자와의 차이"
+      }
+    ],
+    "lenses-and-optical-instruments": [
+      {
+        "source": "lens",
+        "supports": "얇은 렌즈"
+      },
+      {
+        "source": "mirror",
+        "supports": "구면거울"
+      },
+      {
+        "source": "resolution",
+        "supports": "원형 개구 분해능"
+      }
+    ],
+    "polarization-and-reflection": [
+      {
+        "source": "polarization",
+        "supports": "편광·말뤼스·브루스터"
+      },
+      {
+        "source": "tir",
+        "supports": "임계각·전반사"
+      },
+      {
+        "source": "field-polarization",
+        "supports": "전기장 방향"
+      }
+    ],
+    "optical-equipment": [
+      {
+        "source": "lens",
+        "supports": "카메라 근축 상"
+      },
+      {
+        "source": "instrument",
+        "supports": "망원경·현미경의 기본 구성"
+      },
+      {
+        "source": "resolution",
+        "supports": "각분해능"
+      },
+      {
+        "source": "mit-optics",
+        "supports": "추가 강의 안내"
+      },
+      {
+        "source": "microscope-resolution",
+        "supports": "Abbe형 분해능과 개구수의 적용 조건"
+      },
+      {
+        "source": "infinity-optics",
+        "supports": "무한 보정 대물렌즈와 튜브렌즈 구성"
+      }
+    ],
+    "speed-of-light": [
+      {
+        "source": "si-units",
+        "supports": "진공 광속 상수"
+      },
+      {
+        "source": "propagation",
+        "supports": "매질의 전파"
+      }
+    ],
+    "scattering-and-sky": [
+      {
+        "source": "sky",
+        "supports": "하늘색의 정성적 설명"
+      },
+      {
+        "source": "rayleigh",
+        "supports": "레일리 파장 의존성"
+      }
+    ],
+    "xrd-bragg": [
+      {
+        "source": "structure-factor",
+        "supports": "브래그·구조인자"
+      },
+      {
+        "source": "si-ge-lattice",
+        "supports": "Si·Ge 값"
+      },
+      {
+        "source": "al-lattice",
+        "supports": "Al 값"
+      },
+      {
+        "source": "cu-lattice",
+        "supports": "Cu 값"
+      }
+    ],
+    "lithography-process": [
+      {
+        "source": "photolithography",
+        "supports": "공정 흐름·PR"
+      },
+      {
+        "source": "resolution",
+        "supports": "일반 광학 분해능"
+      },
+      {
+        "source": "vim",
+        "supports": "교정·검증"
+      },
+      {
+        "source": "lithography-scaling",
+        "supports": "CD=k₁λ/NA, DOF=k₂λ/NA²와 공정 의존 계수"
+      }
+    ],
+    "lithography-cd": [
+      {
+        "source": "photolithography",
+        "supports": "노광·현상·식각 구분"
+      }
+    ],
+    "measurement-and-uncertainty": [
+      {
+        "source": "vim",
+        "supports": "측정 용어·교정"
+      },
+      {
+        "source": "uncertainty-law",
+        "supports": "1차 테일러 근사와 공분산을 포함한 불확도 전파"
+      }
+    ],
+    "data-and-model-validation": [
+      {
+        "source": "sklearn",
+        "supports": "데이터 누출"
+      },
+      {
+        "source": "numba",
+        "supports": "성능 최적화의 조건"
+      }
+    ],
+    "ising-and-monte-carlo": [
+      {
+        "source": "ising",
+        "supports": "모형·알고리즘·관측량"
+      }
+    ],
+    "experiment-intake": [
+      {
+        "source": "vim",
+        "supports": "측정값·조건 기록의 용어 기준"
+      }
+    ]
+  }
+}

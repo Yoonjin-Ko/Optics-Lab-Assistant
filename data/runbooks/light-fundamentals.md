@@ -88,7 +88,7 @@ E[\mathrm{eV}]\approx\frac{12398.41984}{\lambda_0[\text{Å}]}
 
 **왜 XRD에 X선을 쓸까?** X선 파장이 결정의 원자 간 거리·면간격과 비슷한 척도여서 회절로 구조를 조사하기 좋습니다. 반면 가시광으로 원자를 보통의 원거리 광학현미경처럼 직접 분해하기는 어렵습니다. 실제 분해능은 파장만이 아니라 NA·관찰 방식에도 달려 있습니다. EUV 파장 13.5 nm를 원자 하나의 크기나 인쇄 선폭과 동일시하지 않습니다.
 
-참고: [NIST · 보어 반지름](https://physics.nist.gov/cgi-bin/cuu/Value?bohrrada0), [CERN · 전자의 점입자 설명](https://home.cern/science/accelerators/compact-linear-collider).
+참고: [NIST · 보어 반지름](https://physics.nist.gov/cuu/Constants/Table/allascii.txt), [CERN · 전자의 점입자 설명](https://home.web.cern.ch/science/physics/standard-model/).
 
 ### 2. 파장별 에너지: 가상 계산표
 | 진공 파장 | 대표 영역·예 | 광자 에너지(eV, 근삿값) |
@@ -155,3 +155,25 @@ E[\mathrm{eV}]\approx\frac{12398.41984}{\lambda_0[\text{Å}]}
 - 기초 공식은 표준 물리 관계를 자체 정리한 것이며 위 링크 본문을 자동으로 수집하는 기능은 없다.
 
 </details>
+
+
+## 핵심 용어
+
+| 용어 | 뜻 |
+| --- | --- |
+| 굴절률 | 위상속도 v에 대한 n=c/v. 매질 안 파장은 λ=λ₀/n이고 정지한 선형 경계에서 진동수는 유지된다. |
+| 결맞음 | 파동 사이 위상 관계가 유지되는 정도. 시간·공간 결맞음을 구분한다. |
+| 광세기 | 실험에서 세기는 면적당 광출력 또는 상대 검출값을 가리킬 수 있어 단위를 확인해야 한다. 광자 하나의 에너지와는 다르다. |
+
+## 출처와 확인 범위
+
+아래 자료의 해당 절·표·초록을 확인해 사실과 공식을 요약했습니다. 점검 순서·가상 사례·시각화는 앱에서 작성한 학습용 구성입니다.
+
+| 확인 내용 | 근거 자료와 위치 |
+| --- | --- |
+| 상수·길이 척도 | [NIST: 2022 CODATA complete listing](https://physics.nist.gov/cuu/Constants/Table/allascii.txt) — Bohr radius, speed of light, Planck constant, elementary charge 항목 |
+| SI 정의 상수 | [NIST SP 330: SI defining constants](https://www.nist.gov/pml/special-publication-330/sp-330-section-2) — §2.2, defining constants |
+| 기본 입자 분류 | [CERN: The Standard Model](https://home.web.cern.ch/science/physics/standard-model/) — 물질 입자와 leptons 설명 |
+| 매질 내 빛 전파 | [OpenStax: Refraction](https://openstax.org/books/university-physics-volume-3/pages/1-3-refraction) — §1.3, Eq. 1.4 |
+
+상세 서지·접근 범위는 `data/source_registry.json`에 기록합니다. 공식의 앱 내 적용 범위와 생략한 현상은 본문의 모델 설명을 따릅니다.

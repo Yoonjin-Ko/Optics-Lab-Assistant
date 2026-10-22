@@ -1,3 +1,12 @@
+/** 빔스플리터에서 각 거울까지의 기준 편도 거리(mm)와 미동 Δx(µm). */
+function michelsonGeometry(v={}) {
+ const arm1=Number(v.arm1Distance??100),arm2=Number(v.arm2Distance??100.02);
+ const gap=Number(((arm2-arm1)*1000).toFixed(9));
+ const displacement=Number(v.displacement??0),currentGap=gap+displacement;
+ return {arm1,arm2,currentArm2:arm2+displacement/1000,gap,currentGap,opl:2*currentGap,phaseCycles:2*(currentGap-20)*1000/Number(v.wavelength??532)};
+}
+if(typeof module!=='undefined')module.exports.michelsonGeometry=michelsonGeometry;
+
 /* 이상적 광학 모델. 모든 길이는 표시 단위에서 SI로 변환한다. */
 /**
  * 선택한 가상 실험의 이론값과 AI에 전달할 요약을 계산한다.
@@ -25,7 +34,7 @@ function opticsSimulation(kind, values) {
     const conductionOccupation=occupation(absorptionType==='metal'?0:threshold);
     const valenceOccupation=occupation(0);
     return {energyScene:absorptionEnergyScene(values),intensity,packetCount,emissionCount:absorptionType==='metal'&&energy>threshold?packetCount:0,energy,allowed,kinetic,fermiEnergy,conductionOccupation,valenceOccupation,cutoff:1239.841984/threshold,emits:absorptionType==='metal'&&energy>threshold,
-      summary:`광흡수·광전효과 실험: ${label}, 상대 광자 유입률=${intensity} (표시 광자 묶음 ${packetCount}개, 실제 전류 아님), λ=${absorptionWave} nm, 광자 에너지=${energy.toFixed(3)} eV, ${absorptionType==='metal'?'일함수 Φ':'밴드갭 Eg'}=${threshold} eV, 문턱 파장=${(1239.841984/threshold).toFixed(2)} nm. 점유 확률 참고 모델 T=${electronTemperature} K, EF=${fermiEnergy.toFixed(3)} eV (금속은 EF=0 기준, 비금속은 Ev=0 기준), f(Ec)=${conductionOccupation.toExponential(3)}. 이 확률은 전자 농도·광흡수 확률이 아니다. ${absorptionType==='metal'?`최대 방출 운동에너지=${kinetic.toFixed(3)} eV, ${energy>threshold?'진공 방출 에너지 조건 충족':'양의 운동에너지 방출 조건 미충족'}`:allowed?'이상적인 밴드 간 들뜸 조건 충족. 물질 밖 방출은 의미하지 않음.':'이상적인 밴드 간 들뜸 에너지 부족. 모든 흡수가 없다는 뜻은 아님.'} 원리를 설명해줘. 입력한 문턱 외의 실제 재료 응답·흡수율·양자효율·전류·전자 수명·간접천이·결함은 모델링하지 않은 학습용 문턱 모델이다.`};
+      summary:`광흡수·광전효과 실험: 현재 모드=${absorptionType}, ${absorptionType==='metal'?'금속 표면 밖 진공 방출 모델':'물질 내부 밴드 간 들뜸 모델, 진공 방출을 다루지 않음'}. ${label}, 상대 광자 유입률=${intensity} (표시 광자 묶음 ${packetCount}개, 실제 전류 아님), λ=${absorptionWave} nm, 광자 에너지=${energy.toFixed(3)} eV, ${absorptionType==='metal'?'일함수 Φ':'밴드갭 Eg'}=${threshold} eV, 문턱 파장=${(1239.841984/threshold).toFixed(2)} nm. 점유 확률 참고 모델 T=${electronTemperature} K, EF=${fermiEnergy.toFixed(3)} eV (금속은 EF=0 기준, 비금속은 Ev=0 기준), f(Ec)=${conductionOccupation.toExponential(3)}. 이 확률은 전자 농도·광흡수 확률이 아니다. ${absorptionType==='metal'?`최대 방출 운동에너지=${kinetic.toFixed(3)} eV, ${energy>threshold?'진공 방출 에너지 조건 충족':'양의 운동에너지 방출 조건 미충족'}`:allowed?'이상적인 밴드 간 들뜸 조건 충족. 물질 밖 방출은 의미하지 않음.':'이상적인 밴드 간 들뜸 에너지 부족. 모든 흡수가 없다는 뜻은 아님.'} 입력한 문턱 외의 실제 재료 응답·흡수율·양자효율·전류·전자 수명·간접천이·결함은 모델링하지 않은 학습용 문턱 모델이다.`};
   }
   // 입사면 기준 s/p 반사율: 스넬 법칙으로 굴절각을 얻고 전반사는 별도로 처리한다.
   if (kind === 'fresnel') {
@@ -45,14 +54,14 @@ function opticsSimulation(kind, values) {
       const r=n1===n2?0:u>=1?1:p?((n2*c-n1*t)/(n2*c+n1*t))**2:((n1*c-n2*t)/(n1*c+n2*t))**2;
       return `${i?'L':'M'}${35+i/179*430},${185-150*r}`;
     }).join(' ');
-    return {polarization3d:polarizationScene(values),rs,rp,tir,critical,brewster,transmitted:tir?null:Math.asin(Math.min(1,st))*180/Math.PI,sPath:curve(false),pPath:curve(true),summary:`s·p 편광 반사·전반사 실험: λ=${wavelength} nm, 비흡수 유전체 n₁=${n1}, n₂=${n2}, 법선 기준 입사각 ${incidence}°. Rₛ=${rs.toFixed(4)}, Rₚ=${rp.toFixed(4)}, ${tir?'전반사':`굴절각 ${(Math.asin(Math.min(1,st))*180/Math.PI).toFixed(2)}°`}. 브루스터 각 ${brewster.toFixed(2)}°, 임계각 ${critical===null?'없음':critical.toFixed(2)+'°'}. 원리를 설명해줘. 굴절률은 사용자가 정한 고정값이며 파장 분산·위상·소멸파는 모델에 포함하지 않았다.`};
+    return {polarization3d:polarizationScene(values),rs,rp,tir,critical,brewster,transmitted:tir?null:Math.asin(Math.min(1,st))*180/Math.PI,sPath:curve(false),pPath:curve(true),summary:`s·p 편광 반사·전반사 실험: λ=${wavelength} nm, 비흡수 유전체 n₁=${n1}, n₂=${n2}, 법선 기준 입사각 ${incidence}°. Rₛ=${rs.toFixed(4)}, Rₚ=${rp.toFixed(4)}, ${tir?'전반사':`굴절각 ${(Math.asin(Math.min(1,st))*180/Math.PI).toFixed(2)}°`}. 브루스터 각 ${brewster.toFixed(2)}°, 임계각 ${critical===null?'없음':critical.toFixed(2)+'°'}. 굴절률은 사용자가 정한 고정값이며 파장 분산·위상·소멸파는 모델에 포함하지 않았다.`};
   }
   // 두 경계의 Snell 법칙. 각도에 따라 화면 분산폭을 재정규화하지 않는다.
   if (kind === 'prism') {
     const {apex=60,prismMode='white'}=values;
     const A=apex*Math.PI/180;
     const refIndex=1.50+.004/.55**2;
-    const incoming=Math.asin(refIndex*Math.sin(A/2));
+    const incoming=Math.asin(refIndex*Math.sin(A/2))+Number(values.prismRotation||0)*Math.PI/180;
     const deviationAt=(index)=>{const r1=Math.asin(Math.sin(incoming)/index);return (incoming+Math.asin(index*Math.sin(A-r1))-A)*180/Math.PI;};
     const colors=['#8a4ab5','#326ed2','#299a68','#dbab27','#cc4c41'];
     const rays=(prismMode==='mono'?[wavelength]:[400,450,530,590,700]).map((lambda,i)=>{
@@ -83,7 +92,7 @@ function opticsSimulation(kind, values) {
     const entryNormal=normal(entryX,entryY,A/2),exitNormal=normal(reference.exitX,reference.exitY,-A/2);
     const reflectedDirection=Math.PI+A/2+incoming;
     const reflectionPath=`M${entryX} ${entryY}L${entryX+65*Math.cos(reflectedDirection)} ${entryY+65*Math.sin(reflectedDirection)}`;
-    return {sourceY,entryY,entryNormal,exitNormal,reflectionPath,incomingAngle:incoming*180/Math.PI,reference,prismPoints:`240,55 ${240-halfWidth},225 ${240+halfWidth},225`,entryX,exitX,spectrum,rays,spread:rays.length>1?rays[0].deviation-rays[rays.length-1].deviation:0,summary:`프리즘 분산 실험: ${prismMode==='mono'?'단색광 '+wavelength+' nm':'백색광의 대표 5개 파장'}, 꼭지각 A=${apex}°, 가상 Cauchy 굴절률 n(λ)=1.50+0.004/λ[µm]². 550 nm가 최소 편이인 고정 입사각에서 두 면 Snell 법칙으로 계산. ${rays.map(r=>`${r.lambda} nm: n=${r.index.toFixed(4)}, δ=${r.deviation.toFixed(3)}°`).join('; ')}. 분산을 설명해줘. 실제 유리나 특정 입사 배치의 정밀 예측은 아니다.`};
+    return {sourceY,entryY,entryNormal,exitNormal,reflectionPath,incomingAngle:incoming*180/Math.PI,reference,prismPoints:`240,55 ${240-halfWidth},225 ${240+halfWidth},225`,entryX,exitX,spectrum,rays,spread:rays.length>1?rays[0].deviation-rays[rays.length-1].deviation:0,summary:`프리즘 분산 실험: ${prismMode==='mono'?'단색광 '+wavelength+' nm':'백색광의 대표 5개 파장'}, 꼭지각 A=${apex}°, 가상 Cauchy 굴절률 n(λ)=1.50+0.004/λ[µm]². 550 nm 최소 편이 기준에서 프리즘 회전 ${Number(values.prismRotation||0)}°를 더한 입사각으로 두 면 Snell 법칙 계산. ${rays.map(r=>`${r.lambda} nm: n=${r.index.toFixed(4)}, δ=${r.deviation.toFixed(3)}°`).join('; ')}. 분산을 설명해줘. 실제 유리나 특정 입사 배치의 정밀 예측은 아니다.`};
   }
   // 산란 계수의 상대비와 직접광 감쇠를 구한다. 측면 검출 세기와 혼동하지 않는다.
   if (kind === 'scattering') {
@@ -98,7 +107,7 @@ function opticsSimulation(kind, values) {
   }
   if (kind === 'polarization') {
     const ratio = Math.cos(angle * Math.PI / 180) ** 2;
-    return {ratio, summary: `편광 실험 (이상적 선편광·분석기), λ=${wavelength} nm (파장 의존성 생략): 상대각 ${angle}°, 입사 세기 I₀ 기준 I/I₀=${ratio.toFixed(4)} (${(ratio*100).toFixed(2)}%). 이 결과의 원리를 설명해줘.`};
+    return {ratio, summary: `편광 실험 (이상적 선편광·분석기), λ=${wavelength} nm (파장 의존성 생략): 상대각 ${angle}°, 입사 세기 I₀ 기준 I/I₀=${ratio.toFixed(4)} (${(ratio*100).toFixed(2)}%). 파장 의존성은 생략한 이상적 모델이다.`};
   }
   // arcsin의 정의역을 먼저 검사한다. 조건 불충족을 0° 피크로 표현하면 안 된다.
   if (kind === 'xrd') {
@@ -112,20 +121,34 @@ function opticsSimulation(kind, values) {
     const theta=allowed && ratio<=1?Math.asin(ratio)*180/Math.PI:null;
     const twoTheta=theta===null?null:2*theta;
     const peaks=preset?xrdPeaks(preset,xray):[];
-    const sample=preset?`${preset.name} (${preset.structure}), a=${preset.a} nm, (${plane})`:'수동 면간격';
+    const sample=preset?`${preset.name} (${preset.structure}), a=${preset.a} nm, (${plane})`:'수동 면간격 모드: 결정구조·격자상수 a·결정면(hkl)은 미지정, d만 직접 설정';
     const scanTwoTheta=Number(values.scanTwoTheta??twoTheta??30);
     const angularError=twoTheta===null?null:scanTwoTheta-twoTheta;
-    return {scanTwoTheta,angularError,theta,twoTheta,spacing,preset,allowed,peaks,summary:`XRD 브래그 법칙: ${sample}, 현재 스캔 2θ=${scanTwoTheta.toFixed(3)}°, 선택 반사와의 각도 차이=${angularError===null?'정의되지 않음':angularError.toFixed(3)+'°'}, 파장 λ=${xray} nm, d=${spacing.toFixed(6)} nm, n=${actualOrder}. ${!allowed?'이상적 결정의 소멸 규칙상 금지 반사.':theta===null?'nλ>2d이므로 해가 없음.':`θ=${theta.toFixed(3)}°, 2θ=${twoTheta.toFixed(3)}°.`} ${peaks.length?'가능한 분말 반사 위치: '+peaks.map(p=>`(${p.hkl}) ${p.twoTheta.toFixed(3)}°`).join(', '):''} 원리를 설명해줘. 근사 격자상수를 고정한 이상적 분말 피크 위치 계산이며 세기·폭·실제 단결정 웨이퍼의 측정 피크는 예측하지 않는다.`};
+    return {scanTwoTheta,angularError,theta,twoTheta,spacing,preset,allowed,peaks,summary:`XRD 브래그 법칙: ${sample}, 현재 스캔 2θ=${scanTwoTheta.toFixed(3)}°, 선택 반사와의 각도 차이=${angularError===null?'정의되지 않음':angularError.toFixed(3)+'°'}, 파장 λ=${xray} nm, d=${spacing.toFixed(6)} nm, n=${actualOrder}. ${!allowed?'이상적 결정의 소멸 규칙상 금지 반사.':theta===null?'nλ>2d이므로 해가 없음.':`θ=${theta.toFixed(3)}°, 2θ=${twoTheta.toFixed(3)}°.`} ${peaks.length?'가능한 분말 반사 위치: '+peaks.map(p=>`(${p.hkl}) ${p.twoTheta.toFixed(3)}°`).join(', '):''} 근사 격자상수를 고정한 이상적 분말 피크 위치 계산이며 세기·폭·실제 단결정 웨이퍼의 측정 피크는 예측하지 않는다.`};
   }
   if (kind === 'michelson') {
-    const {displacement=0, visibility=1}=values;
+    const {displacement=0, visibility=1,mirrorTiltX=0,mirrorTiltY=0}=values;
     const cycles=2*displacement*1000/wavelength;
-    const phase=2*Math.PI*cycles;
+    const geometry=michelsonGeometry(values);
+    const phase=2*Math.PI*geometry.phaseCycles;
     const intensity=(1+visibility*Math.cos(phase))/2;
     // 등경사 간섭의 유효 팔 길이 차이를 20 µm + Δx로 두고, f=100 mm 초점면을 본다.
     // I(r)=(1+V cos[4πt cos(θ)/λ−φ_ref])/2. 각 반경의 세기를 직접 칠해 알파 중첩을 피한다.
-    const baseGap=20, focalMm=100, radiusMm=30;
-    const phaseAt=(r)=>4*Math.PI*(baseGap+displacement)*1000/wavelength*Math.cos(Math.atan(r*radiusMm/focalMm))-4*Math.PI*baseGap*1000/wavelength;
+    const baseGap=geometry.gap, focalMm=100, radiusMm=30;
+    const phaseAt=(r)=>4*Math.PI*(baseGap+displacement)*1000/wavelength*Math.cos(Math.atan(r*radiusMm/focalMm))-4*Math.PI*20*1000/wavelength;
+    // 거울 기울기는 반사광 각도를 약 2배 바꾼다. mrad→rad, 화면 mm→nm.
+    const tilted=mirrorTiltX!==0||mirrorTiltY!==0;
+    const field=(x,y)=>(1+visibility*Math.cos(phaseAt(Math.hypot(x,y))+4*Math.PI*1e6/wavelength*(mirrorTiltX*.001*x*radiusMm+mirrorTiltY*.001*y*radiusMm)))/2;
+    let fringeImage='';
+    if(tilted){
+      const size=100;let pixels='';
+      for(let y=0;y<size;y++)for(let x=0;x<size;x++){
+        const nx=(x+.5-size/2)/(size/2),ny=(y+.5-size/2)/(size/2);
+        if(nx*nx+ny*ny>1)continue;
+        pixels+=`<rect x="${x}" y="${y}" width="1" height="1" fill="${wavelengthColor(wavelength,field(nx,ny))}"/>`;
+      }
+      fringeImage='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><filter id="soft"><feGaussianBlur stdDeviation=".25"/></filter></defs><rect width="100" height="100" fill="#0d1822"/><g filter="url(#soft)">${pixels}</g></svg>`);
+    }
     const radial=Array.from({length:601},(_,i)=>{
       const value=(1+visibility*Math.cos(phaseAt(i/600)))/2;
       const channel=Math.round(255*value);
@@ -133,10 +156,10 @@ function opticsSimulation(kind, values) {
     });
     const profile=Array.from({length:301},(_,i)=>{
       const r=Math.abs(i-150)/150;
-      const value=(1+visibility*Math.cos(phaseAt(r)))/2;
+      const value=field((i-150)/150,0);
       return `${i?'L':'M'}${30+i/300*440},${110-value*85}`;
     }).join(' ');
-    return {cycles,intensity,radial,profile,completed:Math.floor(cycles+1e-9),fraction:cycles-Math.floor(cycles),summary:`Michelson 간섭계: 공기 근사, λ=${wavelength} nm, 기준 위치 대비 거울 이동 Δx=${displacement} µm. 광경로 변화 2Δx=${2*displacement} µm, 무늬 이동 N=${cycles.toFixed(4)}주기, 관찰점 정규화 세기=${intensity.toFixed(4)}, 가시도 V=${visibility}. 원리를 설명해줘. 원형 무늬는 등경사 모델로 유효 팔 길이 차이 20 µm+Δx, 관찰 렌즈 f=100 mm, 반경 30 mm, 기준점 위상 보정을 가정한다. 광원의 결맞음·정렬·파면 수차는 생략했다.`};
+    return {geometry,phaseCycles:geometry.phaseCycles,cycles,intensity,radial,profile,fringeImage,tilted,completed:Math.floor(cycles+1e-9),fraction:cycles-Math.floor(cycles),summary:`Michelson 간섭계: 공기 근사, λ=${wavelength} nm, 기준 위치 대비 거울 이동 Δx=${displacement} µm. 광경로 변화 2Δx=${2*displacement} µm, 무늬 이동 N=${cycles.toFixed(4)}주기, 관찰점 정규화 세기=${intensity.toFixed(4)}, 가시도 V=${visibility}, M₂ 거울 기울기 X=${mirrorTiltX} mrad, Y=${mirrorTiltY} mrad. 각도에 따른 화면 선형 위상을 합산한다. 빔스플리터→M₁ 거리 L₁=${geometry.arm1} mm, 빔스플리터→M₂ 기준 거리 L₂=${geometry.arm2} mm. 현재 편도 거리 차이=${geometry.currentGap} µm, 왕복 광로차=${geometry.opl} µm. 무늬는 등경사 모델로 편도 차이 (L₂−L₁)+Δx, 관찰 렌즈 f=100 mm, 반경 30 mm, 기준점 위상 보정을 가정한다. 이상적 위상 단면의 요약이며 공간 빔 겹침은 별첨 현장 조절 모델을 따른다. 광원의 결맞음 길이·파면 수차는 생략했다.`};
   }
   if (['lens','concave-lens','concave-mirror','convex-mirror'].includes(kind)) {
     const mirror=kind.includes('mirror');
@@ -149,19 +172,21 @@ function opticsSimulation(kind, values) {
     const magnification = image === null ? null : -image/object;
     return {image, magnification, signedF, mirror, name, summary: `${name} 실험 (근축 근사, λ=${wavelength} nm, 색수차·재료 분산 생략): f=${signedF} cm, 물체 거리 s=${object} cm. ${image === null ? '물체가 초점에 있어 유한한 위치에 상이 맺히지 않음.' : `상 거리 s′=${image.toFixed(2)} cm, 배율 M=${magnification.toFixed(2)}, ${image>0?'도립 실상':'정립 허상'}.`} 이 결과를 설명해줘.`};
   }
-  // 남은 메뉴는 단일슬릿: 첫 최소 사이 전체 폭과 sinc² 세기 곡선을 계산한다.
+  // 단일·이중슬릿의 유한 폭 회절 포락선: 첫 최소 사이 전체 폭과 sinc² 세기 곡선을 계산한다.
+  const double=values.slitMode==='double',separation=Number(values.slitSeparation??.3);
   const width = 2*wavelength*1e-9*distance/(slit*1e-3)*1000;
   const points = Array.from({length:241},(_,i)=>{
     const x=(i-120)/120*20; // 스크린 중심에서 mm
     const theta=Math.atan(x/1000/distance);
     // 스크린 위치 mm를 m로 바꾸고, 각도에 따른 위상 인자를 구한다.
     const beta=Math.PI*(slit*1e-3)*Math.sin(theta)/(wavelength*1e-9);
-    const intensity=Math.abs(beta)<1e-10?1:(Math.sin(beta)/beta)**2;
+    const envelope=Math.abs(beta)<1e-10?1:(Math.sin(beta)/beta)**2;
+    const intensity=envelope*(double?Math.cos(Math.PI*separation*1e-3*Math.sin(theta)/(wavelength*1e-9))**2:1);
     return {x,intensity};
   });
-  return {width,points,path:points.map((p,i)=>`${i?'L':'M'}${30+(p.x+20)/40*440},${190-p.intensity*155}`).join(' '),summary:`단일슬릿 회절 (이상적 원거리·작은 각도 근사): 파장 ${wavelength} nm, 슬릿 폭 ${slit} mm, 스크린 거리 ${distance} m. 중앙 최대 전체 폭 W≈${width.toFixed(3)} mm. 이 결과와 조건 변경 효과를 설명해줘.`};
+  return {width,fringeSpacing:double?wavelength*1e-6*distance*1000/separation:null,points,path:points.map((p,i)=>`${i?'L':'M'}${30+(p.x+20)/40*440},${190-p.intensity*155}`).join(' '),summary:`${double?'이중슬릿 간섭·유한 폭 회절':'단일슬릿 회절'} (이상적 원거리·작은 각도 근사): ${double?'슬릿 중심 간격 d='+separation+' mm, 간섭 간격 Δy≈'+(wavelength*.001*distance/separation).toFixed(4)+' mm, ':''}파장 ${wavelength} nm, 슬릿 폭 ${slit} mm, 스크린 거리 ${distance} m. 중앙 최대 전체 폭 W≈${width.toFixed(3)} mm. 이 결과와 조건 변경 효과를 설명해줘.`};
 }
-if (typeof module !== 'undefined') module.exports = {opticsSimulation};
+if (typeof module !== 'undefined') module.exports = {opticsSimulation,michelsonGeometry};
 
 /* 자체 생성한 SVG 장치 개념도. 사용자 문자열은 삽입하지 않는다. */
 /**
@@ -183,6 +208,7 @@ function opticsApparatus(kind, v, result) {
   let body='';
   if(kind==='michelson') {
     const mirrorX=410+num(v.displacement)*24;
+    const tiltDisplay=18*Math.tanh(num(v.mirrorTiltX)*2); // 실제 미세 기울기를 시각적으로 확대한다.
     body=text(300,22,'MICHELSON / 광학 테이블 평면도')+
       box(35,144,92,42,'LASER')+line(127,165,275,165)+
       line(275,165,mirrorX,165,'#d97a52',3)+line(mirrorX,172,275,172,'#e9ab73',2,'stroke-dasharray="5 3"')+
@@ -190,10 +216,11 @@ function opticsApparatus(kind, v, result) {
       line(275,172,275,258,'#69a783',4)+
       `<rect x="256" y="145" width="39" height="39" fill="#b9e4f1" fill-opacity=".55" stroke="#4187a1"/>`+
       line(258,182,292,148,'#337b9c',3)+line(247,72,303,72,'#547187',7)+
-      `<g data-michelson-mirror="true" role="slider" tabindex="0" aria-label="이동 거울 M2 좌우 조절" aria-valuenow="${num(v.displacement)}" aria-valuemin="0" aria-valuemax="5" style="cursor:ew-resize;touch-action:none"><rect x="${mirrorX-15}" y="128" width="30" height="76" fill="transparent"/>`+line(mirrorX,138,mirrorX,194,'#547187',7)+`</g>`+
+      `<g data-michelson-mirror="true" role="slider" tabindex="0" aria-label="이동 거울 M2 좌우 조절" aria-valuenow="${num(v.displacement)}" aria-valuemin="0" aria-valuemax="5" style="cursor:ew-resize;touch-action:none"><rect x="${mirrorX-15}" y="128" width="30" height="76" fill="transparent"/>`+`<g transform="rotate(${tiltDisplay} ${mirrorX} 165)">`+line(mirrorX,138,mirrorX,194,'#547187',7)+`</g>`+`</g>`+
       box(mirrorX-32,209,66,20,'미동대')+line(mirrorX,194,mirrorX,209,'#7e92a3',2)+
-      `<defs><radialGradient id="michelson-device-fringes">${result.radial.map(s=>`<stop offset="${s.offset}%" stop-color="${s.color}"/>`).join('')}</radialGradient></defs><rect x="237" y="257" width="77" height="35" rx="3" fill="#142e3e" stroke="#7897a8"/><circle cx="276" cy="274" r="16" fill="url(#michelson-device-fringes)"/>`+
-      text(183,134,'빔스플리터 50/50')+text(277,57,'기준 거울 M₁')+text(474,120,'M₂ · 좌우 드래그')+text(365,239,`Δx = ${num(v.displacement).toFixed(2)} µm`)+text(361,275,'스크린 / 검출기')+text(145,218,'실선: 진행 · 점선: 복귀')+text(300,322,'거울 위치 변화는 시각적으로 확대 표시');
+      (result.practicalSnapshot?.detectorImage?`<rect x="237" y="257" width="77" height="35" fill="#102434"/><image x="257" y="258" width="34" height="34" href="${result.practicalSnapshot.detectorImage}"/>`:(`<defs><radialGradient id="michelson-device-fringes">${result.radial.map(s=>`<stop offset="${s.offset}%" stop-color="${s.color}"/>`).join('')}</radialGradient></defs><rect x="237" y="257" width="77" height="35" rx="3" fill="#142e3e" stroke="#7897a8"/><circle cx="276" cy="274" r="16" fill="url(#michelson-device-fringes)"/>`+
+      (result.fringeImage?`<image x="260" y="258" width="32" height="32" href="${result.fringeImage}"/>`:'')))+
+      text(183,134,'빔스플리터 50/50')+text(277,57,'기준 거울 M₁')+text(474,120,'M₂ · 좌우 드래그')+text(365,239,`Δx = ${num(v.displacement).toFixed(2)} µm`)+text(361,275,'스크린 / 검출기')+text(145,218,'실선: 진행 · 점선: 복귀')+text(300,322,'위치·X 기울기는 확대 표시 · Y 기울기는 평면 밖 회전');
   } else if(kind==='xrd') {
     // 대칭 θ–2θ 배치: 시료면은 수평, 광원과 검출기 팔이 각각 θ로 배치된다.
     const theta=num(result.scanTwoTheta)/2,rad=theta*Math.PI/180;
@@ -291,25 +318,22 @@ if(typeof module!=='undefined')module.exports.wavelengthColor=wavelengthColor;
 function equipmentSimulation(v={}) {
   const type=v.equipmentType||'camera';
   if(!['camera','telescope','microscope'].includes(type))throw new Error('지원하지 않는 광학장비입니다.');
-  const defaults={f:50,u:1000,sensor:36,fNumber:4,objective:500,eyepiece:25,diameter:80,microF:4,tube:200,microNA:.65,medium:1,wave:550,lithoWave:13.5,na:.33,k1:.4,k2:.5,reduction:4,mask:100};
+  const defaults={f:50,u:1000,sensor:36,fNumber:4,objective:500,eyepiece:25,diameter:80,microF:4,tube:200,microNA:.65,medium:1,wave:550};
   const p={telescopeModel:'kepler',microscopeModel:'infinity',...defaults,...v};
   const fmt=(x)=>Number.isFinite(x)?Number(x.toFixed(4)):null;
-  const metrics=[],hints=[];let title,detail,positions,solution='';
+  const metrics=[],hints=[];let title,detail,solution='';
   if(type==='camera') {
     title='카메라 · 얇은 렌즈';const image=p.u>p.f?p.f*p.u/(p.u-p.f):null;
     metrics.push(['상 거리',image,'mm'],['횡배율',image===null?null:-image/p.u,'배'],['수평 화각',2*Math.atan(p.sensor/(2*p.f))*180/Math.PI,'°']);
-    detail=`초점거리 f=${p.f} mm, 물체 거리 u=${p.u} mm, 센서 폭=${p.sensor} mm, F수=${p.fNumber}. 1/f=1/u+1/v, m=-v/u. 물체는 실상 조건 u>f 필요. 센서는 계산된 상면에 둔다.`;
-    positions=['물체','렌즈 / 조리개','센서 · 도립상'];
+    detail=`초점거리 f=${p.f} mm, 물체 거리 u=${p.u} mm, 센서 폭=${p.sensor} mm, F수=${p.fNumber}. 1/f=1/u+1/v, m=-v/u. 물체는 실상 조건 u>f 필요. 센서는 계산된 상면에 둔다. |m|=f/(u−f)이므로 u 고정·0<f<u에서 f를 늘리면 |m|가 증가한다. 센서도 새 상면 v로 이동해야 한다.`;
     hints.push('피사체 폭 200 mm를 센서에 꽉 채우려면 물체 거리는 몇 mm여야 해?','회절 무늬 지름을 센서에서 5 μm 이하로 하려면 F수는 얼마 이하여야 해?');
   } else if(type==='telescope') {
     const g=p.telescopeModel==='galilean';title=g?'망원경 · 갈릴레이식':'망원경 · 케플러식';metrics.push(['각배율',(g?1:-1)*p.objective/p.eyepiece,'배'],['경통 길이',p.objective+(g?-1:1)*p.eyepiece,'mm']);
     detail=`대물렌즈 f_o=${p.objective} mm, 접안렌즈 f_e=${p.eyepiece} mm, 대물 구경 D=${p.diameter} mm, 진공 파장=${p.wave} nm. 무한대 물체·최종상 무한대·공기·이상적인 ${p.telescopeModel==='galilean'?'갈릴레이식, 오목 접안렌즈, 정립상. L=f_o−|f_e|':'케플러식, 볼록 접안렌즈, 도립상. L=f_o+f_e'}. |각배율|=f_o/|f_e|.`;
-    positions=['평행 입사광','대물렌즈','접안렌즈 → 눈'];
     hints.push('목표 각배율 40배에 필요한 접안렌즈 초점거리는?','1초각의 두 점을 구분하려면 대물렌즈 구경이 몇 mm 이상이어야 해?');
   } else if(type==='microscope') {
     title=p.microscopeModel==='finite'?'현미경 · 유한 경통':'현미경 · 무한 보정';metrics.push(['대물 배율',p.microscopeModel==='finite'?p.tube/p.microF-1:p.tube/p.microF,'배'],['Abbe 분해 거리',p.wave/(2*p.microNA),'nm']);
     detail=`대물렌즈 초점거리=${p.microF} mm, 튜브렌즈 초점거리=${p.tube} mm, 대물 NA=${p.microNA}, 매질 n=${p.medium}, 진공 파장=${p.wave} nm. ${p.microscopeModel==='finite'?'튜브 입력은 대물에서 상면까지 거리 v. 얇은 렌즈의 |M|=v/f_obj−1.':'중간상 배율 M=f_tube/f_obj.'} 분해능은 Abbe d=λ/(2NA). 배율은 접안렌즈 각배율을 포함하지 않는다.`;
-    positions=['시료','대물렌즈 → 평행광','튜브렌즈 → 중간상'];
     hints.push('목표 분해 거리 300 nm에 필요한 NA와 수광 반각은?','중간상 배율 80배를 만들려면 대물렌즈 초점거리는?');
   }
   const q=String(v.question||'');
@@ -325,19 +349,8 @@ function equipmentSimulation(v={}) {
     if(/분해|해상|NA|개구수/i.test(q)&&targetNm>0){const na=p.wave/(2*targetNm);solution=`Abbe d=λ/(2NA). 목표 d=${targetNm} nm에서 NA≥${fmt(na)}. ${na>p.medium?'현재 매질 n='+p.medium+'에서 NA>n이므로 이 조건은 불가능.':`현재 n=${p.medium}에서 최소 수광 반각 θ=${fmt(Math.asin(na/p.medium)*180/Math.PI)}°. NA는 n sinθ.`}`;}
     else if(targetM>0)solution=`${p.microscopeModel==='finite'?'튜브 입력은 대물에서 상면까지 거리 v. 얇은 렌즈의 |M|=v/f_obj−1.':'중간상 배율 M=f_tube/f_obj.'} 목표 ${targetM}배에 필요한 f_obj=${fmt(p.tube/(targetM+(p.microscopeModel==='finite'?1:0)))} mm. ${p.microscopeModel==='finite'?'유한 상 거리 v를 고정한 계산.':'무한 보정 튜브렌즈 모델.'} 대물렌즈 교체 시 NA·수차·보정 호환성은 별도 확인.`;
   }
-  const colors=['#5ad2f0','#f3cb65','#eb8b99'];
-  const lens=(x)=>`<ellipse cx="${x}" cy="145" rx="9" ry="54" fill="#a2d7ee" fill-opacity=".35" stroke="#82c9f1" stroke-width="2"/>`;
-  let rays='';
-  const sensorHeight=Math.min(50,Math.max(3,Math.abs(p.f/(p.u-p.f))*160));
-  const focusX=type==='telescope'?180+240*p.objective/(p.objective+p.eyepiece):330;
-  if(type==='camera') rays=colors.map((c,i)=>`<path d="M65 100L260 ${95+i*45}L490 ${145+sensorHeight}" stroke="${c}" stroke-width="2" fill="none"/>`).join('');
-  if(type==='telescope')rays=colors.map((c,i)=>`<path d="M55 ${95+i*45}L180 ${95+i*45}L${focusX} 145L420 ${110+i*35}L540 ${110+i*35}" stroke="${c}" stroke-width="2" fill="none"/>`).join('');
-  if(type==='microscope')rays=colors.map((c,i)=>`<path d="M70 160L180 ${105+i*30}L355 ${85+i*30}L500 195" stroke="${c}" stroke-width="2" fill="none"/>`).join('');
-  const optics=type==='camera'?lens(260):type==='telescope'?lens(180)+lens(420):type==='microscope'?lens(180)+lens(355):p.lithoWave<20?'<path d="M110 82L165 65M210 165H270M315 80L365 65M405 155H455" stroke="#c4d2e7" stroke-width="9"/>':lens(130)+lens(340);
-  const preview=type==='camera'?`<path d="M490 145V${145+sensorHeight}" stroke="#f3b85f" stroke-width="6"/><text x="390" y="60" fill="white" font-size="12">상 크기 · 배율에 연동</text>`:type==='telescope'?`<circle cx="${focusX}" cy="145" r="5" fill="#ffe6a3"/><text x="255" y="60" fill="white" font-size="12">중간 초점 · 초점거리 비에 연동</text>`:`<text x="235" y="60" fill="white" font-size="12">${metrics[0][0]}: ${fmt(metrics[0][1])} ${metrics[0][2]}</text>`;
-  const apparatus=`<svg class="sim-svg" viewBox="0 0 600 290" role="img" aria-label="${title} 광경로 개념도"><rect width="600" height="290" rx="8" fill="#14283e"/><text x="20" y="27" fill="white">${title}</text><path d="M25 145H570" stroke="#6b829a" stroke-dasharray="5 5"/>${rays}${optics}${preview}<path d="M500 80V215" stroke="#adc2d6" stroke-width="5"/>${positions.map((t,i)=>`<text x="${25+i*190}" y="245" fill="#d5e8fa" font-size="12">${t}</text>`).join('')}<text x="25" y="275" fill="#a6c1d8" font-size="11">광경로 원리 개념도 · 광선 각도/부품 크기 실척 아님 · 입력에 따른 값은 아래 계산 참조</text></svg>`;
   const instrument=type==='camera'?null:instrumentScene(p,type);
-  return {instrumentGeometry:instrument?.geometry,equipment:true,type,title,metrics:metrics.map(([label,value,unit])=>({label,value:fmt(value),unit})),hints,solution,apparatus:type==='camera'?cameraScene(p):instrument.svg,summary:`${title}. ${detail} 기본 계산: ${metrics.map(([label,value,unit])=>`${label}=${fmt(value)??'유효하지 않음'} ${unit}`).join('; ')}. ${solution?'질문에 대한 수식 계산 검산: '+solution:''} 사용자가 요청한 파생값은 가정·단위·식을 밝히고 계산하세요. 정보가 부족하면 필요한 값만 질문하세요. 모든 역산은 이상 모델이며 실제 장비 설정 권고가 아닙니다. 원리를 설명해줘.`};
+  return {instrumentGeometry:instrument?.geometry,equipment:true,type,title,metrics:metrics.map(([label,value,unit])=>({label,value:fmt(value),unit})),hints,solution,apparatus:type==='camera'?cameraScene(p):instrument.svg,summary:`${title}. ${detail} 기본 계산: ${metrics.map(([label,value,unit])=>`${label}=${fmt(value)??'유효하지 않음'} ${unit}`).join('; ')}. ${solution?'질문에 대한 수식 계산 검산: '+solution:''} 사용자가 요청한 파생값은 가정·단위·식을 밝히고 계산하세요. 정보가 부족하면 필요한 값만 질문하세요. 모든 역산은 이상 모델이며 실제 장비 설정 권고가 아닙니다.`};
 }
 
 /** 회전 가능한 직교 투영: 입사면 xy, 경계면 xz, s축 z. */
@@ -353,16 +366,32 @@ function polarizationScene({n1=1,n2=1.5,incidence=45,polMode='both',viewYaw=-30,
  body+=line([0,-130,0],[0,180,0],'#c3cfde',1,true)+text([0,185,0],'법선 n̂');
  body+=line(mul(ki,-185),[0,0,0],'#ffe093',4)+line([0,0,0],mul(kr,180),'#ffe093',3);
  body+=text(mul(ki,-185),'입사광 k →')+text(mul(kr,175),'반사광 →');
- const st=n1/n2*Math.sin(a);
- if(st<=1){const kt=[st,-Math.sqrt(1-st*st),0];body+=line([0,0,0],mul(kt,140),'#8ce0d4',3)+text(mul(kt,145),'투과광 →');}
+ const st=n1/n2*Math.sin(a),tir=st>1,ci=Math.cos(a),ct=tir?0:Math.sqrt(Math.max(0,1-st*st));
+ const kt=tir?null:[st,-ct,0];
+ if(kt)body+=line([0,0,0],mul(kt,140),'#8ce0d4',3)+text(mul(kt,145),'굴절·투과광 →');
+ else body+=text([60,-100,0],'전반사: 전파하는 굴절파 없음');
+ // p 기저를 각 진행 벡터에 수직으로 잡고, 같은 기저 규약의 Fresnel 전기장 계수를 적용한다.
+ const wave=(k,E,begin,end,coefficient,color)=>{
+   if(Math.abs(coefficient)<1e-8)return '';
+   let path='';for(let i=0;i<=100;i++){const t=begin+(end-begin)*i/100,amp=22*coefficient*Math.sin(t*.13-polPhase);const v=mul(k,t).map((x,j)=>x+E[j]*amp);path+=`${i?'L':'M'}${point(v)}`;}
+   return `<path d="${path}" fill="none" stroke="${color}" stroke-width="2.5"/>`;
+ };
  for(const mode of ['s','p'])if(polMode==='both'||polMode===mode) {
-   const color=mode==='s'?'#54c6ff':'#ff9c80',E=mode==='s'?[0,0,1]:[Math.cos(a),Math.sin(a),0];
-   let path='';for(let i=0;i<=100;i++){const t=-180+i*1.7,amp=22*Math.sin(t*.13-polPhase);const v=mul(ki,t).map((x,j)=>x+E[j]*amp);path+=`${i?'L':'M'}${point(v)}`;}
-   body+=`<path d="${path}" fill="none" stroke="${color}" stroke-width="3"/>`;
-   const center=mul(ki,-85),tip=center.map((x,j)=>x+E[j]*48);body+=line(center,tip,color,4)+text(tip,mode==='s'?'Es ⟂ 입사면':'Ep ∥ 입사면',color);
+   const color=mode==='s'?'#54c6ff':'#ff9c80';
+   const basis=k=>mode==='s'?[0,0,1]:[-k[1],k[0],0];
+   const denominator=mode==='s'?n1*ci+n2*ct:n2*ci+n1*ct;
+   const r=tir?1:n1===n2?0:mode==='s'?(n1*ci-n2*ct)/denominator:(n2*ci-n1*ct)/denominator;
+   const t=tir?0:n1===n2?1:2*n1*ci/denominator;
+   body+=wave(ki,basis(ki),-180,-8,1,color)+wave(kr,basis(kr),8,170,r,color);
+   if(kt)body+=wave(kt,basis(kt),8,130,t,color);
+   for(const [k,distance,coefficient] of [[ki,-85,1],[kr,90,r],...(kt?[[kt,80,t]]:[])]){
+     if(Math.abs(coefficient)<1e-8)continue;
+     const center=mul(k,distance),E=basis(k),tip=center.map((x,j)=>x+E[j]*32*coefficient);
+     body+=line(center,tip,color,3)+text(tip,mode==='s'?'Es ⟂ 입사면':'Ep ∥ 입사면',color);
+   }
  }
  body+=text([-200,140,0],'입사면: k와 법선을 포함', '#dfc5fa')+text([-170,0,105],'물질 경계면','#a8dbea');
- return `<svg class="sim-svg polarization-3d" viewBox="0 0 600 430" role="img" aria-label="회전형 3차원 s p 편광 전기장 방향"><rect width="600" height="430" rx="8" fill="#14283e"/>${body}<text x="20" y="28" style="fill:white;font-size:12px">파랑 s: 입사면 밖 / 주황 p: 입사면 안 · 둘 다 E ⟂ k</text><text x="20" y="405" style="fill:#d4e4f1;font-size:12px">전기장 진폭은 방향 비교용 · 반사율은 아래 Fresnel 그래프에서 확인</text></svg>`;
+ return `<svg class="sim-svg polarization-3d" viewBox="0 0 600 430" role="img" aria-label="회전형 3차원 s p 편광 전기장 방향"><rect width="600" height="430" rx="8" fill="#14283e"/>${body}<text x="20" y="28" style="fill:white;font-size:12px">파랑 s: 입사면 밖 / 주황 p: 입사면 안 · 둘 다 E ⟂ k</text><text x="20" y="405" style="fill:#d4e4f1;font-size:12px">진폭: 전기장 Fresnel 계수 · 전반사 위상차·소멸파 생략</text></svg>`;
 }
 
 /** 공개 원리 기반 장비 단면. 부품 배치·반사 횟수·길이는 실제 설계와 다르다. */
@@ -421,7 +450,7 @@ function absorptionEnergyScene(v) {
  return `<svg class="sim-svg absorption-energy-scene" viewBox="0 0 680 420" role="img" aria-label="물질 문턱과 광자 에너지를 비교하는 전자 들뜸 실험">
  <rect width="680" height="420" rx="8" fill="#14283e"/>${text(20,28,'왼쪽: 에너지(eV) / 오른쪽: 물질 내부·외부',17)}
  ${ticks}<path d="M45 65V265" stroke="#96b2c8"/>
- <path d="M55 ${y(T)}H300" stroke="#a3c3e7" stroke-width="3"/>${text(60,y(T)-9,(metal?'진공 준위 Φ':'전도대 바닥 Eg')+' = '+T.toFixed(3)+' eV',12)}
+ <path d="M55 ${y(T)}H300" stroke="#a3c3e7" stroke-width="3"/>${text(60,y(T)-9,(metal?'진공 준위 Evac':'전도대 바닥 Ec')+' = '+T.toFixed(3)+' eV',12)}
  <path d="M55 265H300" stroke="#75b8de" stroke-width="4"/>${text(60,288,metal?'EF = 0 기준':'가전자대 꼭대기 Ev = 0',12)}
  <path d="M95 265V${y(E)}" stroke="#f2cd76" stroke-width="7"/>${text(110,y(E)+5,'광자 '+E.toFixed(3)+' eV',12,'#f2cd76')}
  <circle cx="260" cy="${y(electronEnergy)}" r="8" fill="#61caff" stroke="white"/>
@@ -434,7 +463,7 @@ function absorptionEnergyScene(v) {
  ${metal?'<rect x="622" y="130" width="7" height="110" fill="#87abc3"/>':`<path d="M400 230H515M400 130H515" stroke="#8aaeca" stroke-width="3"/>${lift>0?'<circle cx="470" cy="230" r="8" fill="none" stroke="#e6a779" stroke-dasharray="3 3"/>':''}`}
  ${text(370,310,metal?(allowed?'표면 밖 방출의 에너지 조건 충족':'단일 광자 방출 불가'):'내부 들뜸 ≠ 진공 방출',12)}
  ${text(20,347,metal?'남는 에너지 = 방출 전자의 최대 운동에너지':'초과 에너지 E−Eg = '+excess.toFixed(3)+' eV: 전자·정공 운동에너지 등에 분배',12)}
- ${text(20,375,'세로 눈금은 조건에 따라 자동 확대 · 파란 점=전자 · 노란 선/점=광자 에너지/입사',11)}
+ ${text(20,375,'세로축 자동 확대: 에너지 상한 아님 · 파란 점=전자 · 노란색=광자',11)}
  ${text(20,399,'시간·입자 수·이동 거리는 개념 표시. 실제 흡수율·직접/간접 전이율·수명은 예측하지 않음.',11)}
  </svg>`;
 }
@@ -448,21 +477,182 @@ function instrumentScene(p,type) {
  const lens=(x,h,id,concave=false)=>concave?`<path data-optic="${id}" d="M${x-8} ${155-h}Q${x+1} 155 ${x-8} ${155+h}H${x+8}Q${x-1} 155 ${x+8} ${155-h}Z" fill="#c8e5f2" stroke="#537f9f"/>`:`<ellipse data-optic="${id}" cx="${x}" cy="155" rx="9" ry="${h}" fill="#c8e5f2" stroke="#537f9f"/>`;
  let body='',geometry={};
  if(telescope){
-  const H=p.diameter*.23,rayH=H*.8,fo=p.objective,fe=p.eyepiece,L=galilean?fo-fe:fo+fe;
+  const H=p.diameter*.23,rayH=H*.8,fo=p.objective,fe=p.eyepiece,L=(galilean?fo-fe:fo+fe)+Number(p.eyepieceOffset||0);
   const x1=150,x2=x1+330*L/(fo+fe),focus=x1+330*fo/(fo+fe),outH=rayH*fe/fo;
   // 접안렌즈의 표시 크기는 고정한다. 지원 범위의 최대 출사 광선 높이(44.16)를 수용한다.
   const eyepieceH=52;geometry={objectiveRadius:H+8,rayRadius:rayH,eyepieceRadius:eyepieceH,outRadius:outH};
   body+=`<rect x="${x1}" y="${155-H-15}" width="${x2-x1}" height="${2*H+30}" rx="7" fill="#e7edf3" stroke="#c0cdd7"/>`;
-  for(const sign of [-1,0,1]){const y=155+sign*rayH,out=155+(galilean?1:-1)*sign*outH;body+=line([[25,y],[x1,y],[x2,out],[570,out]],sign===0?'#dda757':'#5489b5');if(galilean)body+=line([[x2,out],[focus,155]],'#9b7fa8',true);}
+  for(const sign of [-1,0,1]){const y=155+sign*rayH,out=155+sign*rayH*(1-L/fo),slope=-sign*rayH/fo-(out-155)/(galilean?-fe:fe),end=out+slope*(570-x2)*(fo+fe)/330;body+=line([[25,y],[x1,y],[x2,out],...(Math.abs(out-155)<=eyepieceH?[[570,end]]:[])],sign===0?'#dda757':'#5489b5');if(galilean)body+=line([[x2,out],[focus,155]],'#9b7fa8',true);}
   body+=lens(x1,H+8,'objective')+lens(x2,eyepieceH,'eyepiece',galilean)+`<circle cx="${focus}" cy="155" r="4" fill="#b69262"/>`;
   body+=txt(150,60,'大物 구경 D = '+p.diameter+' mm').replace('大物','대물')+txt(x1,270,'대물: 볼록렌즈')+txt(x2,292,galilean?'접안: 오목렌즈':'접안: 볼록렌즈')+txt(390,45,galilean?'정립상 · 내부 실상 없음':'도립상 · 두 렌즈 사이 실상')+txt(330,328,'대물 구경: 집광 폭 변화 · 접안렌즈 크기 고정 · 렌즈 크기는 개념 축척');
  }else{
-  const h=18+42*p.microNA/p.medium,rayH=h*.82,x1=180,x2=400,imageX=560;
-  geometry={objectiveRadius:h,rayRadius:rayH};
-  body+=`<rect x="45" y="197" width="75" height="12" fill="#899dac"/><path d="M80 197V155" stroke="#b98362" stroke-width="4"/>`;
-  for(const sign of [-1,0,1]){const y=155+sign*rayH;body+=finite?line([[80,155],[x1,y],[imageX,155]],'#5489b5'):line([[80,155],[x1,y],[x2,y],[imageX,155]],'#5489b5');}
-  body+=lens(x1,h,'objective')+(finite?'':lens(x2,h+5,'tube'))+`<path d="M560 95V215" stroke="#8b9eb0" stroke-width="4"/>`;
-  body+=txt(80,245,'시료')+txt(x1,270,'대물렌즈 · NA '+p.microNA)+txt(finite?410:x2,58,finite?'대물이 직접 유한 거리의 실상 형성':'대물 뒤 평행광 → 튜브렌즈')+txt(560,245,'중간상면')+txt(330,325,'물체 한 점의 광선 다발 · NA에 따른 수광 범위 개념 표시');
+  const h=18+42*p.microNA/p.medium,rayH=h*.82,x1=180;
+  // 각 구간은 별도 축척이다. 시료를 초점 조건에 자동 배치하며 같은
+  // 시료 높이를 유지해 f_obj와 f_tube 변경에 따른 상 크기를 비교한다.
+  const magnification=finite?p.tube/p.microF-1:p.tube/p.microF;
+  const objectDistance=finite?p.microF*p.tube/(p.tube-p.microF):p.microF;
+  const objectX=x1-3*objectDistance,x2=330,imageX=finite?300+.65*p.tube:x2+.6*p.tube;
+  const objectH=.5,imageH=objectH*magnification,imageY=155+imageH;
+  geometry={objectiveRadius:h,rayRadius:rayH,magnification,objectDistance,imageX,imageHeight:imageH};
+  body+=`<rect x="${objectX-22}" y="197" width="44" height="12" fill="#899dac"/><path d="M${objectX} 197V${155-objectH}" stroke="#b98362" stroke-width="3"/><circle cx="${objectX}" cy="${155-objectH}" r="3" fill="#c56c43"/>`;
+  for(const sign of [-1,0,1]){
+   const y=155+sign*rayH;
+   // 무한 보정 구간의 광선은 서로 평행하고 튜브렌즈 뒤에서 한 점에 모인다.
+   const tubeY=y+imageH*80/p.tube;
+   body+=finite?line([[objectX,155-objectH],[x1,y],[imageX,imageY]],'#5489b5'):line([[objectX,155-objectH],[x1,y],[x2,tubeY],[imageX,imageY]],'#5489b5');
+  }
+  body+=lens(x1,h,'objective')+(finite?'':lens(x2,h+65,'tube'))+`<path d="M${imageX} 80V240" stroke="#8b9eb0" stroke-width="3"/><path data-image-height="${imageH}" d="M${imageX} 155V${imageY}l-5 -7m5 7 5 -7" fill="none" stroke="#c56c43" stroke-width="3"/>`;
+  body+=txt(objectX,245,'시료')+txt(x1,270,'대물 f = '+p.microF+' mm')+txt(finite?410:x2,58,finite?'대물이 직접 실상 형성':'튜브렌즈 f = '+p.tube+' mm')+txt(imageX,260,'중간상 '+magnification.toFixed(1)+'배')+txt(330,302,'주황색: 같은 시료의 도립 중간상 · 시료 위치는 초점 조건에 자동 배치')+txt(330,328,'구간별 축척이 다름 · 초점거리를 바꿔 중간상 크기와 광선 비교');
  }
  return {geometry,svg:`<svg class="sim-svg instrument-scene" viewBox="0 0 600 350" role="img" aria-label="${title} 장치와 유효 구경 광선"><rect width="600" height="350" rx="8" fill="#f2f6fa"/>${txt(300,24,title)}<path d="M20 155H580" stroke="#b1c0cf" stroke-dasharray="5 5"/>${body}</svg>`};
 }
+
+/** 실험 조절 항목. 이상적 이론 그래프와 구분되는 검출/정렬 학습 모델이다. */
+function opticsPracticalControls(kind,metal=false){
+ const c=(key,label,min,max,step,value,unit='')=>({key,label,min,max,step,value,unit});
+ const focus=[c('screen','스크린 위치',1,100,.1,15,'cm'),c('aperture','유효 구경',.2,4,.1,1,'cm')];
+ const map={
+ michelson:[c('arm1Distance','빔스플리터 → M₁ 거울 거리',99.9,100.1,.0001,100,'mm'),c('arm2Distance','빔스플리터 → M₂ 거울 거리 · 기준',99.9,100.1,.0001,100.02,'mm'),c('beamX','귀환빔 위치 보정 X',-8,8,.05,0,'mm'),c('beamY','귀환빔 위치 보정 Y',-8,8,.05,0,'mm'),c('waist1','M₁ 빔 반경',1,4,.1,2,'mm'),c('waist2','M₂ 빔 반경',1,4,.1,2,'mm'),c('balance','M₂ / M₁ 광량',.05,1,.01,1)],
+ polarization:[c('axisError','분석기 영점 오차',-15,15,.1,0,'°'),c('leak','교차 편광판 누설 비율',0,.1,.001,0)],
+ diffraction:[c('beamOffset','슬릿에 대한 입사빔 중심',-.4,.4,.005,0,'mm'),c('steering','입사 빔 조향각',-5,5,.05,0,'mrad'),c('background','검출기 배경광',0,.15,.005,0)],
+ xrd:[c('zero','검출각 영점 오차',-1.5,1.5,.01,0,'°'),c('height','시료 높이 오차',-1,1,.01,0,'mm'),c('acceptance','검출 각도 허용폭 σ',.05,1,.01,.2,'°')],
+ fresnel:[c('zero','입사각 눈금 영점 오차',-3,3,.05,0,'°'),c('mixing','p축에서 벗어난 편광축',0,90,.5,0,'°')],
+ prism:[c('rotation','프리즘 회전 · 기준 입사 대비',-5,5,.1,0,'°'),c('detectorOffset','스크린 수직 위치 보정',-30,30,.5,0,'mm')],
+ camera:[c('screen','센서의 렌즈 뒤 위치',1,1100,.1,52.6,'mm')],
+ telescope:[c('eyepieceOffset','접안렌즈 위치 오차',-20,20,.1,0,'mm'),c('pupilOffset','눈의 출사동공 중심 이탈',-6,6,.05,0,'mm')],
+ microscope:[c('sampleDefocus','시료 상하 미동',-8,8,.05,0,'µm')],
+ absorption:metal?[c('retarding','수집 전극의 저지 전압',0,10,.01,0,'V')]:[c('thickness','시료 두께',.1,10,.1,1,'µm'),c('alpha','가상 흡수계수 α',.05,2,.05,.5,'µm⁻¹')]
+ };
+ if(['concave-lens','convex-mirror'].includes(kind))return [c('eyeDistance','눈과 광학소자 거리',5,80,.5,20,'cm'),c('eyeOffset','눈의 광축 이탈',-4,4,.05,0,'cm'),c('aperture','유효 구경',.2,4,.1,1,'cm')];
+ return map[kind]||focus;
+}
+
+/** 표준 근축식·Gaussian 빔 합성·검출기 수용각을 이용한 실습 화면.
+ * 표시 크기/색/초점 흐림은 학습용 축척이며 실제 장비 예측은 아니다.
+ */
+let michelsonPaintCache=null;
+function opticsPractical(kind,p,r,settings={}){
+ const defaults=Object.fromEntries(opticsPracticalControls(kind,p.absorptionType==='metal').map(c=>[c.key,c.value]));
+ const s={...defaults,...settings}, metrics=[],f=x=>Number(x.toFixed(4));
+ const txt=(x,y,t,size=13)=>`<text x="${x}" y="${y}" fill="#dceaf5" font-size="${size}" text-anchor="middle" style="fill:#dceaf5;font:${size}px Arial,sans-serif;text-anchor:middle">${t}</text>`;
+ const line=(x1,y1,x2,y2,color='#75b8dc',width=2)=>`<path d="M${x1} ${y1}L${x2} ${y2}" stroke="${color}" stroke-width="${width}" fill="none"/>`;
+ let body='',note='',state={},title='검출 화면',height=260,detectorImage='';
+ const bar=(label,value,y,color='#74c8df')=>txt(125,y+14,label,12)+`<rect x="235" y="${y}" width="300" height="17" fill="#294052"/><rect x="235" y="${y}" width="${300*Math.max(0,Math.min(1,value))}" height="17" fill="${color}"/>`+txt(385,y+38,(value*100).toFixed(1)+'%',12);
+ const trace=(fn,max=1)=>Array.from({length:241},(_,i)=>`${i?'L':'M'}${40+i*520/240},${210-150*fn(i/240)/max}`).join(' ');
+ if(kind==='michelson'){
+  // M₂ 회전은 반사각을 2배 바꾸고, 1m 유효 전파 뒤 빔 중심도 이동시킨다.
+  const dx=s.beamX+2*Number(p.mirrorTiltX||0),dy=s.beamY+2*Number(p.mirrorTiltY||0);
+  const w1=s.waist1,w2=s.waist2,sep=Math.hypot(dx,dy),overlap=2*w1*w2/(w1*w1+w2*w2)*Math.exp(-sep*sep/(w1*w1+w2*w2));
+  const geometry=michelsonGeometry({...p,...s});
+  // 이전 저장 입력은 호환하되 새 화면에서는 두 거리로부터 차이를 계산한다.
+  if(settings.armDifference!==undefined){geometry.gap=Number(settings.armDifference);geometry.currentGap=geometry.gap+Number(p.displacement||0);geometry.opl=2*geometry.currentGap;geometry.phaseCycles=2*(geometry.currentGap-20)*1000/p.wavelength;}
+  const mode=s.view||'interference';
+  const extent=mode==='alignment'?12:4,n=mode==='alignment'?96:192,pitch=2*extent/n,k=2*Math.PI/(p.wavelength/1e6),tx=Number(p.mirrorTiltX||0)*.002,ty=Number(p.mirrorTiltY||0)*.002;
+  const sinc=x=>Math.abs(x)<1e-10?1:Math.sin(x)/x;
+  const pixelAverage=sinc(k*tx*pitch/2)*sinc(k*ty*pitch/2),groups={};
+  const paintKey=JSON.stringify([mode,dx,dy,w1,w2,s.balance,p.wavelength,mode==='alignment'?0:geometry.phaseCycles,p.displacement,geometry.currentGap,tx,ty,p.visibility]);
+  let raster;
+  if(michelsonPaintCache?.key===paintKey){raster=michelsonPaintCache.raster;detectorImage=michelsonPaintCache.image;}else{
+  for(let iy=0;iy<n;iy++)for(let ix=0;ix<n;ix++){
+   const x=(ix+.5)/n*2*extent-extent,y=(iy+.5)/n*2*extent-extent;
+   const a=Math.exp(-2*(x*x+y*y)/(w1*w1)),b=s.balance*Math.exp(-2*((x-dx)**2+(y-dy)**2)/(w2*w2));
+   let color;
+   if(mode==='alignment')color=`rgb(${Math.round(255*Math.sqrt(b))},${Math.round(220*Math.sqrt(Math.max(a,b)))},${Math.round(255*Math.sqrt(a))})`;
+   else{
+    const phase=2*Math.PI*geometry.phaseCycles+k*(tx*x+ty*y)+4*Math.PI*geometry.currentGap*1e3/p.wavelength*(Math.cos(Math.atan(Math.hypot(x,y)/10))-1);
+    const v=Math.max(0,(a+b+2*Number(p.visibility??1)*Math.sqrt(a*b)*pixelAverage*Math.cos(phase))/4);
+    const level=Math.round(Math.sqrt(Math.min(1,v))*63)/63;color=wavelengthColor(p.wavelength,level);
+   }
+   (groups[color]??=[]).push(`M${ix} ${iy}h1v1h-1z`);
+  }
+  raster=Object.entries(groups).map(([color,path])=>`<path shape-rendering="crispEdges" fill="${color}" d="${path.join('')}"/>`).join('');
+  detectorImage='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${n} ${n}">${raster}</svg>`);
+  michelsonPaintCache={key:paintKey,raster,image:detectorImage};
+  }
+  const cx=300,cy=178,scale=11;
+  body+=`<svg x="168" y="46" width="264" height="264" viewBox="0 0 ${n} ${n}">${raster}</svg>`;
+  if(mode==='alignment')body+=line(cx-7,cy,cx+7,cy,'#71e8ff')+line(cx,cy-7,cx,cy+7,'#71e8ff')+line(cx+dx*scale-7,cy+dy*scale,cx+dx*scale+7,cy+dy*scale,'#ffd090')+line(cx+dx*scale,cy+dy*scale-7,cx+dx*scale,cy+dy*scale+7,'#ffd090');
+  if(mode==='alignment')body+=`<circle data-return-beam="true" cx="${cx+dx*scale}" cy="${cy+dy*scale}" r="15" fill="transparent" tabindex="0" role="button" aria-label="M₂ 귀환빔. 끌거나 방향키로 위치 보정" style="cursor:grab"/>`;
+  if(mode==='alignment')body+=txt(92,120,'M₁ 기준빔',14)+txt(92,143,'청록색 경로',12)+txt(512,120,'M₂ 귀환빔',14)+txt(512,143,'주황색 경로',12);
+  else body+=txt(80,120,'합성광',14)+txt(520,120,`${p.wavelength} nm`,14);
+  body+=txt(300,338,mode==='alignment'?'화면 범위 ±12 mm · 색은 경로 구분용':'간섭 관측 확대 · 화면 범위 ±4 mm',12);
+  state={beamSeparation:sep,beamDX:dx,beamDY:dy,overlap,pixelAverage,geometry,observationExtent:extent,observationFocal:10};height=360;title=mode==='alignment'?'두 귀환빔 정렬':'겹친 영역의 간섭';
+  metrics.push(['M₁까지 편도 거리',geometry.arm1,'mm'],['M₂까지 현재 편도 거리',geometry.currentArm2,'mm'],['두 거리 차이 · M₂−M₁',geometry.currentGap,'µm'],['왕복 광로차 · 공기 근사',geometry.opl,'µm'],['두 빔 중심 간격',sep,'mm'],['위치·빔 폭 겹침 지표',overlap*100,'%']);
+  note='기본 화면은 두 귀환빔이 겹친 원형 간섭무늬입니다. 정렬 확인 모드에서는 두 광점의 중심과 폭을 맞춥니다. 위치 보정은 조향 거울쌍의 효과, M₂ 각도는 방향·빔 중심을 함께 바꿉니다. 같은 중심이어도 각도·폭·광량이 다르면 무늬가 달라집니다. 거울 변위는 밝고 어두운 고리를 이동시키고 M₂ 기울기는 위상 기울기와 빔 중심을 함께 바꿉니다. 관측 렌즈 f=10 mm, 두 거울까지 거리 차이 (L₂−L₁)+Δx의 등경사 위상을 Gaussian 빔에 합성한 교육 모델입니다. 정렬 화면 ±12 mm와 간섭 확대 화면 ±4 mm의 배율이 다릅니다.';
+ }else if(['lens','concave-lens','concave-mirror','convex-mirror','camera','microscope'].includes(kind)){
+  let image=r.image,aperture=s.aperture,screen=s.screen,unit='cm';
+  if(kind==='camera'){image=p.u>p.f?p.f*p.u/(p.u-p.f):null;aperture=p.f/p.fNumber;unit='mm';}
+  if(kind==='microscope'){
+   const finite=p.microscopeModel==='finite',base=finite?p.microF*p.tube/(p.tube-p.microF):p.microF;
+   const u=base+s.sampleDefocus/1000,q=1/u-1/p.microF,a=1+80*q;
+   image=finite?-1/q:-a/(q-a/p.tube);screen=p.tube;aperture=2*p.microF*p.microNA/p.medium*(finite?1:Math.abs(a));unit='mm';
+  }
+  if(Number.isFinite(image)&&image<0&&s.eyeDistance!==undefined){
+   const radius=s.aperture/2*(1+s.eyeDistance/Math.abs(image)),visible=Math.abs(s.eyeOffset)<radius;
+   const angular=Math.abs(r.magnification)/(s.eyeDistance+Math.abs(image));
+   body=`<rect x="160" y="45" width="280" height="170" fill="#050b12" stroke="#6489a2"/>`+(visible?`<text x="300" y="145" text-anchor="middle" fill="#d9f4ff" font-family="serif" font-size="${Math.max(15,Math.min(110,angular*2200))}" style="fill:#d9f4ff;font:${Math.max(15,Math.min(110,angular*2200))}px Georgia,serif">F</text>`:txt(300,130,'눈이 출사 광선 다발을 벗어남',16));
+   state={image,real:false,visible,angular};title='눈의 위치를 옮겨 허상 보기';metrics.push([kind==='concave-lens'?'렌즈의 물체 쪽 허상 거리':'거울 뒤 허상 거리',Math.abs(image),'cm'],['눈에서의 각크기 · 표식 높이 1 cm',angular*1000,'mrad']);
+   note='허상은 눈으로 볼 수 있지만 스크린에 직접 받을 수 없습니다. 눈을 광축 밖으로 옮기면 유한 구경을 통과한 광선 다발을 놓칩니다. F는 정립 허상이며 크기는 각크기의 확대 표시입니다.';
+  }else{
+  const real=Number.isFinite(image)&&image>0,blur=real?Math.abs(aperture*(1-screen/image)):null;
+  const blurPx=real?Math.min(20,blur*(kind==='microscope'?5:kind==='camera'?6:16)):0;
+  body+=`<defs><filter id="focus-practice-${kind}" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="${blurPx}"/></filter></defs><rect x="160" y="45" width="280" height="170" fill="#050b12" stroke="#6489a2"/>`;
+  body+=real?`<g filter="url(#focus-practice-${kind})"><text x="300" y="130" text-anchor="middle" dominant-baseline="middle" fill="#d9f4ff" font-size="92" font-family="serif" style="fill:#d9f4ff;font:92px Georgia,serif" transform="rotate(180 300 130)">F</text></g>`:txt(300,132,'무늬가 맺히는 실상면 없음',17);
+  title=kind==='microscope'?'시료 미동에 따른 고정 중간상면':'스크린·센서의 초점 맞추기';
+  metrics.push(['고정 검출면 위치',screen,unit]);if(real)metrics.push(['현재 선명한 상면',image,unit],['기하학적 흐림 원 지름',blur,unit]);
+  state={image,screen,blur,real};note='실상면과 검출면이 일치하면 기하학적 흐림이 줄어듭니다. 허상은 스크린으로 받을 수 없습니다. F는 초점 확인 표식이며 표시 흐림은 확대 축척입니다. 수차·회절 PSF는 포함하지 않습니다.';
+  }
+ }else if(kind==='polarization'){
+  const actual=p.angle+s.axisError,signal=s.leak+(1-s.leak)*Math.cos(actual*Math.PI/180)**2;
+  body=bar('분석기 투과광',signal,70)+txt(300,180,'눈금 각도와 실제 투과축 차이를 조절해 소광을 찾아보세요.');state={actualAngle:actual,signal};metrics.push(['실제 두 축 상대각',actual,'°'],['검출 세기 비',signal,'']);note='누설 비율은 유한 소광비를 모사하는 입력입니다. 이상적 말뤼스 그래프와 실제 조절 검출값을 구분합니다.';
+ }else if(kind==='diffraction'){
+  const double=p.slitMode==='double',d=Number(p.slitSeparation??.3),a=p.slit,w=double?.5:.12,steps=200;
+  const power=offset=>{let sum=0;for(let i=0;i<steps;i++){const x=offset-a/2+(i+.5)*a/steps;sum+=Math.exp(-2*(x-s.beamOffset)**2/w**2)*a/steps/(w*Math.sqrt(Math.PI/2));}return sum;};
+  const left=power(double?-d/2:0),right=double?power(d/2):0,transmitted=left+right;
+  const center=p.distance*s.steering,fn=x=>{
+    const theta=Math.atan((x-center)/(1000*p.distance)),beta=Math.PI*a*Math.sin(theta)/(p.wavelength*1e-6);
+    const envelope=Math.abs(beta)<1e-8?1:(Math.sin(beta)/beta)**2;
+    const phase=2*Math.PI*d*Math.sin(theta)/(p.wavelength*1e-6);
+    return envelope*(double?(left+right+2*Math.sqrt(left*right)*Math.cos(phase))/2:left)+s.background;
+  };
+  // 정면에서 보는 관찰 스크린. 가로축은 검출 위치, 세로축은 긴 슬릿 방향이다.
+  const strips=Array.from({length:1200},(_,i)=>{const x=(i+.5)/1200*40-20;return `<rect x="${50+i*500/1200}" y="65" width="${500/1200+.02}" height="150" fill="${wavelengthColor(p.wavelength,Math.sqrt(Math.min(1,Math.max(0,fn(x)))))}"/>`;}).join('');
+  body=`<rect x="48" y="63" width="504" height="154" fill="#000" stroke="#7896a9"/>`+strips+txt(50,238,'−20 mm',12)+txt(300,238,'0',12)+txt(550,238,'+20 mm',12);
+  state={transmitted,center,left,right};metrics.push(['슬릿 통과 광량',transmitted*100,'%'],['무늬 중심 이동',center,'mm']);
+  if(double)metrics.push(['간섭무늬 간격',p.wavelength*.001*p.distance/d,'mm']);
+  title=double?'이중슬릿 · 스크린 정면의 간섭무늬':'단일슬릿 · 스크린 정면의 회절무늬';
+  note='스크린을 빛이 도달하는 관찰면에서 정면으로 본 화면입니다. 세로 줄은 긴 슬릿의 방향이며 가로 밝기만 계산합니다. '+(double?'유한 슬릿 폭의 회절 포락선 안에 두 슬릿의 간섭무늬가 생깁니다. 두 슬릿의 조명 불균형은 대비를 낮춥니다.':'중앙 밝은 띠와 양쪽의 약한 부극대가 나타납니다.')+' 빔 조향은 무늬를 이동시킵니다. 원거리·균일한 슬릿 내부 조명의 근사이며 밝기는 관찰용 제곱근 감마입니다. 실제 촬영 이미지가 아닙니다.';
+ }else if(kind==='xrd'){
+  const center=r.twoTheta===null?null:r.twoTheta+s.zero-2*s.height/200*Math.cos(r.theta*Math.PI/180)*180/Math.PI;
+  const response=center===null?0:Math.exp(-.5*((p.scanTwoTheta-center)/s.acceptance)**2);
+  body=bar('검출각 일치도',response,65)+txt(300,175,'주황: 현재 검출각 / 청록: 이동한 반사 위치');
+  if(center!==null)body+=line(50+500*p.scanTwoTheta/180,190,50+500*p.scanTwoTheta/180,225,'#ffbb78',4)+line(50+500*center/180,190,50+500*center/180,225,'#79ddf0',4);
+  state={center,response};if(center!==null)metrics.push(['오차를 포함한 반사 위치',center,'°']);metrics.push(['검출각 일치도',response*100,'%']);note='대칭 θ–2θ, 고니오미터 반경 200 mm, 높이 오차 Δ(2θ)=−2h cosθ/R의 근사입니다. 일치도는 지정한 각도 수용폭의 Gaussian 응답이며 실제 XRD 세기나 피크 폭 데이터가 아닙니다.';
+ }else if(kind==='fresnel'){
+  const a=Math.max(0,Math.min(89.5,p.incidence+s.zero)),u=p.n1/p.n2*Math.sin(a*Math.PI/180),ci=Math.cos(a*Math.PI/180),ct=Math.sqrt(Math.max(0,1-u*u));
+  const rs=p.n1===p.n2?0:u>1?1:((p.n1*ci-p.n2*ct)/(p.n1*ci+p.n2*ct))**2,rp=p.n1===p.n2?0:u>1?1:((p.n2*ci-p.n1*ct)/(p.n2*ci+p.n1*ct))**2;
+  const signal=rp*Math.cos(s.mixing*Math.PI/180)**2+rs*Math.sin(s.mixing*Math.PI/180)**2;
+  body=bar('혼합 편광 반사 검출',signal,70)+txt(300,180,'편광축이 어긋나면 브루스터 각에서도 s 성분이 남습니다.');state={actualAngle:a,signal};metrics.push(['실제 법선 기준 입사각',a,'°'],['반사 검출 비율',signal*100,'%']);note='p편광축 오차를 s/p 세기 혼합으로 계산합니다. 회전 시야와 편광축 조절은 별개입니다.';
+ }else if(kind==='prism'){
+  const rays=r.rays.map(ray=>({lambda:ray.lambda,y:ray.displayY-s.detectorOffset}));
+  body+=`<rect x="200" y="35" width="200" height="185" fill="#050a12" stroke="#7596ac"/>`;
+  for(let i=0;i<r.rays.length;i++){const ray=r.rays[i],y=(rays[i].y-40)*.75;if(y>=35&&y<=220)body+=line(205,y,395,y,ray.color,7);}
+  state={incomingAngle:r.incomingAngle,screenCenters:rays.map(ray=>ray.y),captured:rays.filter(x=>{const y=(x.y-40)*.75;return y>=35&&y<=220;}).length};metrics.push(['스크린 안 대표 파장',state.captured,'개']);note='회전은 위 장치의 입사·굴절·출사 경로를 함께 바꿉니다. 스크린 위치가 벗어나면 일부 빛을 놓칠 수 있습니다. 스크린 보정은 그림 좌표 1단위=1 mm로 가정한 확대 표시이며 실제 장치 치수가 아닙니다.';
+ }else if(kind==='telescope'){
+  const signedFe=p.telescopeModel==='galilean'?-p.eyepiece:p.eyepiece,u=signedFe+s.eyepieceOffset,vergence=Math.abs(u)<1e-10?null:1/signedFe-1/u;
+  const exitDiameter=p.diameter/(p.objective/p.eyepiece),pupilRadius=exitDiameter/2,eyeRadius=1.5;
+  let transmitted=0,total=0;for(let iy=-30;iy<=30;iy++)for(let ix=-30;ix<=30;ix++){const x=ix/30*pupilRadius,y=iy/30*pupilRadius;if(x*x+y*y<=pupilRadius*pupilRadius){total++;if((x-s.pupilOffset)**2+y*y<=eyeRadius*eyeRadius)transmitted++;}}
+  const signal=total?transmitted/total:0;
+  body+=`<circle cx="300" cy="125" r="${Math.min(80,pupilRadius*20)}" fill="#69d7ef" fill-opacity=".5"/><circle cx="${300+s.pupilOffset*20}" cy="125" r="30" fill="none" stroke="#ffd08b" stroke-width="3"/>`+txt(300,235,'청록: 출사동공 / 주황: 눈의 동공(지름 3 mm)');state={vergence,signal};metrics.push(['렌즈 간 실제 설정 거리',p.objective+(p.telescopeModel==='galilean'?-p.eyepiece:p.eyepiece)+s.eyepieceOffset,'mm'],['눈에 들어오는 광량 비',signal*100,'%']);if(vergence!==null)metrics.push(['출사 광속 버전스',vergence*1000,'m⁻¹']);note='접안 위치가 맞으면 출사 광선이 평행합니다(버전스 0). 눈을 출사동공 중심에서 벗어나게 하면 시야가 어두워집니다. 눈의 조절·수차는 생략합니다.';
+ }else if(kind==='absorption'){
+  if(p.absorptionType==='metal'){
+   const collected=r.emits&&r.kinetic>s.retarding,remaining=Math.max(0,(r.kinetic||0)-s.retarding);
+   body+=line(150,55,150,205,'#8ec9dd',8)+line(450,55,450,205,'#ffd192',8)+line(165,130,collected?440:295,130,collected?'#8ee9ff':'#ed9875',4)+txt(300,65,!r.emits?'현재 에너지에서 양의 운동에너지 방출 없음':collected?'수집 전극까지 도달':'방출 후 전극 도달 전 저지')+txt(150,235,'금속 표면')+txt(450,235,'수집 전극');if(r.emits&&Number(p.intensity??1)>0)body+=`<circle r="5" fill="#96e4ff"><animateMotion dur="1.8s" repeatCount="indefinite" path="${collected?'M170 130L435 130':'M170 130L295 130L170 130'}"/></circle>`;state={collected,remaining};metrics.push(['최대 전자의 잔여 운동에너지',remaining,'eV']);note='Φ를 넘겨 방출되어도 저지 전압이 Kmax/e 이상이면 수집되지 않습니다. 최대 에너지 전자 하나의 도달 조건이며 실제 전류–전압 곡선을 예측하지 않습니다.';
+  }else{
+   const transmitted=Math.exp(-s.alpha*s.thickness),absorbed=1-transmitted;
+   body=bar('시료 통과광',transmitted,55)+bar('시료 흡수광',absorbed,135,'#efb471');state={transmitted,absorbed};metrics.push(['광학 두께 αt',s.alpha*s.thickness,''],['투과율',transmitted*100,'%']);note='입력한 가상 α에 대한 Beer–Lambert I/I₀=exp(−αt). α는 실제 물질 데이터나 밴드갭으로 계산한 값이 아닙니다. 흡수와 밴드 간 들뜸·진공 방출 조건을 구분합니다.';
+  }
+ }
+ return {title,state,detectorImage,metrics:metrics.map(([label,value,unit])=>({label,value:Number.isFinite(value)?f(value):null,unit})),note,svg:`<svg class="sim-svg practical-screen" viewBox="0 0 600 ${height}" role="img" aria-label="${title}"><rect width="600" height="${height}" rx="8" fill="#102434"/>${txt(300,27,title,16)}${body}</svg>`,summary:`현장 조절 학습 모델 (${kind}): ${Object.entries(s).map(([k,v])=>`${k}=${v}`).join(', ')}. ${metrics.map(([label,value,unit])=>`${label}=${Number.isFinite(value)?f(value):'없음'} ${unit}`).join('; ')}. ${note}`};
+}
+if(typeof module!=='undefined')Object.assign(module.exports,{opticsPractical,opticsPracticalControls});

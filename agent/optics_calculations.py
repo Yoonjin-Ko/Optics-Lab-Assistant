@@ -8,6 +8,7 @@ SPECS = {
  'photon_energy': ('광자 에너지', 'light-fundamentals', ['wavelength'], 'E = hc/λ₀', '진공 파장, 광자 한 개의 에너지'),
  'bragg_angle': ('브래그 각도', 'xrd-bragg', ['wavelength','spacing','order'], '2d sinθ = nλ', '같은 단위로 변환. θ는 결정면 기준이며 측정 축은 2θ. 결정 소멸 규칙·세기는 계산하지 않음'),
  'michelson_wavelength': ('간섭계 파장', 'michelson-interferometer', ['displacement','fringes'], 'λ ≈ 2Δx/N', '공기 n≈1, 한 팔 거울 이동, 밝음→다음 밝음을 한 주기로 계수'),
+ 'michelson_displacement': ('간섭계 거울 이동량', 'michelson-interferometer', ['wavelength','fringes'], 'Δx ≈ Nλ/2', '공기 n≈1, 한 팔 거울의 추가 이동 거리, 밝음→다음 밝음 한 주기'),
  'michelson_fringes': ('간섭무늬 주기 수', 'michelson-interferometer', ['displacement','wavelength'], 'N ≈ 2Δx/λ', '공기 n≈1, 왕복 경로. 결과는 연속적인 위상 주기 수'),
  'malus': ('편광판 투과 세기 비', 'polarization-and-reflection', ['angle'], 'I/I₀ = cos²θ', '이상적인 두 선편광 투과축의 상대각, I₀는 두 번째 판 직전 세기'),
  'thin_lens': ('얇은 렌즈 상 위치', 'lenses-and-optical-instruments', ['focal','object_distance'], '1/f = 1/u + 1/v, m = −v/u', '공기 중 얇은 렌즈. 실물체 u>0, 볼록 f>0·오목 f<0. 유한 두께·수차 생략'),
@@ -17,6 +18,12 @@ UNIT = r'(?:nm|mm|cm|[uµμ]m|[Åå]|m)'
 
 def calculate_optics(operation: str, parameters: dict) -> dict:
     """정해진 식만 계산하고 입력 부족·단위 오류·불가능 조건을 구조화해서 반환한다."""
+    if operation == 'parameter_definition':
+        from .experiment_parameters import calculate_parameter_query
+        return calculate_parameter_query(parameters)
+    if operation == 'inquiry':
+        from .inquiry_calculations import calculate_inquiry
+        return calculate_inquiry(parameters)
     if operation not in SPECS:
         return {'ok':False,'status':'unsupported_operation','operation':operation,'message':'지원하지 않는 계산입니다.'}
     title,doc,required,formula,assumption=SPECS[operation]
@@ -25,7 +32,7 @@ def calculate_optics(operation: str, parameters: dict) -> dict:
         if isinstance(value,dict):return {k:json_safe(v) for k,v in value.items()}
         if isinstance(value,list):return [json_safe(v) for v in value]
         return value
-    base={'operation':operation,'title':title,'formula':formula,'assumptions':assumption,'source':f'runbook://incident-response/{doc}','inputs':json_safe(parameters)}
+    base={'operation':operation,'title':title,'formula':formula,'assumptions':assumption,'source':f'optics://documents/{doc}','inputs':json_safe(parameters)}
     if not isinstance(parameters,dict):
         return {**base,'ok':False,'status':'invalid_input','message':'입력은 이름과 값의 사전이어야 합니다.'}
     missing=[k for k in required if k not in parameters]
@@ -64,6 +71,10 @@ def calculate_optics(operation: str, parameters: dict) -> dict:
             d=length('displacement');n=scalar('fringes','count')
             if n<=0:raise ValueError('무늬 주기 수는 0보다 커야 합니다.')
             results=[result('파장',2*d/n*1e9,'nm')]
+        elif operation=='michelson_displacement':
+            w=length('wavelength');n=scalar('fringes','count')
+            if n<0:raise ValueError('무늬 주기 수는 음수가 아니어야 합니다.')
+            results=[result('거울 이동량',n*w/2*1e6,'µm')]
         elif operation=='michelson_fringes':
             results=[result('무늬 주기 수',2*length('displacement',zero=True)/length('wavelength'),'cycles')]
         elif operation=='malus':
@@ -82,6 +93,12 @@ def calculate_optics(operation: str, parameters: dict) -> dict:
 
 def plan_calculation(query: str) -> dict | None:
     """수치 계산 요청만 해석. 명시 입력을 우선하고 모호한 수치는 추측하지 않는다."""
+    from .experiment_parameters import plan_parameter_query
+    parameter_query=plan_parameter_query(query)
+    if parameter_query:return parameter_query
+    from .inquiry_calculations import plan_inquiry
+    inquiry=plan_inquiry(query)
+    if inquiry:return inquiry
     if query.startswith('[사용자 질문]\n'):
         user,_,context=query[len('[사용자 질문]\n'):].partition('\n\n[현재 가상 실험]')
     else:user,context=query,''
@@ -93,10 +110,19 @@ def plan_calculation(query: str) -> dict | None:
             if isinstance(candidate,dict):snapshot=candidate
         except (ValueError,TypeError):pass
     q=user.lower()
+    active_match=re.search(r'\[현재 실험 문서\] ([a-z-]+)',context)
+    active_document=active_match.group(1) if active_match else None
+    # 목표 설정·역산 문제를 현재 설정의 정방향 계산으로 바꿔 답하지 않는다.
+    # 지원하지 않는 역산은 조건을 보존한 채 설명 작성 경로에서 처리한다.
+    reverse_request=re.search(r'만들려|얻으려|맞출|정할|옮겨야|설정해야|바꿀|역산|필요한|몇\s*도로',q)
+    supported_inverse=('파장' in q or 'wavelength' in q) and bool(re.search(r'마이[켈컬]|michelson|무늬',q)) and not re.search(r'옮겨야|이동해야',q)
+    displacement_target=bool(re.search(r'거울.*(?:얼마나|이동량|변위)|(?:이동량|변위).*거울',q)) and bool(re.search(r'옮겨야|이동해야|구해|계산|얼마',q)) and active_document=='michelson-interferometer'
+    if reverse_request and not supported_inverse and not displacement_target:return None
     if not re.search(NUM,user) and not re.search(r'계산|구해',q) and not (context and re.search(r'얼마|몇',q)):return None
-    if re.search(r'광자|에너지|ev',q) and ('파장' in q or '광자' in q or re.search(UNIT,q)):op='photon_energy'
+    if displacement_target:op='michelson_displacement'
+    elif re.search(r'광자|에너지|ev',q) and ('파장' in q or '광자' in q or re.search(UNIT,q)):op='photon_energy'
     elif re.search(r'xrd|브래그|브레그|회절각|2θ|2세타',q):op='bragg_angle'
-    elif re.search(r'마이[켈컬]|michelson|무늬|거울.*이동',q):op='michelson_fringes' if re.search(r'(?:파장|λ)\s*[=:]?\s*'+NUM+r'\s*'+UNIT,q) else 'michelson_wavelength' if '파장' in q or 'wavelength' in q else 'michelson_fringes'
+    elif re.search(r'마이[켈컬]|michelson|거울.*이동',q) or ('무늬' in q and active_document in (None,'michelson-interferometer')):op='michelson_fringes' if re.search(r'(?:파장|λ)\s*[=:]?\s*'+NUM+r'\s*'+UNIT,q) else 'michelson_wavelength' if '파장' in q or 'wavelength' in q else 'michelson_fringes'
     elif re.search(r'편광|말뤼스|투과율',q):op='malus'
     elif re.search(r'렌즈|초점거리|상 거리',q) and not re.search(r'망원경|현미경|접안|대물',q):op='thin_lens'
     elif re.search(r'계산|구해|얼마|몇',q) and snapshot.get('default_operation') in SPECS:
@@ -107,6 +133,9 @@ def plan_calculation(query: str) -> dict | None:
     labels={'wavelength':r'파장|λ|lambda','spacing':r'면간격|면 간격|\bd\b','displacement':r'거울 이동|이동량|변위|Δx|Δd|거울(?:을)?','focal':r'초점거리|초점 거리|\bf\b','object_distance':r'물체 거리|물체거리|\bu\b|\bs\b'}
     for key in SPECS[op][2]:
         for text,origin in [(user,'question'),(context,'experiment_snapshot')]:
+            # 브라우저가 전송한 구조화 값은 설명문 속 숫자보다 우선한다.
+            if origin=='experiment_snapshot' and key in snapshot.get('parameters',{}):
+                continue
             if key in labels:
                 matches=re.findall(r'(?:'+labels[key]+r')\s*(?:\([^)]*\))?\s*[=:은는을를]?\s*('+NUM+r')\s*('+UNIT+r')(?![a-z])',text,re.I)
                 if op=='photon_energy' and origin=='question':
@@ -139,6 +168,9 @@ def plan_calculation(query: str) -> dict | None:
 
 def format_calculation(data:dict) -> str:
     """검증된 수치·단위만 표시하는 결정론적 작성. 오류 상태에서는 계산값을 만들지 않는다."""
+    if data.get('operation') in ('inquiry','parameter_definition'):
+        from .inquiry_calculations import format_inquiry
+        return format_inquiry(data)
     if not data.get('ok'):
         names={'wavelength':'진공 파장(예: 532 nm)','spacing':'면간격(예: 0.3 nm)','order':'회절 차수','displacement':'거울 이동량(예: 0.1 mm)','fringes':'무늬 주기 수','angle':'상대각(예: 45도)','focal':'초점거리(예: 10 cm)','object_distance':'물체 거리(예: 30 cm)'}
         reason='다음 값이 필요합니다: '+', '.join(names[x] for x in data['missing']) if data.get('missing') else data['message']

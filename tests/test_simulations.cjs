@@ -122,3 +122,27 @@ for(const apex of [30,60,70]) {
  }
 }
 console.log('프리즘 실제 광선 경로·두 면 Snell 법칙·법선 기준 각도 검증 통과');
+const alignedMichelson=simulate('michelson',{wavelength:532});
+const tiltedMichelson=simulate('michelson',{wavelength:532,mirrorTiltX:.03});
+const tiltedYMichelson=simulate('michelson',{wavelength:532,mirrorTiltY:.03});
+assert.equal(alignedMichelson.fringeImage,'');
+assert.ok(tiltedMichelson.fringeImage.startsWith('data:image/svg+xml'));
+assert.notEqual(tiltedMichelson.fringeImage,tiltedYMichelson.fringeImage);
+assert.notEqual(tiltedMichelson.profile,alignedMichelson.profile);
+assert.equal(tiltedMichelson.cycles,alignedMichelson.cycles);
+assert.ok(tiltedMichelson.summary.includes('기울기 X=0.03'));
+console.log('마이켈슨 2축 기울기·화면 위상·주기 수 독립성 검증 통과');
+// 유한 폭 이중슬릿: 간섭 간격은 d에 반비례, 회절 포락선 폭은 a에 반비례.
+{
+ const p={wavelength:532,slit:.1,distance:1,slitMode:'double',slitSeparation:.3};
+ const m=require('../optics_lab.js');
+ const a=m.opticsSimulation('diffraction',p),b=m.opticsSimulation('diffraction',{...p,slitSeparation:.6});
+ assert.ok(Math.abs(a.fringeSpacing-1.773333333333)<1e-9);
+ assert.ok(Math.abs(a.fringeSpacing/2-b.fringeSpacing)<1e-10);
+ assert.equal(a.width,b.width);
+ assert.ok(a.points.every(v=>Number.isFinite(v.intensity)&&v.intensity>=0&&v.intensity<=1));
+ assert.equal(a.points[120].intensity,1);
+ const detector=m.opticsPractical('diffraction',p,a,{});
+ assert.ok(detector.svg.includes('스크린 정면'));
+ assert.notEqual(detector.svg,m.opticsPractical('diffraction',{...p,slitMode:'single'},a,{}).svg);
+}

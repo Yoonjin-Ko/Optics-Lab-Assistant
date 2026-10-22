@@ -33,3 +33,22 @@
 - NASA, Blue Sky: https://spaceplace.nasa.gov/blue-sky/en/
 
 </details>
+
+
+## 핵심 용어
+
+| 용어 | 뜻 |
+| --- | --- |
+| 레일리산란 | 파장보다 작은 산란체에 대한 근사. 다른 조건이 같을 때 산란 세기는 대략 λ⁻⁴ 경향을 보인다. |
+| 미산란 | 구형 입자에 대한 전자기 산란 해석으로, 입자 크기가 파장에 가까운 경우 등에서 레일리 근사와 다른 각도·파장 의존성을 보인다. |
+
+## 출처와 확인 범위
+
+아래 자료의 해당 절·표·초록을 확인해 사실과 공식을 요약했습니다. 점검 순서·가상 사례·시각화는 앱에서 작성한 학습용 구성입니다.
+
+| 확인 내용 | 근거 자료와 위치 |
+| --- | --- |
+| 하늘색의 정성적 설명 | [NASA: Why Is the Sky Blue?](https://spaceplace.nasa.gov/blue-sky/en/) — The Short Answer 및 산란 설명 |
+| 레일리 파장 의존성 | [Feynman Lectures Vol. I, Ch. 32](https://www.feynmanlectures.caltech.edu/I_32.html) — §32–5 Scattering of light, Eq. 32.19의 낮은 진동수 근사 |
+
+상세 서지·접근 범위는 `data/source_registry.json`에 기록합니다. 공식의 앱 내 적용 범위와 생략한 현상은 본문의 모델 설명을 따릅니다.

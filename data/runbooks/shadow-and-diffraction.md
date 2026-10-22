@@ -63,9 +63,26 @@ lambda=532 nm, a=0.10 mm, L=1 m이면 단일슬릿 중앙 최대 폭 W≈10.64 m
 슬릿 폭 a를 줄이면 회절 포락선이 넓어진다. 슬릿 간격 d를 늘리면 간섭무늬 간격은 좁아진다. 두 효과를 혼동하지 않는다.
 
 ## 참고 자료
-- OpenStax, University Physics Volume 3, Light / Geometric Optics / Interference / Diffraction: https://openstax.org/details/books/university-physics-volume-3
 - 실험실 장비별 매뉴얼과 수업 실험 지침으로 실제 배치를 확인한다.
-- 관련 절: https://openstax.org/books/university-physics-volume-3/pages/4-2-single-slit-diffraction
-- 관련 절: https://openstax.org/books/university-physics-volume-3/pages/4-3-double-slit-diffraction
 
 </details>
+
+
+## 핵심 용어
+
+| 용어 | 뜻 |
+| --- | --- |
+| 슬릿폭 | 빛이 통과하는 틈의 폭. 단일슬릿 원거리 회절에서 폭이 작아지면 중앙 무늬가 넓어진다. |
+| 원거리회절 | 전파 거리·관찰 렌즈 배치에 따라 파면을 원거리 근사로 취급하는 회절 조건. |
+| 중앙최대 | 단일슬릿 회절의 중심 밝은 무늬. 첫 암선 사이 전체 폭은 작은 각도에서 약 2λL/a. |
+
+## 출처와 확인 범위
+
+아래 자료의 해당 절·표·초록을 확인해 사실과 공식을 요약했습니다. 점검 순서·가상 사례·시각화는 앱에서 작성한 학습용 구성입니다.
+
+| 확인 내용 | 근거 자료와 위치 |
+| --- | --- |
+| 원거리 단일슬릿 | [OpenStax: Single-Slit Diffraction](https://openstax.org/books/university-physics-volume-3/pages/4-1-single-slit-diffraction) — §4.1, Diffraction through a Single Slit |
+| 회절격자와의 차이 | [OpenStax: Diffraction Gratings](https://openstax.org/books/university-physics-volume-3/pages/4-4-diffraction-gratings) — §4.4 |
+
+상세 서지·접근 범위는 `data/source_registry.json`에 기록합니다. 공식의 앱 내 적용 범위와 생략한 현상은 본문의 모델 설명을 따릅니다.

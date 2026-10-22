@@ -44,8 +44,33 @@ lambda와 d는 동일 길이 단위, n은 양의 정수이다. theta는 결정�
 분말의 가능한 위치 목록과 실제 단결정 웨이퍼의 θ–2θ 측정은 같지 않다. 원자 산란 인자·다중도·온도 인자·배향·장비 함수 등을 계산하지 않으므로 막대 높이는 세기가 아니다. 같은 d의 반사는 대표 hkl로 묶는다.
 
 ### 프리셋 출처
-- Si·Ge: Hom, Kiszenik & Post (1975), 표에 공개된 격자상수: https://journals.iucr.org/paper?buy=yes&cnor=a12735
-- Al: International Tables 표의 300 K 근사값: https://onlinelibrary.wiley.com/iucr/itc/Cb/ch4o4v0001/table4o4o2o1/
+- Si·Ge: Hom, Kiszenik & Post (1975), 공개 초록에 기재된 격자상수: https://onlinelibrary.wiley.com/doi/abs/10.1107/s0021889875010965
+- Al: Roach 등 (2013), Table 2 Experiment 열의 인용값: https://journals.iucr.org/j/issues/2013/06/00/he5613/index.html
 - Cu: IUCr 논문의 순수 Cu 기준값 a=3.615 Å: https://journals.iucr.org/a/issues/2017/04/00/sc5103/sc5103.pdf
 
 </details>
+
+
+## 핵심 용어
+
+| 용어 | 뜻 |
+| --- | --- |
+| 결정구조 | 원자·이온·분자가 공간에서 주기적으로 배열되는 방식. 격자와 그 격자점에 배치되는 원자 묶음(기저)을 함께 고려한다. XRD가 구조를 만드는 것이 아니라 회절로 구조를 추론한다. |
+| 격자상수 | 단위격자의 크기와 모양을 정하는 길이 a,b,c와 각도 α,β,γ. 입방정계에서는 a=b=c이고 세 각은 90°이다. 일반적으로 면간격 d와 같은 값이 아니다. |
+| 단위격자 | 반복하여 전체 결정을 구성할 수 있는 기본 공간 단위. |
+| 밀러지수 | 결정면의 방향을 나타내는 정수 표기 (hkl). 입방정계에서 면간격은 d=a/√(h²+k²+l²). |
+| 고니오미터 | 시료·검출기의 각도를 정밀하게 조절하고 읽는 장치. 대칭 θ–2θ 배치에서 시료면 기준 입사각은 θ, 산란각은 2θ. |
+| 소멸규칙 | 단위격자 내부 원자들의 산란파 합으로 일부 반사가 사라질 수 있다. 구조인자는 원자 위치·산란인자와 관련되며 브래그 조건만으로 강도를 정할 수 없다. |
+
+## 출처와 확인 범위
+
+아래 자료의 해당 절·표·초록을 확인해 사실과 공식을 요약했습니다. 점검 순서·가상 사례·시각화는 앱에서 작성한 학습용 구성입니다.
+
+| 확인 내용 | 근거 자료와 위치 |
+| --- | --- |
+| 브래그·구조인자 | [IUCr: Introduction to the calculation of structure factors](https://www.iucr.org/what-we-do/education/pamphlets/introduction-calculation-of-structure-factors) — Bragg equation Eq. (5), 원자 산란인자·구조인자 설명 |
+| Si·Ge 값 | [Hom, Kiszenik & Post (1975), J. Appl. Cryst. 8, 457–458](https://onlinelibrary.wiley.com/doi/abs/10.1107/s0021889875010965) — 공개 Abstract |
+| Al 값 | [Roach et al. (2013), J. Appl. Cryst. 46, 1755–1770](https://journals.iucr.org/j/issues/2013/06/00/he5613/index.html) — Table 2, Experiment 열 |
+| Cu 값 | [Hansford et al. (2017), Acta Cryst. A73, 293–311](https://journals.iucr.org/a/issues/2017/04/00/sc5103/sc5103.pdf) — 인쇄 p.306 (PDF p.14), pure copper 기준값 문장 |
+
+상세 서지·접근 범위는 `data/source_registry.json`에 기록합니다. 공식의 앱 내 적용 범위와 생략한 현상은 본문의 모델 설명을 따릅니다.

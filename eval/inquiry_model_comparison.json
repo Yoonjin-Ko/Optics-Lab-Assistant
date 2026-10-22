@@ -1,0 +1,410 @@
+[
+  {
+    "id": "lens-default-3",
+    "experiment": "lens",
+    "variant": "default",
+    "question": "물체가 초점을 통과하면 상의 위치와 방향은 어떻게 바뀔까?",
+    "message": "[사용자 질문]\n물체가 초점을 통과하면 상의 위치와 방향은 어떻게 바뀔까?\n\n[현재 가상 실험]\n실험: 볼록렌즈\n[현재 실험 문서] lenses-and-optical-instruments\n볼록렌즈 실험 (근축 근사, λ=532 nm, 색수차·재료 분산 생략): f=10 cm, 물체 거리 s=30 cm. 상 거리 s′=15.00 cm, 배율 M=-0.50, 도립 실상. 이 결과를 설명해줘.\n[광학 계산 입력]\n{\"default_operation\":\"thin_lens\",\"parameters\":{\"focal\":{\"value\":10,\"unit\":\"cm\"},\"object_distance\":{\"value\":30,\"unit\":\"cm\"}}}\n\n위 내용은 가상 모델의 조건과 계산 결과입니다. 참고 자료의 설명 요청 문구보다 사용자 질문에 우선 답하세요. 실제 측정이나 센서 관측으로 표현하지 마세요.",
+    "configured_quality_model": "qwen3.5:2b",
+    "first_token_seconds": 3.892,
+    "events": [
+      {
+        "type": "RouteDecided",
+        "route": "optics"
+      },
+      {
+        "type": "PlanCreated",
+        "task_count": 1,
+        "targets": [
+          "lenses-and-optical-instruments"
+        ]
+      },
+      {
+        "type": "TaskCompleted",
+        "id": "optics-0",
+        "source": "runbook",
+        "target": "lenses-and-optical-instruments",
+        "retries": 0
+      },
+      {
+        "type": "SourcesPrepared",
+        "seconds": 0.1319,
+        "workers": [
+          "documents"
+        ]
+      },
+      {
+        "type": "DraftWritten",
+        "attempt": 1,
+        "length": 156,
+        "seconds": 5.472,
+        "first_token_seconds": 3.753163959016092
+      },
+      {
+        "type": "Validation",
+        "attempt": 1,
+        "verdict": "합격"
+      },
+      {
+        "type": "Finalize",
+        "pipeline": "optics"
+      }
+    ],
+    "drafts": [
+      "볼록렌즈에서 물체가 초점을 통과하면 상의 위치는 스크린에 맺히기 어려워지고 방향은 도립이 됩니다. 이는 근축 얇은 렌즈 공식 \\( s' = \\frac{fs}{s-f} \\) 에서 분모가 0 이 되어 실상 거리가 무한대가 되는 경우로, 실제 실험에서는 스크린을 멀리 이동해야 합니다."
+    ],
+    "input_chars": 443,
+    "timings": {
+      "documents": 0.1318,
+      "write_1": 5.472,
+      "first_token": 3.7532
+    },
+    "answer": "볼록렌즈에서 물체가 초점을 통과하면 상의 위치는 스크린에 맺히기 어려워지고 방향은 도립이 됩니다. 이는 근축 얇은 렌즈 공식 \\( s' = \\frac{fs}{s-f} \\) 에서 분모가 0 이 되어 실상 거리가 무한대가 되는 경우로, 실제 실험에서는 스크린을 멀리 이동해야 합니다.",
+    "total_seconds": 5.613,
+    "content_review": {
+      "status": "fail",
+      "review": "초점 안으로 넘어간 뒤 정립 허상으로 바뀌는 설명 없이 도립·무한대 실상만 답함.",
+      "answer_sha256": "ed82991fd1c5311ce988ae8c60b8e3690d6e7c6e103433e06ef0e0707c269352"
+    }
+  },
+  {
+    "id": "concave-lens-default-1",
+    "experiment": "concave-lens",
+    "variant": "default",
+    "question": "현재 허상은 어디에 보이고 왜 스크린에는 맺히지 않을까?",
+    "message": "[사용자 질문]\n현재 허상은 어디에 보이고 왜 스크린에는 맺히지 않을까?\n\n[현재 가상 실험]\n실험: 오목렌즈\n[현재 실험 문서] lenses-and-optical-instruments\n오목렌즈 실험 (근축 근사, λ=532 nm, 색수차·재료 분산 생략): f=-10 cm, 물체 거리 s=30 cm. 상 거리 s′=-7.50 cm, 배율 M=0.25, 정립 허상. 이 결과를 설명해줘.\n[광학 계산 입력]\n{\"default_operation\":\"thin_lens\",\"parameters\":{\"focal\":{\"value\":-10,\"unit\":\"cm\"},\"object_distance\":{\"value\":30,\"unit\":\"cm\"}}}\n\n위 내용은 가상 모델의 조건과 계산 결과입니다. 참고 자료의 설명 요청 문구보다 사용자 질문에 우선 답하세요. 실제 측정이나 센서 관측으로 표현하지 마세요.",
+    "configured_quality_model": "qwen3.5:2b",
+    "first_token_seconds": 0.419,
+    "events": [
+      {
+        "type": "RouteDecided",
+        "route": "optics"
+      },
+      {
+        "type": "PlanCreated",
+        "task_count": 1,
+        "targets": [
+          "lenses-and-optical-instruments"
+        ]
+      },
+      {
+        "type": "TaskCompleted",
+        "id": "optics-0",
+        "source": "runbook",
+        "target": "lenses-and-optical-instruments",
+        "retries": 0
+      },
+      {
+        "type": "SourcesPrepared",
+        "seconds": 0.0039,
+        "workers": [
+          "documents"
+        ]
+      },
+      {
+        "type": "DraftWritten",
+        "attempt": 1,
+        "length": 101,
+        "seconds": 1.6985,
+        "first_token_seconds": 0.4123905000160448
+      },
+      {
+        "type": "Validation",
+        "attempt": 1,
+        "verdict": "합격"
+      },
+      {
+        "type": "Finalize",
+        "pipeline": "optics"
+      }
+    ],
+    "drafts": [
+      "오목렌즈는 초점 안의 물체에서 정립된 허상을 생성합니다. 스크린에는 맺히기 어렵습니다.\n\n이 실험에서는 f=-10 cm, s=30 cm 입니다. 계산값은 s'=-7.50 cm입니다."
+    ],
+    "input_chars": 443,
+    "timings": {
+      "documents": 0.0038,
+      "write_1": 1.6985,
+      "first_token": 0.4124
+    },
+    "answer": "오목렌즈는 초점 안의 물체에서 정립된 허상을 생성합니다. 스크린에는 맺히기 어렵습니다.\n\n이 실험에서는 f=-10 cm, s=30 cm 입니다. 계산값은 s'=-7.50 cm입니다.",
+    "total_seconds": 1.708,
+    "content_review": {
+      "status": "fail",
+      "review": "오목렌즈는 실물체의 초점 밖에서도 허상인데 초점 안 조건으로 잘못 한정하고 현재 위치 방향을 답하지 않음.",
+      "answer_sha256": "a2789864a7ca1a855f66ad333947e661342bf2363c28d387f449782345ef9e22"
+    }
+  },
+  {
+    "id": "fresnel-default-3",
+    "experiment": "fresnel",
+    "variant": "default",
+    "question": "지금 매질 조합에서 전반사가 가능할까? 가능하면 임계각은 얼마일까?",
+    "message": "[사용자 질문]\n지금 매질 조합에서 전반사가 가능할까? 가능하면 임계각은 얼마일까?\n\n[현재 가상 실험]\n실험: s·p 편광 / 전반사\n[현재 실험 문서] polarization-and-reflection\ns·p 편광 반사·전반사 실험: λ=532 nm, 비흡수 유전체 n₁=1, n₂=1.5, 법선 기준 입사각 45°. Rₛ=0.0920, Rₚ=0.0085, 굴절각 28.13°. 브루스터 각 56.31°, 임계각 없음. 굴절률은 사용자가 정한 고정값이며 파장 분산·위상·소멸파는 모델에 포함하지 않았다.\n\n위 내용은 가상 모델의 조건과 계산 결과입니다. 참고 자료의 설명 요청 문구보다 사용자 질문에 우선 답하세요. 실제 측정이나 센서 관측으로 표현하지 마세요.",
+    "configured_quality_model": "qwen3.5:2b",
+    "first_token_seconds": 1.445,
+    "events": [
+      {
+        "type": "RouteDecided",
+        "route": "optics"
+      },
+      {
+        "type": "PlanCreated",
+        "task_count": 1,
+        "targets": [
+          "polarization-and-reflection"
+        ]
+      },
+      {
+        "type": "TaskCompleted",
+        "id": "optics-0",
+        "source": "runbook",
+        "target": "polarization-and-reflection",
+        "retries": 0
+      },
+      {
+        "type": "SourcesPrepared",
+        "seconds": 0.0034,
+        "workers": [
+          "documents"
+        ]
+      },
+      {
+        "type": "DraftWritten",
+        "attempt": 1,
+        "length": 96,
+        "seconds": 2.6536,
+        "first_token_seconds": 1.437754542042967
+      },
+      {
+        "type": "Validation",
+        "attempt": 1,
+        "verdict": "합격"
+      },
+      {
+        "type": "Finalize",
+        "pipeline": "optics"
+      }
+    ],
+    "drafts": [
+      "현재 실험 조건 (λ=532 nm, n₁=1, n₂=1.5) 에서 전반사는 불가능합니다. 입사각 45°는 임계각보다 작기 때문입니다.\n\n임계각은 약 **69.8°**입니다."
+    ],
+    "input_chars": 372,
+    "timings": {
+      "documents": 0.0034,
+      "write_1": 2.6536,
+      "first_token": 1.4378
+    },
+    "answer": "현재 실험 조건 (λ=532 nm, n₁=1, n₂=1.5) 에서 전반사는 불가능합니다. 입사각 45°는 임계각보다 작기 때문입니다.\n\n임계각은 약 **69.8°**입니다.",
+    "total_seconds": 2.662,
+    "content_review": {
+      "status": "fail",
+      "review": "불가능이라는 결론은 맞지만 존재하지 않는 임계각 69.8°를 생성하고 입사각 때문이라고 오설명.",
+      "answer_sha256": "a4b1a5f4ad6ba850f5fe8f5f0572160bd957ad5bf0574125ebe9700b08f8a459"
+    }
+  },
+  {
+    "id": "absorption-default-2",
+    "experiment": "absorption",
+    "variant": "default",
+    "question": "현재 문턱에너지를 넘기려면 파장을 얼마 이하로 설정해야 할까?",
+    "message": "[사용자 질문]\n현재 문턱에너지를 넘기려면 파장을 얼마 이하로 설정해야 할까?\n\n[현재 가상 실험]\n실험: 광흡수 / 광전효과\n[현재 실험 문서] absorption-photoelectric\n광흡수·광전효과 실험: 현재 모드=semiconductor, 물질 내부 밴드 간 들뜸 모델, 진공 방출을 다루지 않음. 실리콘 Si · diamond cubic, 간접갭 · 포논을 포함한 전이 고려, Hlali 등(2017) p.1688 · 300 K 계산 입력값, 상대 광자 유입률=1 (표시 광자 묶음 3개, 실제 전류 아님), λ=532 nm, 광자 에너지=2.331 eV, 밴드갭 Eg=1.12 eV, 문턱 파장=1107.00 nm. 점유 확률 참고 모델 T=300 K, EF=0.560 eV (금속은 EF=0 기준, 비금속은 Ev=0 기준), f(Ec)=3.912e-10. 이 확률은 전자 농도·광흡수 확률이 아니다. 이상적인 밴드 간 들뜸 조건 충족. 물질 밖 방출은 의미하지 않음. 입력한 문턱 외의 실제 재료 응답·흡수율·양자효율·전류·전자 수명·간접천이·결함은 모델링하지 않은 학습용 문턱 모델이다.\n\n위 내용은 가상 모델의 조건과 계산 결과입니다. 참고 자료의 설명 요청 문구보다 사용자 질문에 우선 답하세요. 실제 측정이나 센서 관측으로 표현하지 마세요.",
+    "configured_quality_model": "qwen3.5:2b",
+    "first_token_seconds": 1.803,
+    "events": [
+      {
+        "type": "RouteDecided",
+        "route": "optics"
+      },
+      {
+        "type": "PlanCreated",
+        "task_count": 1,
+        "targets": [
+          "absorption-photoelectric"
+        ]
+      },
+      {
+        "type": "TaskCompleted",
+        "id": "optics-0",
+        "source": "runbook",
+        "target": "absorption-photoelectric",
+        "retries": 0
+      },
+      {
+        "type": "SourcesPrepared",
+        "seconds": 0.004,
+        "workers": [
+          "documents"
+        ]
+      },
+      {
+        "type": "DraftWritten",
+        "attempt": 1,
+        "length": 121,
+        "seconds": 3.0768,
+        "first_token_seconds": 1.795885375002399
+      },
+      {
+        "type": "Validation",
+        "attempt": 1,
+        "verdict": "합격"
+      },
+      {
+        "type": "Finalize",
+        "pipeline": "optics"
+      }
+    ],
+    "drafts": [
+      "문턱 에너지는 1239.84 eV 입니다. 이를 넘기려면 파장은 약 0.5 nm 에서 1107 nm 사이에서 설정해야 합니다. 단, 이 값은 단순 밴드 간 전이 조건이며 실제 흡수율이나 방출 효율을 보장하지 않습니다."
+    ],
+    "input_chars": 652,
+    "timings": {
+      "documents": 0.004,
+      "write_1": 3.0768,
+      "first_token": 1.7959
+    },
+    "answer": "문턱 에너지는 1239.84 eV 입니다. 이를 넘기려면 파장은 약 0.5 nm 에서 1107 nm 사이에서 설정해야 합니다. 단, 이 값은 단순 밴드 간 전이 조건이며 실제 흡수율이나 방출 효율을 보장하지 않습니다.",
+    "total_seconds": 3.088,
+    "content_review": {
+      "status": "fail",
+      "review": "에너지 환산 계수 1239.84 eV·nm를 문턱 에너지로 오인. 문턱 파장 상한과 임의 하한을 혼합.",
+      "answer_sha256": "75266e9b9f012624ea6a9dd1b22e86389e4d490d690b71cc02e430d9c4f90894"
+    }
+  },
+  {
+    "id": "camera-default-3",
+    "experiment": "camera",
+    "variant": "default",
+    "question": "F수를 높이면 밝기와 회절 무늬는 각각 어떻게 변할까?",
+    "message": "[사용자 질문]\nF수를 높이면 밝기와 회절 무늬는 각각 어떻게 변할까?\n\n[현재 가상 실험]\n실험: 광학장비\n[현재 실험 문서] optical-equipment\n카메라 · 얇은 렌즈. 초점거리 f=50 mm, 물체 거리 u=1000 mm, 센서 폭=36 mm, F수=4. 1/f=1/u+1/v, m=-v/u. 물체는 실상 조건 u>f 필요. 센서는 계산된 상면에 둔다. |m|=f/(u−f)이므로 u 고정·0<f<u에서 f를 늘리면 |m|가 증가한다. 센서도 새 상면 v로 이동해야 한다. 기본 계산: 상 거리=52.6316 mm; 횡배율=-0.0526 배; 수평 화각=39.5978 °.  사용자가 요청한 파생값은 가정·단위·식을 밝히고 계산하세요. 정보가 부족하면 필요한 값만 질문하세요. 모든 역산은 이상 모델이며 실제 장비 설정 권고가 아닙니다.\n\n위 내용은 가상 모델의 조건과 계산 결과입니다. 참고 자료의 설명 요청 문구보다 사용자 질문에 우선 답하세요. 실제 측정이나 센서 관측으로 표현하지 마세요.",
+    "configured_quality_model": "qwen3.5:2b",
+    "first_token_seconds": 1.344,
+    "events": [
+      {
+        "type": "RouteDecided",
+        "route": "optics"
+      },
+      {
+        "type": "PlanCreated",
+        "task_count": 1,
+        "targets": [
+          "optical-equipment"
+        ]
+      },
+      {
+        "type": "TaskCompleted",
+        "id": "optics-0",
+        "source": "runbook",
+        "target": "optical-equipment",
+        "retries": 0
+      },
+      {
+        "type": "SourcesPrepared",
+        "seconds": 0.0052,
+        "workers": [
+          "documents"
+        ]
+      },
+      {
+        "type": "DraftWritten",
+        "attempt": 1,
+        "length": 333,
+        "seconds": 4.8601,
+        "first_token_seconds": 1.3342656660242938
+      },
+      {
+        "type": "Validation",
+        "attempt": 1,
+        "verdict": "합격"
+      },
+      {
+        "type": "Finalize",
+        "pipeline": "optics"
+      }
+    ],
+    "drafts": [
+      "**F 수 증가 시 밝기는 감소하고, 회절 무늬의 지름은 커집니다.**\n\n1. **밝기 변화**: F 수는 초점거리/입사동공 지름으로 정의되며, 같은 노출시간에서 상면 조도는 \\( 1/(F \\text{수})^2 \\)에 비례합니다. 따라서 F 수를 높이면 밝기는 약 \\( (F_{\\text{새}} / F_{\\text{기존}})^{-2} \\)로 감소합니다.\n2. **회절 무늬 변화**: Airy 첫 영점 지름은 \\( d = 2.44 \\lambda F_\\# \\)으로 표현됩니다. 여기서 λ는 파장, \\(F_\\#\\)\\ 는 실제 F 수입니다. 따라서 F 수가 증가하면 회절 무늬의 지름도 함께 커집니다."
+    ],
+    "input_chars": 510,
+    "timings": {
+      "documents": 0.0051,
+      "write_1": 4.8601,
+      "first_token": 1.3343
+    },
+    "answer": "**F 수 증가 시 밝기는 감소하고, 회절 무늬의 지름은 커집니다.**\n\n1. **밝기 변화**: F 수는 초점거리/입사동공 지름으로 정의되며, 같은 노출시간에서 상면 조도는 \\( 1/(F \\text{수})^2 \\)에 비례합니다. 따라서 F 수를 높이면 밝기는 약 \\( (F_{\\text{새}} / F_{\\text{기존}})^{-2} \\)로 감소합니다.\n2. **회절 무늬 변화**: Airy 첫 영점 지름은 \\( d = 2.44 \\lambda F_\\# \\)으로 표현됩니다. 여기서 λ는 파장, \\(F_\\#\\)\\ 는 실제 F 수입니다. 따라서 F 수가 증가하면 회절 무늬의 지름도 함께 커집니다.",
+    "total_seconds": 4.871,
+    "content_review": {
+      "status": "pass",
+      "review": "F수 증가 시 밝기 감소·Airy 지름 증가를 식과 일관되게 답함.",
+      "answer_sha256": "021682ef48abda2f0aeb59c3087d057e8a5b2c0d19ee7f28208c9cc2a84afec3"
+    }
+  },
+  {
+    "id": "microscope-default-1",
+    "experiment": "microscope",
+    "variant": "default",
+    "question": "현재 모델에서 중간상은 어디에 생기고 어떤 방향으로 보일까?",
+    "message": "[사용자 질문]\n현재 모델에서 중간상은 어디에 생기고 어떤 방향으로 보일까?\n\n[현재 가상 실험]\n실험: 광학장비\n[현재 실험 문서] optical-equipment\n현미경 · 무한 보정. 대물렌즈 초점거리=4 mm, 튜브렌즈 초점거리=200 mm, 대물 NA=0.65, 매질 n=1, 진공 파장=550 nm. 중간상 배율 M=f_tube/f_obj. 분해능은 Abbe d=λ/(2NA). 배율은 접안렌즈 각배율을 포함하지 않는다. 기본 계산: 대물 배율=50 배; Abbe 분해 거리=423.0769 nm.  사용자가 요청한 파생값은 가정·단위·식을 밝히고 계산하세요. 정보가 부족하면 필요한 값만 질문하세요. 모든 역산은 이상 모델이며 실제 장비 설정 권고가 아닙니다.\n\n위 내용은 가상 모델의 조건과 계산 결과입니다. 참고 자료의 설명 요청 문구보다 사용자 질문에 우선 답하세요. 실제 측정이나 센서 관측으로 표현하지 마세요.",
+    "configured_quality_model": "qwen3.5:2b",
+    "first_token_seconds": 0.413,
+    "events": [
+      {
+        "type": "RouteDecided",
+        "route": "optics"
+      },
+      {
+        "type": "PlanCreated",
+        "task_count": 1,
+        "targets": [
+          "optical-equipment"
+        ]
+      },
+      {
+        "type": "TaskCompleted",
+        "id": "optics-0",
+        "source": "runbook",
+        "target": "optical-equipment",
+        "retries": 0
+      },
+      {
+        "type": "SourcesPrepared",
+        "seconds": 0.0036,
+        "workers": [
+          "documents"
+        ]
+      },
+      {
+        "type": "DraftWritten",
+        "attempt": 1,
+        "length": 105,
+        "seconds": 1.5918,
+        "first_token_seconds": 0.4060338329873048
+      },
+      {
+        "type": "Validation",
+        "attempt": 1,
+        "verdict": "합격"
+      },
+      {
+        "type": "Finalize",
+        "pipeline": "optics"
+      }
+    ],
+    "drafts": [
+      "무한 보정 현미경의 중간상은 대물렌즈에서 튜브렌즈로 들어온 평행광을 받아 상을 형성하는 곳입니다. 이는 눈이 관찰할 수 있는 공간에 위치하며, 빛은 렌즈를 통과하여 굴절되어 맺히게 됩니다."
+    ],
+    "input_chars": 465,
+    "timings": {
+      "documents": 0.0035,
+      "write_1": 1.5918,
+      "first_token": 0.406
+    },
+    "answer": "무한 보정 현미경의 중간상은 대물렌즈에서 튜브렌즈로 들어온 평행광을 받아 상을 형성하는 곳입니다. 이는 눈이 관찰할 수 있는 공간에 위치하며, 빛은 렌즈를 통과하여 굴절되어 맺히게 됩니다.",
+    "total_seconds": 1.602,
+    "content_review": {
+      "status": "partial",
+      "review": "튜브렌즈에 의한 상 형성은 언급하지만 중간상 위치(튜브 뒤 200mm)·도립 방향에 답하지 않음.",
+      "answer_sha256": "8491ff30714be24a445eee954aa5cc16274222d3ef10b58956f3011dae2679de"
+    }
+  }
+]

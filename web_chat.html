@@ -81,13 +81,28 @@
 .experiment-layout .experiment-controls{overflow:visible;border:0;border-left:1px solid #c4d5e1;border-radius:0;background:transparent;padding:0 0 0 12px}
 .experiment-layout .conversation-pane{position:sticky;top:12px;align-self:start}
 @media(max-width:850px){.experiment-layout .simulation-pane{height:auto;max-height:none;min-height:0}.experiment-layout .conversation-pane{position:static}}
+
+/* 문서 길이에 맞춰 메뉴의 회색 배경이 함께 늘어나지 않도록 한다. */
+.document-layout{grid-template-columns:130px minmax(0,1fr)}
+.document-layout .sidebar{align-self:start}
+.document-layout .rightbar{display:none!important}
+.document-layout .desk{align-items:start;grid-template-columns:minmax(0,1fr) minmax(270px,310px)}
+.document-layout .document-pane{max-height:none;overflow:visible;background:#fff}
+.document-layout .conversation-pane{position:sticky;top:12px}
+.document-pane .bubble pre{white-space:pre-wrap;overflow-wrap:anywhere}
+@media(max-width:850px){.document-layout .desk{grid-template-columns:1fr}.document-layout .conversation-pane{position:static}}
+@media(max-width:600px){.document-layout{display:block}}
+
+.brand-home{font:inherit;letter-spacing:inherit;color:inherit;background:none;border:0;padding:0;text-align:left;cursor:pointer}.brand-home:focus-visible{outline:2px solid #1474ba;outline-offset:5px;border-radius:2px}
+.inquiry-guide{margin-top:18px;border-top:1px solid #bbcfdd;padding-top:10px}.inquiry-guide h3{font-size:14px;color:#225f84;margin:0 0 8px}.inquiry-guide p,.inquiry-guide small{font-size:11px;line-height:1.6}.inquiry-guide b{display:block}.inquiry-guide button{display:block;width:100%;text-align:left;line-height:1.6;background:#fff;border:1px solid #adc6d7;color:#285c80;padding:8px;margin:8px 0;cursor:pointer}.inquiry-guide button:hover,.inquiry-guide button:focus-visible{background:#dfeef8}.inquiry-guide small{display:block;color:#537184}
+.practical-controls{margin:16px 0;padding-top:12px;border-top:2px solid #a9c7da}.practical-controls summary{font-weight:bold;color:#225f84}.practical-controls button{display:block;width:100%;padding:7px;margin:6px 0;border:1px solid #91b0c5;background:#f0f7fc;color:#285c80}.practical-observation{margin:16px 0}.practical-observation h3{font-size:14px;color:#285c80}.practical-screen{display:block;width:100%;height:auto;max-height:none!important}
 </style>
 </head>
 <body>
 <div id="app">
   <div class="utility"><span><b>OPTICS LAB ONLINE</b> &nbsp; / &nbsp; EXPLORE · LEARN · EXPERIMENT</span><span>한국어</span></div>
-  <header class="masthead"><div class="branding"><div class="eyebrow">THE EXPLORER'S GUIDE TO LIGHT</div><h1>OPTICS <em>LAB</em></h1></div><div class="hero-optics" aria-hidden="true"><span class="hero-label">DISCOVER THE SPECTRUM</span></div></header>
-  <div class="layout" :class="{'home-layout':view==='ask','experiment-layout':view==='simulation'}">
+  <header class="masthead"><div class="branding"><div class="eyebrow">THE EXPLORER'S GUIDE TO LIGHT</div><h1><button type="button" class="brand-home" @click="view='ask';selectedTopic=null" aria-label="Optics Lab 메인으로 이동">OPTICS <em>LAB</em></button></h1></div><div class="hero-optics" aria-hidden="true"><span class="hero-label">DISCOVER THE SPECTRUM</span></div></header>
+  <div class="layout" :class="{'home-layout':view==='ask','experiment-layout':view==='simulation','document-layout':view==='document'}">
   <!-- 좌측: 가상 실험 선택과 로컬 문서 탐색. 클릭만으로 LLM을 호출하지 않는다. -->
   <nav class="sidebar" aria-label="학습 메뉴"><div class="side-heading">CONTENTS</div>
     <button class="nav-link" :class="{active:view==='ask'}" @click="view='ask'">ASK / 메인</button>
@@ -131,7 +146,17 @@
         <article v-if="!docLoading && !docError" class="bubble" v-answer="docContent"></article>
       </div>
       <div v-show="view === 'simulation'" class="simulation-pane">
-        <aside class="experiment-controls" aria-label="실험 조절 장치"><div class="control-heading">조절 장치</div><div id="experiment-controls"></div><button class="transfer" @click="transferResult">조건·결과를 채팅에 넣기 →</button></aside>
+        <aside class="experiment-controls" aria-label="실험 조절 장치"><div class="control-heading">조절 장치</div><div id="experiment-controls"></div><details class="practical-controls" open><summary>현장 조절</summary><p class="model-note">변수를 하나씩 바꾸며 검출 화면을 맞춰 보세요.</p>
+            <label v-for="control in practicalControls" :key="issueKey+control.key">{{ control.label }} <b>{{ practicalSettings[issueKey][control.key] }} {{ control.unit }}</b><input type="range" :min="control.min" :max="control.max" :step="control.step" v-model.number="practicalSettings[issueKey][control.key]"></label>
+            <label v-if="issueKey==='michelson'">관찰 모드<select v-model="practicalSettings.michelson.view"><option value="alignment">두 귀환빔 위치 확인</option><option value="interference">합성 간섭 관찰</option></select></label>
+            <button type="button" @click="disturbPractical">일부러 어긋나게 하기</button><button type="button" @click="resetPractical">조절 기준 복원</button>
+            <button v-if="['lens','concave-lens','concave-mirror','convex-mirror','camera'].includes(issueKey)" type="button" :disabled="!practical.state.real" @click="focusPractical">계산된 실상면에 스크린 놓기</button>
+          </details><button class="transfer" @click="transferResult">조건·결과를 채팅에 넣기 →</button>
+          <section v-if="activeInquiry" class="inquiry-guide" aria-label="탐구 질문">
+            <h3>탐구 질문</h3><p><b>바꿀 값</b> {{ activeInquiry.change }}</p><p><b>관찰·구할 값</b> {{ activeInquiry.observe }}</p>
+            <button v-for="question in activeInquiry.questions" :key="question" type="button" @click="prepareInquiry(question)">{{ question }}</button>
+            <small>누르면 채팅 입력창에 들어갑니다. 현재 조건은 전송할 때 자동 첨부됩니다.</small>
+          </section></aside>
         <div class="experiment-stage">
         <div class="sim-tabs"><button v-for="lab in navigationLabs" :key="lab.id" :class="{selected:activeLabId===lab.id}" @click="openSimulation(lab.id)">{{ lab.title }}</button></div>
         <section v-if="activeTheory" :key="'theory-'+issueKey" class="experiment-theory" aria-label="실험 이론과 공식">
@@ -208,13 +233,15 @@
           <p><strong>이동 거울 M₂를 좌우로 끌어 보세요.</strong> 빛은 두 팔에서 왕복한 뒤 빔스플리터에서 합쳐집니다. 거울 이동과 장치의 관찰 화면·아래 확대 무늬가 같은 값으로 움직입니다.</p>
           <div class="michelson-device" @pointerdown="startMirrorDrag" @pointermove="dragMirror" @pointerup="endMirrorDrag" @pointercancel="endMirrorDrag" @keydown="keyMirror" v-html="apparatusSvg"></div>
           <Teleport defer to="#experiment-controls"><label>거울 이동 Δx <b>{{ displacement.toFixed(4) }} µm</b><input type="range" min="0" max="5" step="0.0001" v-model.number="displacement" @input="pauseMichelson"></label></Teleport>
-          <Teleport defer to="#experiment-controls"><label>가시도 V <b>{{ visibility.toFixed(2) }}</b><input type="range" min="0" max="1" step="0.01" v-model.number="visibility"></label></Teleport>
+          <Teleport defer to="#experiment-controls"><label>M₂ 기울기 X <b>{{ mirrorTiltX.toFixed(3) }} mrad</b><input type="range" min="-2" max="2" step=".001" v-model.number="mirrorTiltX"></label><label>M₂ 기울기 Y <b>{{ mirrorTiltY.toFixed(3) }} mrad</b><input type="range" min="-2" max="2" step=".001" v-model.number="mirrorTiltY"></label><button class="small-action" @click="mirrorTiltX=0;mirrorTiltY=0">거울 각도 정렬 · 0으로</button><p class="model-note">1 mrad ≈ 0.0573°. 기울이면 화면의 위상 기울기가 바뀌어 띠 방향·간격이 달라집니다. 반사각과 귀환빔 중심도 함께 달라집니다. 현장 조절에서 두 광점을 맞추고 합성 간섭으로 전환하세요.</p></Teleport>
+          <Teleport defer to="#experiment-controls"><label>광원·위상 안정성 V <b>{{ visibility.toFixed(2) }}</b><input type="range" min="0" max="1" step="0.01" v-model.number="visibility"></label></Teleport>
           <Teleport defer to="#experiment-controls"><div class="michelson-controls"><button @click="playing?pauseMichelson():playMichelson()">{{ playing?'Ⅱ 일시정지':'▶ 느리게 재생' }}</button><button @click="stepMichelson(-.25)">− ¼주기</button><button @click="stepMichelson(.25)">+ ¼주기</button><button @click="resetMichelson">처음으로</button></div></Teleport>
           <Teleport defer to="#experiment-controls"><label>재생 속도 <b>{{ playbackRate }} 주기/초</b><input type="range" min="0.1" max="1" step="0.05" v-model.number="playbackRate"></label></Teleport>
-          <svg viewBox="0 0 500 390" class="sim-svg michelson-screen" aria-label="거울 이동에 따라 중심에서 이동하는 등경사 간섭무늬"><defs><radialGradient id="michelson-fringes"><stop v-for="(sample,i) in sim.radial" :key="i" :offset="sample.offset+'%'" :stop-color="sample.color"/></radialGradient></defs><rect width="500" height="390" fill="#0d1822"/><circle cx="250" cy="187" r="167" fill="url(#michelson-fringes)"/><path d="M250 175V199M238 187H262" stroke="#fa815c" stroke-width="1"/><circle cx="250" cy="187" r="6" fill="none" stroke="#fa815c"/><text x="250" y="374" style="fill:#d8e6ee;text-anchor:middle">중심 관측점 + · 선택한 단색광의 상대 세기</text></svg>
+          <div class="michelson-controls"><button @click="observeMichelson('rings')">원형 간섭무늬 보기</button><button @click="observeMichelson('stripes')">기울어진 간섭무늬 보기</button><button @click="practicalSettings.michelson.view='alignment'">두 빔 정렬 확인</button></div>
+          <section class="practical-observation" aria-label="귀환빔 정렬 실습" @pointerdown="startBeamAlign" @pointermove="dragBeamAlign" @pointerup="endBeamAlign" @pointercancel="endBeamAlign" @keydown="keyBeamAlign"><div v-html="practical.svg"></div><div class="result"><div v-for="m in practical.metrics" :key="m.label">{{ m.label }}: {{ m.value }} {{ m.unit }}</div></div><p class="model-note">{{ practical.note }}</p></section>
           <div class="fringe-counter"><strong>{{ sim.completed }}</strong><span>완료 주기<br>현재 주기 {{ (sim.fraction*100).toFixed(1) }}%</span><div class="phase-track"><div :style="{width:(sim.fraction*100)+'%'}"></div></div></div>
           <svg viewBox="0 0 500 145" class="sim-svg" aria-label="화면 중심을 지나는 세기 단면"><path d="M30 20V110H470" fill="none" stroke="#819bad"/><path :d="sim.profile" fill="none" stroke="#277eac" stroke-width="2"/><text x="30" y="132">−30 mm</text><text x="240" y="132">중심</text><text x="423" y="132">+30 mm</text></svg>
-          <div class="result">N = {{ sim.cycles.toFixed(4) }} 주기 · 중심 상대 세기 = {{ sim.intensity.toFixed(4) }}<br>한 주기 거울 이동 λ/2 = {{ (wavelength/2000).toFixed(4) }} µm</div><p>+¼주기를 누르면 중심이 밝음 → 중간 → 어두움 → 중간 → 밝음으로 변합니다. 한 주기는 밝음에서 다음 밝음까지이며 밝음→어두움은 반 주기입니다.</p><p class="model-note">공기 중 등경사 간섭 모델: 유효 팔 길이 차이 20 µm+Δx, 관찰 렌즈 f=100 mm, 화면 반경 30 mm. 기준 위상을 보정해 Δx=0에서 중심을 밝게 맞췄습니다. 흑백은 파장에 상관없이 세기만 표시하며 실제 장비의 수차·정렬·결맞음은 생략합니다.</p>
+          <div class="result">N = {{ sim.cycles.toFixed(4) }} 주기 · 이상적 기준점 세기 = {{ sim.intensity.toFixed(4) }}<br>한 주기 거울 이동 λ/2 = {{ (wavelength/2000).toFixed(4) }} µm</div><p>+¼주기를 누르면 중심이 밝음 → 중간 → 어두움 → 중간 → 밝음으로 변합니다. 한 주기는 밝음에서 다음 밝음까지이며 밝음→어두움은 반 주기입니다.</p><p class="model-note">X·Y 각도를 바꿔 띠의 방향과 간격을 비교하고 ‘거울 각도 정렬’로 돌아오세요. <a href="https://simufisica.com/en/michelson-interferometer/" target="_blank" rel="noopener">참고: SimuFísica의 각도 조절 실험</a>. 이 화면은 구면 위상에 작은 거울 기울기를 합산한 별도 학습 모델입니다.</p><p class="model-note">공기 중 등경사 간섭 모델: 편도 거리 차이 (L₂−L₁)+Δx, 관찰 렌즈 f=100 mm, 화면 반경 30 mm. 초기 관찰 조건 L₁=100 mm, L₂=100.02 mm, Δx=0에서 중심 위상을 보정했습니다. 두 거리나 거울 미동을 바꾸면 위상도 변합니다. 색 밝기는 상대 세기를 나타냅니다. 위 합성 화면은 관측 렌즈 f=10 mm·±4 mm 확대 범위에서 Gaussian 빔의 겹침과 등경사 위상을 함께 계산합니다. 아래 이상적 단면 그래프는 기존 위상 모델입니다. 실제 장비의 수차·편광·결맞음 길이는 생략합니다.</p>
         </template>
         <template v-else-if="simKind==='fresnel'">
           <div class="polarization-guide">
@@ -263,10 +290,12 @@
           <Teleport defer to="#experiment-controls"><label>과정 선택<select v-model="absorptionType"><option value="semiconductor">반도체 · 밴드 사이 전자 들뜸</option><option value="metal">금속 · 진공으로 전자 방출</option><option value="insulator">부도체 · 큰 밴드갭의 들뜸</option></select></label></Teleport>
           <Teleport defer to="#experiment-controls"><div class="michelson-controls"><button @click="chooseAbsorptionExample('semiconductor','si',650)">Si + 빨강 · 들뜸 조건</button><button @click="chooseAbsorptionExample('semiconductor','gan',650)">GaN + 빨강 · 부족</button><button @click="chooseAbsorptionExample('semiconductor','gan',300)">GaN + UV · 들뜸 조건</button><button @click="chooseAbsorptionExample('metal','na',450)">Na + 파랑 · 방출 조건</button><button @click="chooseAbsorptionExample('metal','cu',450)">Cu + 파랑 · 방출 불가</button></div></Teleport>
           <Teleport defer to="#experiment-controls"><label>물질 선택 · 기준값<select v-model="bandMaterial" @change="chooseBandMaterial"><option value="custom">직접 설정 · 가상 물질</option><option v-for="m in bandMaterials.filter(m=>m.type===absorptionType)" :key="m.id" :value="m.id">{{ m.name }} · {{ m.gap }} eV</option></select></label></Teleport>
-          <p v-if="selectedBandMaterial" class="model-note"><strong>{{ selectedBandMaterial.name }}</strong> · {{ selectedBandMaterial.transition }} · {{ absorptionType==='metal'?'표면 일함수 대표값':'약 300 K 밴드갭 대표값' }}. <a :href="selectedBandMaterial.source" target="_blank" rel="noopener">출처</a><br>문턱 파장 {{ (1239.841984/selectedBandMaterial.gap).toFixed(1) }} nm · 점유 분포 온도를 바꿔도 기준 밴드갭은 고정됩니다.</p>
+          <p class="model-note">물질 프리셋의 기준 에너지는 고정됩니다. 값을 바꾸려면 물질 선택에서 <strong>직접 설정 · 가상 물질</strong>을 선택하세요. 0.5–10 eV는 조절 범위이며 반도체·부도체를 나누는 경계가 아닙니다.</p>
+          <p class="model-note">{{ absorptionType==='metal'?'금속은 EF=0을 기준으로 진공 준위 Evac=Φ를 표시합니다. 밴드갭으로 도체를 구분하지 않습니다.':'Ev=0을 기준으로 전도대 바닥 Ec=Eg를 표시합니다. 전도대 바닥은 전자의 에너지 상한이 아닙니다.' }} 그래프 위쪽 끝은 표시 범위입니다.</p>
+          <p v-if="selectedBandMaterial" class="model-note"><strong>{{ selectedBandMaterial.name }}</strong> · {{ selectedBandMaterial.transition }} · {{ selectedBandMaterial.sourceNote }}. <a :href="selectedBandMaterial.source" target="_blank" rel="noopener">출처</a><br>문턱 파장 {{ (1239.841984/selectedBandMaterial.gap).toFixed(1) }} nm · 점유 분포 온도를 바꿔도 기준 밴드갭은 고정됩니다.</p>
           <Teleport defer to="#experiment-controls"><label>입사 파장 <b>{{ absorptionWave }} nm</b><input type="range" min="100" max="2000" step="1" v-model.number="absorptionWave"></label></Teleport>
           <Teleport defer to="#experiment-controls"><div class="michelson-controls"><button @click="absorptionWave=193">자외선 193 nm</button><button @click="absorptionWave=450">파랑 450 nm</button><button @click="absorptionWave=650">빨강 650 nm</button><button @click="absorptionWave=1550">적외선 1550 nm</button></div></Teleport>
-          <Teleport defer to="#experiment-controls"><label>{{ absorptionType==='metal'?'일함수 Φ':'밴드갭 Eg' }} · {{ selectedBandMaterial?'물질 기준값':'직접 설정' }} <b>{{ threshold.toFixed(3) }} eV</b><input type="range" min="0.5" max="10" step="0.001" v-model.number="threshold" @input="bandMaterial='custom'"></label></Teleport>
+          <Teleport defer to="#experiment-controls"><label>{{ absorptionType==='metal'?'일함수 Φ':'밴드갭 Eg' }} · {{ selectedBandMaterial?'물질 기준값':'직접 설정' }} <b>{{ threshold.toFixed(3) }} eV</b><input type="range" min="0.5" max="10" step="0.001" v-model.number="threshold" :disabled="!!selectedBandMaterial"></label></Teleport>
           <p class="model-note">반도체·부도체에서는 전자가 물질 안의 높은 에너지 상태로 이동합니다. 금속 모드는 표면 밖 진공 방출을 별도로 다룹니다. 물질 선택값은 출처의 대표값이며, 직접 설정은 가상 물질입니다.</p>
           <details class="electron-concepts"><summary><strong>전자 들뜸 · 밴드갭 · 페르미 준위 알아보기</strong></summary>
             <ul><li><strong>가전자대:</strong> 원자가 결합과 관련된 전자들이 차지하는 에너지 띠.</li><li><strong>전도대:</strong> 전기 전도에 참여할 수 있는 전자 상태의 띠.</li><li><strong>밴드갭 Eg:</strong> 가전자대 꼭대기 Ev와 전도대 바닥 Ec 사이의 에너지 간격.</li><li><strong>페르미 준위 EF:</strong> 열평형 전자 점유를 설명하는 화학 퍼텐셜. 유한 온도에서 f(EF)=½이며, 그 에너지에 실제 상태가 있다는 뜻은 아닙니다.</li><li><strong>전자 들뜸:</strong> 에너지를 받아 높은 허용 상태로 이동하는 것. 낮은 상태에 남은 빈자리는 정공으로 다룹니다.</li><li><strong>일함수 Φ:</strong> 금속의 페르미 준위에서 진공 준위까지의 에너지 차이. Eg와 다릅니다.</li></ul>
@@ -301,7 +330,7 @@
         </template>
         <template v-else-if="simKind==='equipment'">
           <Teleport defer to="#experiment-controls"><label>광학장비<select v-model="equipment.equipmentType"><option value="camera">카메라 · 상 형성</option><option value="telescope">망원경 · 각배율</option><option value="microscope">현미경 · 중간상 / 분해능</option></select></label></Teleport>
-          <div class="equipment-intro"><strong>{{ {camera:'카메라: 무엇이 사진에 담길까?',telescope:'망원경: 멀리 있는 물체를 얼마나 크게 볼까?',microscope:'현미경: 작은 구조를 얼마나 구분할까?'}[equipment.equipmentType] }}</strong><p>{{ {camera:'센서 길이를 바꾸고 사진에 들어오는 건물 수를 비교하세요. F수는 오른쪽 조리개 구멍과 사진 밝기를 바꿉니다.',telescope:'대물렌즈는 빛을 모으고 접안렌즈는 중간상을 확대합니다. 접안 초점거리를 줄이면 각배율이 커집니다.',microscope:'대물렌즈가 시료 빛을 받아 튜브렌즈가 중간상을 만듭니다. NA를 바꾸면 아래 분해 가능 거리가 달라집니다.'}[equipment.equipmentType] }}</p></div>
+          <div class="equipment-intro"><strong>{{ {camera:'카메라: 무엇이 사진에 담길까?',telescope:'망원경: 멀리 있는 물체를 얼마나 크게 볼까?',microscope:'현미경: 작은 구조를 얼마나 구분할까?'}[equipment.equipmentType] }}</strong><p>{{ {camera:'센서 길이를 바꾸고 사진에 들어오는 건물 수를 비교하세요. F수는 오른쪽 조리개 구멍과 사진 밝기를 바꿉니다.',telescope:'대물렌즈는 빛을 모으고 접안렌즈는 중간상을 확대합니다. 접안 초점거리를 줄이면 각배율이 커집니다.',microscope:'초점거리를 바꾸면 주황색 중간상의 크기와 광선이 변합니다. 시료 위치는 초점 조건에 자동 배치됩니다. NA는 분해 가능 거리를 바꿉니다.'}[equipment.equipmentType] }}</p></div>
         <div v-if="apparatusSvg" class="apparatus-panel" ><div class="apparatus-title">조절 중인 장비 <span>장치와 광경로</span></div><div class="apparatus-art"  v-html="apparatusSvg"></div><p>장치 배치는 원리 학습용 개념도입니다. 실제 장비의 기구 치수·안전 절차를 재현하지 않습니다.</p></div>
           <template v-if="equipment.equipmentType==='camera'">
             <Teleport defer to="#experiment-controls"><label>렌즈 초점거리 {{ equipment.f }} mm<input type="range" min="10" max="200" v-model.number="equipment.f"></label></Teleport>
@@ -309,7 +338,7 @@
             <Teleport defer to="#experiment-controls"><label>사진을 받는 센서의 가로 길이 {{ equipment.sensor }} mm<input type="range" min="5" max="50" step=".1" v-model.number="equipment.sensor"></label></Teleport>
             <p>센서를 넓히면 사진에 건물이 더 많이 들어옵니다. 초점거리를 늘리면 확대되고, 거리가 멀어지면 더 넓게 보입니다.</p>
             <Teleport defer to="#experiment-controls"><label>조리개 · 빛이 들어오는 구멍 크기 <b>f/{{ equipment.fNumber }}</b><input type="range" min="1" max="22" step=".1" v-model.number="equipment.fNumber"></label></Teleport>
-            <p><strong>f/4는 초점거리 ÷ 구멍 지름이 4라는 뜻</strong>입니다. 예: 50 mm 렌즈의 f/4는 구멍 지름 12.5 mm. 숫자를 낮추면 구멍이 커지고, 높이면 작아집니다.</p>
+            <p><strong>F수 = 초점거리 ÷ 입사동공 지름</strong>입니다. 현재 {{ equipment.f }} mm 렌즈의 f/{{ equipment.fNumber }}는 유효 구경 약 {{ (equipment.f/equipment.fNumber).toFixed(2) }} mm입니다. F수를 낮추면 구경이 커집니다.</p>
             <Teleport defer to="#experiment-controls"><div class="michelson-controls"><button @click="equipment.fNumber=2">f/2 · 넓게</button><button @click="equipment.fNumber=4">f/4 · 기준</button><button @click="equipment.fNumber=8">f/8 · 좁게</button><button @click="equipment.fNumber=16">f/16 · 더 좁게</button></div></Teleport>
           </template>
           <template v-else-if="equipment.equipmentType==='telescope'">
@@ -329,7 +358,7 @@
           </template>
 
           <Teleport defer to="#experiment-controls"><label >계산 파장 {{ equipment.wave }} nm<input type="range" min="400" max="700" v-model.number="equipment.wave"></label></Teleport>
-          <div class="result"><div v-for="m in sim.metrics" :key="m.label">{{ m.label }}: {{ m.value===null?'실상 조건을 확인하세요':m.value+' '+m.unit }}</div></div>
+          <div class="result"><div v-for="m in sim.metrics" :key="m.label">{{ m.label }}: {{ m.value===null?'실상 조건을 확인하세요':m.value+' '+m.unit }}</div></div><p v-if="equipment.equipmentType==='camera'" class="model-note"><b>상 거리</b>: 렌즈에서 선명한 상이 맺히는 센서 위치까지 거리입니다.<br><b>횡배율</b>: 상 크기 ÷ 물체 크기입니다. 음수는 도립상, 절댓값 0.05는 실제 물체의 약 1/20 크기라는 뜻입니다.<br><b>수평 화각</b>: 사진에 담는 좌우 각도입니다. 클수록 넓게 담깁니다. 현재 표시는 무한대 초점 기준 근사입니다.</p>
           <details class="electron-concepts"><summary>파생값을 구하려면?</summary><p>카메라: 센서에 맞는 물체 거리·회절 한계 F수 / 망원경: 목표 배율의 접안렌즈·필요 구경 / 현미경: 목표 해상도의 NA·수광각을 물어보세요.</p></details>
           <div class="category-questions"><button v-for="q in sim.hints" :key="q" @click="input=q">{{ q }} →</button></div>
           <button class="small-action" @click="openDoc('optical-equipment')">장비별 식·가정·계산 문서 보기 →</button>
@@ -337,11 +366,14 @@
           <p class="model-note">광경로는 개념도, 수치는 이상적인 근축·회절 모델입니다. 수차·광원 대역폭·실제 조리개·검출 응답을 포함하지 않습니다. </p>
         </template>
         <template v-else>
+          <Teleport defer to="#experiment-controls"><label>슬릿 종류<select v-model="slitMode"><option value="single">단일슬릿 · 회절</option><option value="double">이중슬릿 · 간섭과 회절</option></select></label><label v-if="slitMode==='double'">두 슬릿 중심 간격 d <b>{{ slitSeparation.toFixed(2) }} mm</b><input type="range" :min="slit+.01" max="2" step=".01" v-model.number="slitSeparation"></label></Teleport>
           <Teleport defer to="#experiment-controls"><label>슬릿 폭 <b>{{ slit.toFixed(2) }} mm</b><input type="range" min="0.05" max="0.50" step="0.01" v-model.number="slit"></label></Teleport>
           <Teleport defer to="#experiment-controls"><label>스크린 거리 <b>{{ distance.toFixed(1) }} m</b><input type="range" min="1" max="3" step="0.1" v-model.number="distance"></label></Teleport>
-          <svg viewBox="0 0 500 250" class="sim-svg" aria-label="단일슬릿 상대 세기 그래프"><path d="M30 30V190H470" fill="none" stroke="#7897ae"/><path :d="sim.path" fill="none" :stroke="lightColor" stroke-width="2"/><text x="30" y="220">−20 mm</text><text x="240" y="220">0</text><text x="422" y="220">+20 mm</text><text x="32" y="20">상대 세기 I/I(0)</text></svg>
-          <div class="result">중앙 최대 전체 폭 ≈ {{ sim.width.toFixed(3) }} mm</div><p>W ≈ 2λL/a. 단일슬릿 원거리 회절, 위치 변환에는 작은 각도 근사를 사용합니다.</p>
+          <section class="practical-observation" aria-label="슬릿 스크린 정면"><div v-html="practical.svg"></div><p>{{ practical.note }}</p></section>
+          <svg viewBox="0 0 500 250" class="sim-svg" aria-label="슬릿 상대 세기 그래프"><path d="M30 30V190H470" fill="none" stroke="#7897ae"/><path :d="sim.path" fill="none" :stroke="lightColor" stroke-width="2"/><text x="30" y="220">−20 mm</text><text x="240" y="220">0</text><text x="422" y="220">+20 mm</text><text x="32" y="20">상대 세기 I/I(0)</text></svg>
+          <div class="result">회절 포락선 중앙 전체 폭 ≈ {{ sim.width.toFixed(3) }} mm<span v-if="slitMode==='double'"><br>간섭무늬 간격 Δy ≈ {{ sim.fringeSpacing.toFixed(3) }} mm</span></div><p>W ≈ 2λL/a<span v-if="slitMode==='double'"> · Δy ≈ λL/d. 세밀한 간섭무늬는 넓은 회절 포락선 안에 나타납니다.</span></p>
         </template>
+        <section v-if="!['michelson','diffraction'].includes(simKind)" class="practical-observation" aria-label="현장 조절 검출 화면"><h3>현장 조절 · 검출 화면</h3><div v-html="practical.svg"></div><div class="result"><div v-for="m in practical.metrics" :key="m.label">{{ m.label }}: {{ m.value===null?'없음':m.value }} {{ m.unit }}</div></div><p class="model-note">{{ practical.note }}</p><p class="model-note">위 이론 그래프와 구분한 조절 실습 화면입니다. 실제 측정 데이터가 아닙니다.</p></section>
         <section v-if="activeIssues" :key="issueKey" class="experiment-issues" aria-label="실험 유의사항과 확인 문제">
           <details><summary><strong>유의사항 · 자주 생기는 문제</strong><span>열어서 확인하기</span></summary>
             <p class="issue-notice"><strong>먼저 알아두기</strong><br>{{ activeIssues.notice }}</p>
@@ -380,7 +412,7 @@
   <!-- Enter/보내기는 같은 핸들러 사용. 새 요청은 기존 스트림을 먼저 닫는다. -->
   <form @submit.prevent="onSubmit">
     <input
-      v-model="input"
+      v-model="input" data-chat-input
       aria-label="광학 질문"
       autocomplete="off"
       placeholder="예: Michelson 간섭계에서 간섭무늬가 안 보여요"
@@ -402,7 +434,7 @@
   <footer class="footer"><span>학습용 안내 · 실제 실험은 소속 실험실 안전 지침을 따르세요.</span><strong>OPTICS LAB ONLINE</strong></footer>
 </div>
 
-<script src="/optics_lab.js"></script>
+<script src="/optics_lab.js?v=20261022-arm-distances-5"></script>
 <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/marked@15.0.12/marked.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.6/dist/purify.min.js"></script>
@@ -411,13 +443,10 @@
 const { createApp, ref, reactive, nextTick, computed, watch, onBeforeUnmount } = Vue;
 
 const STEP_LABELS = {
+  SourcesPrepared: e => `자료 준비 ${e.seconds.toFixed(2)}초 · ${e.workers.length}개 담당 작업`,
   PlanCreated: e => `자료 확인: 항목 ${e.task_count}가지${e.targets?.length ? ` (주제: ${e.targets.join(', ')})` : ''}`,
-  GateApplied: e => e.removed_analysis_tasks ? `불필요한 작업 ${e.removed_analysis_tasks}건 제거` : null,
-  TaskCompleted: e => (e.source === 'monitoring'
-      ? `모니터링 지표 확인 (시스템: ${e.target})`
-      : `학습·점검 자료 조회 (유형: ${e.target})`) + (e.retries ? ' (재시도 성공)' : ''),
-  ReplanCheck: e => e.is_sufficient ? null : (e.reason || '관련 자료 확인 필요'),
-  DraftWritten: e => `답변 초안 작성 (시도 ${e.attempt})`,
+  TaskCompleted: e => `학습 자료 조회: ${e.target}`,
+  WebSearchCompleted: e => e.status==='ok' ? `허용 출처 검색 완료: ${e.count}건` : e.status==='no_trusted_results' ? '허용한 출처에서 사용할 자료를 찾지 못했습니다' : `웹 검색 미완료: ${e.status}`,
   CalculationCompleted: e => e.ok ? `MCP 계산 완료: ${e.operation}` : `계산 조건 확인: ${e.status}`,
   CalculationValidated: e => e.ok ? '단위·입력 조건·계산 결과 확인 완료' : '입력 부족 또는 계산 불가 조건 확인',
   Validation: e => e.verdict === '합격' ? '응답 형식 확인 완료' : '응답 형식 보완 중',
@@ -488,10 +517,32 @@ createApp({
   setup() {
     // 화면 모드·슬라이더 값은 모두 동일한 setup 수명에 있어 메뉴 이동 시 유지된다.
     const view = ref('ask');
+    const practicalSettings=reactive(Object.fromEntries(['michelson','polarization','diffraction','xrd','fresnel','prism','camera','telescope','microscope','lens','concave-lens','concave-mirror','convex-mirror','absorption'].map(kind=>[kind,{...Object.fromEntries(opticsPracticalControls(kind).map(c=>[c.key,c.value])),...(kind==='absorption'?{retarding:0}:{}),...(kind==='michelson'?{view:'interference'}:{})}])));
+    const practicalControls=computed(()=>opticsPracticalControls(issueKey.value,absorptionType.value==='metal'));
+    const practical=computed(()=>opticsPractical(issueKey.value,simulationValues.value,sim.value,practicalSettings[issueKey.value]));
+    function resetPractical(){for(const c of practicalControls.value)practicalSettings[issueKey.value][c.key]=c.value;if(issueKey.value==='michelson'){mirrorTiltX.value=0;mirrorTiltY.value=0;practicalSettings.michelson.view='interference';}}
+    function disturbPractical(){const s=practicalSettings[issueKey.value];if(issueKey.value==='michelson'){s.beamX=3;s.beamY=-2;s.waist2=2.8;s.view='alignment';mirrorTiltX.value=.3;mirrorTiltY.value=-.2;}else{const c=practicalControls.value[0];s[c.key]=Math.min(c.max,c.value+(c.max-c.min)*.2);}}
+    function observeMichelson(pattern){
+      pauseMichelson();const s=practicalSettings.michelson;
+      Object.assign(s,{view:'interference',arm1Distance:100,arm2Distance:pattern==='stripes'?100:100.02,beamX:0,beamY:0,waist1:2,waist2:2,balance:1});
+      mirrorTiltX.value=pattern==='stripes'?.18:0;mirrorTiltY.value=0;
+      s.beamX=-2*mirrorTiltX.value;displacement.value=0;visibility.value=1;
+    }
+    function focusPractical(){if(practical.value.state.real)practicalSettings[issueKey.value].screen=practical.value.state.image;}
+    let beamDragging=false;
+    function startBeamAlign(event){if(!event.target.closest('[data-return-beam]'))return;beamDragging=true;pauseMichelson();event.currentTarget.setPointerCapture?.(event.pointerId);dragBeamAlign(event);}
+    function dragBeamAlign(event){if(!beamDragging)return;const svg=event.currentTarget.querySelector('svg.practical-screen'),matrix=svg?.getScreenCTM?.();if(!matrix)return;const pt=svg.createSVGPoint();pt.x=event.clientX;pt.y=event.clientY;const local=pt.matrixTransform(matrix.inverse());practicalSettings.michelson.beamX=Math.max(-8,Math.min(8,Math.round(((local.x-300)/11-2*mirrorTiltX.value)*100)/100));practicalSettings.michelson.beamY=Math.max(-8,Math.min(8,Math.round(((local.y-178)/11-2*mirrorTiltY.value)*100)/100));}
+    function endBeamAlign(){beamDragging=false;}
+    function keyBeamAlign(event){if(!event.target.closest('[data-return-beam]'))return;const moves={ArrowLeft:['beamX',-.1],ArrowRight:['beamX',.1],ArrowUp:['beamY',-.1],ArrowDown:['beamY',.1]};const move=moves[event.key];if(move){event.preventDefault();const [key,delta]=move;practicalSettings.michelson[key]=Math.max(-8,Math.min(8,Math.round((practicalSettings.michelson[key]+delta)*100)/100));}}
+
+
     const simKind = ref('polarization');
     const angle = ref(45), focal = ref(10), object = ref(30);
     const wavelength = ref(532), slit = ref(0.10), distance = ref(1);
+    const slitMode=ref('single'),slitSeparation=ref(.3);
+    watch(slit,()=>{slitSeparation.value=Math.max(slitSeparation.value,Number((slit.value+.01).toFixed(2)));});
     const scanTwoTheta=ref(30);
+    const mirrorTiltX=ref(0),mirrorTiltY=ref(0);
     const xray=ref(0.154), spacing=ref(0.3), order=ref(1), displacement=ref(0), visibility=ref(1);
     const n1=ref(1), n2=ref(1.5), incidence=ref(45), apex=ref(60), opticalDepth=ref(.2);
     const material=ref('custom'),plane=ref('111'),materials=xrdMaterials();
@@ -532,13 +583,13 @@ createApp({
     function chooseLight(value){if(value!=='custom')wavelength.value=Number(value);}
     const absorptionType=ref('semiconductor'),threshold=ref(1.12),absorptionWave=ref(532),photonShot=ref(0);
     const bandMaterials=[
-      {id:'si',name:'실리콘 Si · diamond cubic',type:'semiconductor',gap:1.12,transition:'간접갭 · 포논을 포함한 전이 고려',source:'https://journals.ioffe.ru/articles/viewPDF/45185'},
-      {id:'gaas',name:'갈륨비소 GaAs · zinc blende',type:'semiconductor',gap:1.424,transition:'직접갭',source:'https://journals.ioffe.ru/articles/viewPDF/45185'},
-      {id:'gan',name:'질화갈륨 GaN · wurtzite',type:'semiconductor',gap:3.4,transition:'직접갭 · 육방정계',source:'https://arxiv.org/abs/0708.2211'},
-      {id:'na',name:'나트륨 Na · 표면 일함수 예시',type:'metal',gap:2.46,transition:'표면 상태에 따라 달라지는 대표값',source:'https://openstax.org/books/university-physics-volume-3/pages/6-2-photoelectric-effect'},
-      {id:'al',name:'알루미늄 Al · 표면 일함수 예시',type:'metal',gap:4.08,transition:'표면 상태에 따라 달라지는 대표값',source:'https://openstax.org/books/university-physics-volume-3/pages/6-2-photoelectric-effect'},
-      {id:'cu',name:'구리 Cu · 표면 일함수 예시',type:'metal',gap:4.7,transition:'표면 상태에 따라 달라지는 대표값',source:'https://openstax.org/books/university-physics-volume-3/pages/6-2-photoelectric-effect'},
-      {id:'sio2',name:'이산화규소 SiO₂',type:'insulator',gap:9,transition:'절연체 · 구조·결함에 따라 광학 흡수단 차이',source:'https://journals.ioffe.ru/articles/viewPDF/45185'}
+      {id:'si',name:'실리콘 Si · diamond cubic',type:'semiconductor',gap:1.12,transition:'간접갭 · 포논을 포함한 전이 고려',sourceNote:'Hlali 등(2017) p.1688 · 300 K 계산 입력값',source:'https://journals.ioffe.ru/articles/viewPDF/45185'},
+      {id:'gaas',name:'갈륨비소 GaAs · zinc blende',type:'semiconductor',gap:1.424,transition:'직접갭',sourceNote:'Hlali 등(2017) p.1688 · 300 K 계산 입력값',source:'https://journals.ioffe.ru/articles/viewPDF/45185'},
+      {id:'gan',name:'질화갈륨 GaN · wurtzite',type:'semiconductor',gap:3.4,transition:'직접갭 · 육방정계',sourceNote:'Dhara 등(2007) 초록 · 육방정 비교 근삿값',source:'https://arxiv.org/abs/0708.2211'},
+      {id:'na',name:'나트륨 Na · 표면 일함수 예시',type:'metal',gap:2.46,transition:'표면 상태에 따라 달라지는 대표값',sourceNote:'OpenStax §6.2 Table 6.1 · 일함수 대표값',source:'https://openstax.org/books/university-physics-volume-3/pages/6-2-photoelectric-effect'},
+      {id:'al',name:'알루미늄 Al · 표면 일함수 예시',type:'metal',gap:4.08,transition:'표면 상태에 따라 달라지는 대표값',sourceNote:'OpenStax §6.2 Table 6.1 · 일함수 대표값',source:'https://openstax.org/books/university-physics-volume-3/pages/6-2-photoelectric-effect'},
+      {id:'cu',name:'구리 Cu · 표면 일함수 예시',type:'metal',gap:4.7,transition:'표면 상태에 따라 달라지는 대표값',sourceNote:'OpenStax §6.2 Table 6.1 · 일함수 대표값',source:'https://openstax.org/books/university-physics-volume-3/pages/6-2-photoelectric-effect'},
+      {id:'sio2',name:'이산화규소 SiO₂',type:'insulator',gap:9,transition:'절연체 · 구조·결함에 따라 광학 흡수단 차이',sourceNote:'Hlali 등(2017) p.1688 · 300 K 계산 입력값',source:'https://journals.ioffe.ru/articles/viewPDF/45185'}
     ];
     const bandMaterial=ref('si');
     const selectedBandMaterial=computed(()=>bandMaterials.find(m=>m.id===bandMaterial.value));
@@ -554,10 +605,9 @@ createApp({
     const emissionDuration=computed(()=>Math.max(.45,Math.min(3,2/Math.sqrt(Math.max(.05,sim.value.kinetic||.05)))));
     function firePhoton(){shotCount.value=1;photonShot.value++;playAbsorptionAnimation();}
     function fireLightPulse(){shotCount.value=Math.round(intensity.value*3);photonShot.value++;if(shotCount.value)playAbsorptionAnimation();else absorptionProgress.value=0;}
-    watch(absorptionType,type=>{bandMaterial.value='custom';threshold.value={semiconductor:1.5,metal:4.5,insulator:8}[type];photonShot.value=0;});
+    watch(absorptionType,type=>{bandMaterial.value={semiconductor:'si',metal:'na',insulator:'sio2'}[type];chooseBandMaterial();});
     watch([absorptionWave,threshold,intensity],()=>{photonShot.value=0;shotCount.value=0;});
-    const equipment=reactive({equipmentType:'camera',telescopeModel:'kepler',microscopeModel:'infinity',stageX:0,focusOffset:0,f:50,u:1000,sensor:36,fNumber:4,objective:500,eyepiece:25,diameter:80,microF:4,tube:200,microNA:.65,medium:1,wave:550,lithoWave:13.5,na:.33,k1:.4,k2:.5,reduction:4,mask:100});
-    watch(()=>equipment.lithoWave,()=>{equipment.na=Math.min(equipment.na,equipment.lithoWave<20?.95:1.35);});
+    const equipment=reactive({equipmentType:'camera',telescopeModel:'kepler',microscopeModel:'infinity',f:50,u:1000,sensor:36,fNumber:4,objective:500,eyepiece:25,diameter:80,microF:4,tube:200,microNA:.65,medium:1,wave:550});
     // 질문과 해설은 학습용 사례다. 실제 장비의 고장 진단 결과가 아니다.
     const experimentIssues={
       polarization:{notice:'I₀는 두 번째 편광판 직전의 선편광 세기입니다. 레이저 직접광·반사광을 눈으로 보지 마세요.',questions:[
@@ -634,8 +684,9 @@ f<0, u>0, v<0. f·u·v는 같은 길이 단위입니다.`,'근축 구면거울 �
       prism:theory('굴절률이 파장에 의존해 두 경계면에서 굴절한 빛이 색마다 다른 방향으로 나옵니다. 산란과는 다른 현상입니다.',String.raw`\[\sin i=n\sin r_1,\quad n\sin r_2=\sin e,\quad r_1+r_2=A,\quad\delta=i+e-A\]
 \[n(\lambda)=1.50+\frac{0.004}{\lambda[\mathrm{\mu m}]^2}\]
 A: 꼭지각, i: 입사각, e: 출사각, δ: 편이각. i·e는 각 면의 법선 기준입니다.`,'공기 중 가상 Cauchy 분산 모델입니다. 각 꼭지각에서 550 nm가 최소 편이인 입사각을 사용합니다. 다른 파장까지 동시에 최소 편이는 아닙니다.'),
-      diffraction:theory('단일슬릿을 통과한 파동이 간섭해 중앙 최대와 양쪽 부극대를 만듭니다. 슬릿이 좁을수록 중앙 무늬가 넓어집니다.',String.raw`\[\frac I{I(0)}=\left(\frac{\sin\beta}{\beta}\right)^2,\quad\beta=\frac{\pi a\sin\theta}{\lambda},\quad W\approx\frac{2\lambda L}{a}\]
-a: 슬릿 폭, L: 스크린 거리, W: 중앙 최대 전체 폭. 길이를 같은 단위로 변환합니다. β=0에서 세기 비의 극한은 1입니다.`,'원거리 회절과 중앙 부근 작은 각도 근사입니다. 실제 광원 분포·슬릿 불균일·검출기 잡음은 생략합니다.'),
+      diffraction:theory('단일슬릿은 넓은 중앙 회절무늬와 약한 부극대가 생깁니다. 이중슬릿은 이 회절 포락선 안에 촘촘한 간섭무늬가 생깁니다. 슬릿 폭 a는 포락선, 중심 간격 d는 간섭 간격을 정합니다.',String.raw`\[\frac I{I(0)}=\left(\frac{\sin\beta}{\beta}\right)^2,\quad\beta=\frac{\pi a\sin\theta}{\lambda},\quad W\approx\frac{2\lambda L}{a}\]
+이중슬릿: \[I/I(0)=(\sin\beta/\beta)^2\cos^2(\pi d\sin\theta/\lambda),\quad\Delta y\approx\lambda L/d\]
+a: 슬릿 폭, d: 두 슬릿 중심 간격, L: 스크린 거리, W: 회절 포락선 중앙 전체 폭. 길이를 같은 단위로 변환합니다. β=0에서 세기 비의 극한은 1입니다.`,'원거리 회절과 중앙 부근 작은 각도 근사입니다. 실제 광원 분포·슬릿 불균일·검출기 잡음은 생략합니다.'),
       absorption:theory('반도체 내부 들뜸은 전자가 물질 안의 높은 상태로 이동하는 것, 외부 광전효과는 전자가 표면에서 진공으로 나오는 것입니다. 밴드갭과 일함수는 서로 다른 양입니다.',String.raw`\[E=h\nu=\frac{hc}{\lambda_0},\quad E[\mathrm{eV}]\approx\frac{1239.84}{\lambda_0[\mathrm{nm}]}\]
 \[E\ge E_g\quad\text{(내부 들뜸의 단순 에너지 조건)},\qquad K_{\max}=E-\Phi\]
 Eg: 밴드갭, Φ: 일함수, Kmax: 최대 방출 운동에너지(단위 eV). 양의 운동에너지로 외부 방출하려면 E>Φ여야 합니다.`,'E≥Eg는 실제 흡수의 충분조건이 아닙니다. 직접·간접 전이·포논·결함을 구분합니다. 세기와 광자 에너지는 다르며 실제 흡수율·전류는 계산하지 않습니다.'),
@@ -652,7 +703,26 @@ v: 유한 모델의 대물→중간상 거리, θ: 수광 반각. NA≤n이어�
     const activeTheory=computed(()=>experimentTheories[issueKey.value]);
     const activeIssues=computed(()=>experimentIssues[simKind.value==='equipment'?equipment.equipmentType:simKind.value]);
     const issueKey=computed(()=>simKind.value==='equipment'?equipment.equipmentType:simKind.value);
-    const labs = [{id:'equipment',title:'광학장비'},{id:'polarization',title:'편광판'},{id:'lens',title:'볼록렌즈'},{id:'concave-lens',title:'오목렌즈'},{id:'concave-mirror',title:'오목거울'},{id:'convex-mirror',title:'볼록거울'},{id:'diffraction',title:'단일슬릿'},{id:'michelson',title:'마이켈슨 간섭계'},{id:'xrd',title:'XRD'},{id:'fresnel',title:'s·p 편광 / 전반사'},{id:'prism',title:'프리즘 분산'},{id:'absorption',title:'광흡수 / 광전효과'}];
+    // 정답 대신 조작 → 관찰 → 역산을 유도한다. 선택만으로 API를 호출하지 않는다.
+    const inquiryGuides={
+      lens:{change:'물체 거리·초점거리',observe:'상 위치·실상/허상·배율',questions:['현재 상은 렌즈 어느 쪽에 생기고 스크린에 맺힐까?','물체 거리를 고정하고 같은 크기의 실상을 만들려면 초점거리를 어떻게 정할까?','물체가 초점을 통과하면 상의 위치와 방향은 어떻게 바뀔까?']},
+      'concave-lens':{change:'물체 거리·초점거리',observe:'허상의 위치·축소 배율',questions:['현재 허상은 어디에 보이고 왜 스크린에는 맺히지 않을까?','물체를 가까이 옮기면 상 위치와 크기는 어떻게 달라질까?']},
+      'concave-mirror':{change:'물체 거리·초점거리',observe:'거울 앞/뒤 상 위치·배율',questions:['현재 상은 거울 앞과 뒤 중 어디에 생길까?','같은 크기의 도립 실상을 만들려면 물체를 어디에 놓아야 할까?','확대된 정립상을 보려면 물체 거리를 어떻게 바꿔야 할까?']},
+      'convex-mirror':{change:'물체 거리·초점거리',observe:'정립 허상·상 크기',questions:['현재 상은 거울 뒤 어디에 보일까?','물체가 가까워질 때 허상의 크기와 위치는 어떻게 변할까?']},
+      polarization:{change:'두 편광판 사이 각도',observe:'투과 세기 비',questions:['현재 최대 투과 세기의 절반을 얻으려면 편광판을 몇 도로 맞출까?','각도를 두 배로 바꾸면 투과 세기도 두 배로 변할까?']},
+      diffraction:{change:'슬릿 폭·파장·스크린 거리',observe:'회절 포락선의 첫 암선·중앙 폭 / 이중슬릿 간섭 간격',questions:['현재 중앙 밝은 무늬의 폭을 계산하려면 어떤 값이 필요할까?','다른 값은 고정하고 무늬 폭을 두 배로 만들려면 무엇을 바꿀까?']},
+      michelson:{change:'거울 변위·기울기·파장',observe:'지나간 무늬 수·간격·방향',questions:['지금 파장에서 무늬 10개가 지나가려면 거울을 얼마나 옮겨야 할까?','거울 변위는 고정하고 기울기만 바꾸면 무늬 간격은 어떻게 달라질까?','거울 변위와 지나간 무늬 수로 파장을 어떻게 역산할까?']},
+      xrd:{change:'X선 파장·면간격 또는 시료·결정면',observe:'브래그 각 θ·측정 각 2θ',questions:['현재 반사의 검출기 위치 2θ를 계산하면 얼마일까?','같은 결정면에서 파장을 늘리면 피크는 어느 방향으로 이동할까?','피크의 2θ에서 면간격과 입방 격자상수를 어떻게 역산할까?']},
+      fresnel:{change:'입사각·입사/투과 매질 굴절률',observe:'굴절각·s/p 반사율·임계각',questions:['현재 조건에서 s와 p 중 어느 편광이 더 많이 반사될까?','p 반사가 사라지는 입사각은 얼마이고 어떻게 맞출까?','지금 매질 조합에서 전반사가 가능할까? 가능하면 임계각은 얼마일까?']},
+      prism:{change:'꼭지각·광원 종류·단색광 파장',observe:'출사 방향·편이각·색 분리',questions:['현재 광선의 두 면 굴절각과 최종 편이각을 어떻게 구할까?','같은 프리즘에서 빨강과 보라 중 어느 빛이 더 많이 꺾일까?','꼭지각만 바꾸면 출사 방향과 색 분리폭은 어떻게 달라질까?']},
+      absorption:{change:'물질·광자 파장·빛의 세기',observe:'문턱 파장·들뜸 또는 방출·에너지',questions:['현재 물질에서 내부 들뜸과 진공 방출 중 무엇을 보는 것일까?','현재 문턱에너지를 넘기려면 파장을 얼마 이하로 설정해야 할까?','파장은 고정하고 세기만 높이면 문턱 아래에서도 전자가 방출될까?']},
+      camera:{change:'초점거리·물체 거리·센서 폭·F수',observe:'상 거리·화각·회절 크기',questions:['현재 선명한 상은 렌즈 뒤 얼마에 생기고 센서를 어디에 놓아야 할까?','물체 거리를 고정하고 더 크게 찍으려면 초점거리를 어떻게 바꿀까?','F수를 높이면 밝기와 회절 무늬는 각각 어떻게 변할까?']},
+      telescope:{change:'대물/접안 초점거리·대물 구경',observe:'각배율·렌즈 간격·분해능',questions:['현재 배율을 두 배로 만들려면 접안 초점거리를 어떻게 정할까?','현재 망원경 종류에서 두 렌즈 사이 거리는 얼마여야 할까?','배율은 유지하고 더 가까운 두 별을 구분하려면 무엇을 바꿀까?']},
+      microscope:{change:'대물 초점거리·튜브 설정·NA·파장',observe:'중간상 위치·배율·분해 거리',questions:['현재 모델에서 중간상은 어디에 생기고 어떤 방향으로 보일까?','튜브 설정을 고정하고 중간상 배율을 두 배로 만들려면 대물 초점거리를 어떻게 바꿀까?','더 크게 보이는 것과 더 작은 구조를 구분하는 것은 같을까? NA와 배율로 설명해줘.']}
+    };
+    const activeInquiry=computed(()=>inquiryGuides[issueKey.value]);
+    function prepareInquiry(question){input.value=question;nextTick(()=>document.querySelector('[data-chat-input]')?.focus());}
+    const labs = [{id:'equipment',title:'광학장비'},{id:'polarization',title:'편광판'},{id:'lens',title:'볼록렌즈'},{id:'concave-lens',title:'오목렌즈'},{id:'concave-mirror',title:'오목거울'},{id:'convex-mirror',title:'볼록거울'},{id:'diffraction',title:'단일·이중슬릿'},{id:'michelson',title:'마이켈슨 간섭계'},{id:'xrd',title:'XRD'},{id:'fresnel',title:'s·p 편광 / 전반사'},{id:'prism',title:'프리즘 분산'},{id:'absorption',title:'광흡수 / 광전효과'}];
     // computed는 슬라이더가 변할 때만 다시 계산한다. 조작 자체로 API를 호출하지 않는다.
     const lensOptions=labs.filter(lab=>['lens','concave-lens','concave-mirror','convex-mirror'].includes(lab.id));
     const navigationLabs=labs.filter(lab=>!['concave-lens','concave-mirror','convex-mirror'].includes(lab.id)).map(lab=>lab.id==='lens'?{id:'lens-group',title:'렌즈/거울'}:lab);
@@ -673,9 +743,10 @@ v: 유한 모델의 대물→중간상 거리, θ: 수광 반각. NA≤n이어�
     function dragPolarizer(event){if(!polarizerDragging)return;const svg=event.currentTarget.ownerSVGElement||event.currentTarget;const point=svg.createSVGPoint?.();if(!point)return;point.x=event.clientX;point.y=event.clientY;const matrix=svg.getScreenCTM();if(!matrix)return;const local=point.matrixTransform(matrix.inverse());let degrees=Math.atan2((local.x-385)/30,(145-local.y)/65)*180/Math.PI;angle.value=Math.round((degrees+180)%180);}
     function endPolarizerDrag(){polarizerDragging=false;}
     const polMode=ref('both'),viewYaw=ref(-30),viewTilt=ref(25),polPhase=ref(0);
-    const sim = computed(()=>opticsSimulation(simKind.value, {...equipment,polMode:polMode.value,viewYaw:viewYaw.value,viewTilt:viewTilt.value,polPhase:polPhase.value,angle:angle.value, focal:focal.value,object:object.value,wavelength:wavelength.value,slit:slit.value,distance:distance.value,scanTwoTheta:scanTwoTheta.value,xray:xray.value,material:material.value,plane:plane.value,spacing:spacing.value,order:order.value,displacement:displacement.value,visibility:visibility.value,n1:n1.value,n2:n2.value,incidence:incidence.value,apex:apex.value,prismMode:prismMode.value,absorptionProgress:absorptionProgress.value,absorptionType:absorptionType.value,intensity:intensity.value,materialLabel:selectedBandMaterial.value?`${selectedBandMaterial.value.name}, ${selectedBandMaterial.value.transition}, 약 300 K 고정 기준값`:'',threshold:threshold.value,absorptionWave:absorptionWave.value,fermiPosition:fermiPosition.value,electronTemperature:electronTemperature.value,opticalDepth:opticalDepth.value}));
+    const simulationValues = computed(()=>({...equipment,arm1Distance:practicalSettings.michelson.arm1Distance,arm2Distance:practicalSettings.michelson.arm2Distance,polMode:polMode.value,viewYaw:viewYaw.value,viewTilt:viewTilt.value,polPhase:polPhase.value,angle:angle.value, focal:focal.value,object:object.value,wavelength:wavelength.value,slit:slit.value,slitMode:slitMode.value,slitSeparation:slitSeparation.value,distance:distance.value,scanTwoTheta:scanTwoTheta.value,xray:xray.value,material:material.value,plane:plane.value,spacing:spacing.value,order:order.value,mirrorTiltX:mirrorTiltX.value,mirrorTiltY:mirrorTiltY.value,displacement:displacement.value,visibility:visibility.value,n1:n1.value,n2:n2.value,incidence:incidence.value,apex:apex.value,prismMode:prismMode.value,absorptionProgress:absorptionProgress.value,absorptionType:absorptionType.value,intensity:intensity.value,materialLabel:selectedBandMaterial.value?`${selectedBandMaterial.value.name}, ${selectedBandMaterial.value.transition}, ${selectedBandMaterial.value.sourceNote}`:'',threshold:threshold.value,absorptionWave:absorptionWave.value,fermiPosition:fermiPosition.value,electronTemperature:electronTemperature.value,opticalDepth:opticalDepth.value,prismRotation:practicalSettings.prism.rotation,eyepieceOffset:practicalSettings.telescope.eyepieceOffset}));
+    const sim=computed(()=>opticsSimulation(simKind.value,simulationValues.value));
     // 이 SVG는 자체 생성 함수의 숫자·고정 라벨만 포함한다. 외부 HTML을 여기로 넣지 않는다.
-    const apparatusSvg=computed(()=>opticsApparatus(simKind.value,{scanTwoTheta:scanTwoTheta.value,displacement:displacement.value,spacing:sim.value.spacing||spacing.value,n1:n1.value,n2:n2.value,incidence:incidence.value,apex:apex.value,prismMode:prismMode.value,absorptionType:absorptionType.value,threshold:threshold.value,absorptionWave:absorptionWave.value,fermiPosition:fermiPosition.value,electronTemperature:electronTemperature.value,opticalDepth:opticalDepth.value,wavelength:wavelength.value},sim.value));
+    const apparatusSvg=computed(()=>opticsApparatus(simKind.value,{scanTwoTheta:scanTwoTheta.value,mirrorTiltX:mirrorTiltX.value,mirrorTiltY:mirrorTiltY.value,displacement:displacement.value,spacing:sim.value.spacing||spacing.value,n1:n1.value,n2:n2.value,incidence:incidence.value,apex:apex.value,prismMode:prismMode.value,absorptionType:absorptionType.value,threshold:threshold.value,absorptionWave:absorptionWave.value,fermiPosition:fermiPosition.value,electronTemperature:electronTemperature.value,opticalDepth:opticalDepth.value,wavelength:wavelength.value},{...sim.value,practicalSnapshot:simKind.value==='michelson'?practical.value:null}));
     const lensTransform = computed(()=>{
       const image=sim.value.image;
       const extent=Math.max(70,object.value, image===null?0:Math.abs(image),image===null?0:Math.abs(10*sim.value.magnification));
@@ -704,7 +775,7 @@ v: 유한 모델의 대물→중간상 거리, θ: 수광 반각. NA≤n이어�
       if(['lens','concave-lens'].includes(simKind.value))return {default_operation:'thin_lens',parameters:{focal:entry(sim.value.signedF,'cm'),object_distance:entry(object.value,'cm')}};
       return null;
     }
-    function transferResult() { input.value = sim.value.summary; }
+    function transferResult() { input.value = '현재 실험 조건으로 결과를 계산하고 의미를 설명해줘.'; }
     const docContent=ref(''), docLoading=ref(false), docError=ref(''), docSlug=ref('');
     let docRequest=0;
     /**
@@ -759,7 +830,7 @@ v: 유한 모델의 대물→중간상 거리, θ: 수광 반각. NA≤n이어�
     ];
     /** @param {string} question 즉시 전송할 질문. 입력창 채우기 전용 동작과 구분한다. */
     function ask(question) { input.value = question; onSubmit(); }
-    const backendLabel = ref('all_total_vue');
+    const backendLabel = ref('Optics Lab Assistant');
     const log = ref([]);
     const input = ref('');
     const sending = ref(false);
@@ -781,7 +852,7 @@ v: 유한 모델의 대물→중간상 거리, θ: 수광 반각. NA≤n이어�
     }
 
     fetch('/health').then(r => r.json()).then(h => {
-      backendLabel.value = `${h.llm_backend} 실모델(${h.fast_llm}/${h.quality_llm}) · all_total_vue`;
+      backendLabel.value = `${h.llm_backend} 실모델(${h.fast_llm}/${h.quality_llm}) · Optics Lab Assistant`;
     }).catch(() => {});
 
     /** Vue가 DOM을 반영한 뒤 채팅 영역 내부만 마지막 메시지로 스크롤한다. */
@@ -802,8 +873,24 @@ v: 유한 모델의 대물→중간상 거리, θ: 수광 반각. NA≤n이어�
 
       // 전송 시점의 값을 문자열로 복사한다. 이후 슬라이더 변경은 이 요청에 영향을 주지 않는다.
       let context = view.value === 'simulation' ? (simKind.value==='equipment'?opticsSimulation('equipment',{...equipment,question:text}).summary:sim.value.summary) : '';
+      if(context)context+='\n'+practical.value.summary;
+      if(context)context+='\n[실험 설정 스냅샷]\n'+JSON.stringify({version:1,kind:issueKey.value,values:{...simulationValues.value},practical:{...practicalSettings[issueKey.value]}});
       const snapshot=view.value==='simulation'?calculationSnapshot():null;
       if(context&&snapshot)context+='\n[광학 계산 입력]\n'+JSON.stringify(snapshot);
+      // 등록된 탐구 질문은 전송 시점의 설정으로 계산한다. 편집된 질문에는 계약을 붙이지 않는다.
+      const inquiryIndex=activeInquiry.value?.questions.indexOf(text)??-1;
+      if(context&&inquiryIndex>=0){
+        const settings={...simulationValues.value};
+        if(issueKey.value==='xrd'){
+          settings.spacing=sim.value.spacing;
+          settings.order=sim.value.preset?1:order.value;
+          settings.hkl=sim.value.preset?plane.value:null;
+          settings.reflectionAllowed=sim.value.allowed;
+        }
+        context+='\n[탐구 계산 계약]\n'+JSON.stringify({version:1,kind:issueKey.value,index:inquiryIndex,settings});
+      }
+      const documentIds={equipment:'optical-equipment',polarization:'polarization-and-reflection',lens:'lenses-and-optical-instruments','concave-lens':'lenses-and-optical-instruments','concave-mirror':'lenses-and-optical-instruments','convex-mirror':'lenses-and-optical-instruments',diffraction:'shadow-and-diffraction',michelson:'michelson-interferometer',xrd:'xrd-bragg',fresnel:'polarization-and-reflection',prism:'grating-prism-spectrometer',absorption:'absorption-photoelectric'};
+      if(context)context='[현재 실험 문서] '+documentIds[simKind.value]+'\n'+context;
       const experiment = labs.find(lab => lab.id === simKind.value)?.title || '';
       const message = context
         ? `[사용자 질문]\n${text}\n\n[현재 가상 실험]\n실험: ${experiment}\n${context}\n\n위 내용은 가상 모델의 조건과 계산 결과입니다. 참고 자료의 설명 요청 문구보다 사용자 질문에 우선 답하세요. 실제 측정이나 센서 관측으로 표현하지 마세요.`
@@ -833,12 +920,17 @@ v: 유한 모델의 대물→중간상 거리, θ: 수광 반각. NA≤n이어�
         let e;
         try { e = JSON.parse(event.data); } catch { return; }
 
+        if(e.type==='Error'){
+          stepsItem.steps.push(e.message);
+          es.close();activeStream=null;activeSteps=null;sending.value=false;scrollToBottom();return;
+        }
         if (e.type === 'AnswerToken') {
-          if (!streamItem || streamAttempt !== e.attempt) {
+          if (!streamItem) {
             streamItem = reactive({ id: nextId++, kind: 'agent', text: '' });
             log.value.push(streamItem);
             streamAttempt = e.attempt;
           }
+          if(streamAttempt!==e.attempt){streamItem.text='';streamAttempt=e.attempt;}
           streamItem.text += e.delta;
           scrollToBottom();
           return;
@@ -874,7 +966,7 @@ v: 유한 모델의 대물→중간상 거리, θ: 수광 반각. NA≤n이어�
       };
     }
 
-    return { activeTheory, activeIssues, issueKey, chooseAbsorptionExample, absorptionProgress, stopAbsorptionAnimation, scanTwoTheta, startXrdDrag, dragXrd, endXrdDrag, keyXrd, startMirrorDrag, dragMirror, endMirrorDrag, keyMirror, startPolarizerDrag, dragPolarizer, endPolarizerDrag, polMode, viewYaw, viewTilt, polPhase, equipment, intensity, shotCount, emissionDuration, fireLightPulse, bandMaterials, bandMaterial, selectedBandMaterial, chooseBandMaterial, backendLabel, log, input, sending, logEl, onSubmit, stopAnswer, topics, equipmentLessons, selectedTopic, categoryQuestions, openCategory, askRelated, ask, view, simKind, fermiPosition, electronTemperature, absorptionType, threshold, absorptionWave, photonShot, firePhoton, prismMode, lightOptions, selectedLight, lightColor, chooseLight, playing, playbackRate, pauseMichelson, playMichelson, stepMichelson, resetMichelson, material, plane, materials, n1, n2, incidence, apex, opticalDepth, xray, spacing, order, displacement, visibility, imageX, angle, focal, object, wavelength, slit, distance, labs, navigationLabs, lensOptions, activeLabId, sim, apparatusSvg, lensTransform, lensRays, transferResult, openSimulation, openDoc, docContent, docLoading, docError, docSlug };
+    return { slitMode,slitSeparation, observeMichelson, startBeamAlign,dragBeamAlign,endBeamAlign,keyBeamAlign, practicalSettings,practicalControls,practical,resetPractical,disturbPractical,focusPractical, activeInquiry, prepareInquiry, mirrorTiltX,mirrorTiltY,activeTheory, activeIssues, issueKey, chooseAbsorptionExample, absorptionProgress, stopAbsorptionAnimation, scanTwoTheta, startXrdDrag, dragXrd, endXrdDrag, keyXrd, startMirrorDrag, dragMirror, endMirrorDrag, keyMirror, startPolarizerDrag, dragPolarizer, endPolarizerDrag, polMode, viewYaw, viewTilt, polPhase, equipment, intensity, shotCount, emissionDuration, fireLightPulse, bandMaterials, bandMaterial, selectedBandMaterial, chooseBandMaterial, backendLabel, log, input, sending, logEl, onSubmit, stopAnswer, topics, equipmentLessons, selectedTopic, categoryQuestions, openCategory, askRelated, ask, view, simKind, fermiPosition, electronTemperature, absorptionType, threshold, absorptionWave, photonShot, firePhoton, prismMode, lightOptions, selectedLight, lightColor, chooseLight, playing, playbackRate, pauseMichelson, playMichelson, stepMichelson, resetMichelson, material, plane, materials, n1, n2, incidence, apex, opticalDepth, xray, spacing, order, displacement, visibility, imageX, angle, focal, object, wavelength, slit, distance, labs, navigationLabs, lensOptions, activeLabId, sim, apparatusSvg, lensTransform, lensRays, transferResult, openSimulation, openDoc, docContent, docLoading, docError, docSlug };
   },
 }).directive('answer', {mounted: renderAnswer, updated: renderAnswer}).mount('#app');
 </script>

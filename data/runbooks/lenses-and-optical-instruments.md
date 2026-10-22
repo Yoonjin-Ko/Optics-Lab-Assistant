@@ -63,10 +63,7 @@ s=50 mm이면 s'=-100 mm, M=+2. 정립된 두 배 크기의 허상으로 스크�
 수렴렌즈에서 물체가 초점 밖에 있어야 이 배치에서 스크린 실상을 얻는다. 흐림은 초점뿐 아니라 기울기·수차·오염·회절 등의 후보가 있다.
 
 ## 참고 자료
-- OpenStax, University Physics Volume 3, Light / Geometric Optics / Interference / Diffraction: https://openstax.org/details/books/university-physics-volume-3
 - 실험실 장비별 매뉴얼과 수업 실험 지침으로 실제 배치를 확인한다.
-- 관련 절: https://openstax.org/books/university-physics-volume-3/pages/2-4-thin-lenses
-- 관련 절: https://openstax.org/books/university-physics-volume-3/pages/4-5-circular-apertures-and-resolution
 
 ## 오목렌즈와 구면거울
 실물체 s>0에 대해 1/f=1/s+1/s′, M=−s′/s를 사용한다.
@@ -77,3 +74,26 @@ s=50 mm이면 s'=-100 mm, M=+2. 정립된 두 배 크기의 허상으로 스크�
 참고: https://openstax.org/books/university-physics-volume-3/pages/2-2-spherical-mirrors
 
 </details>
+
+
+## 핵심 용어
+
+| 용어 | 뜻 |
+| --- | --- |
+| 초점거리 | 광학계의 집광·발산 정도를 나타내는 길이. 얇은 렌즈의 평행 근축광이 모이거나 발산해 보이는 위치와 관련된다. |
+| 실상 | 광선이 실제로 모여 형성하는 상으로 적절한 위치의 스크린에 맺을 수 있다. |
+| 허상 | 광선의 역연장선이 만나는 것으로 보이는 상. 그 위치에 스크린을 놓아 직접 받는 상은 아니다. |
+| 횡배율 | 상 높이/물체 높이. 근축 얇은 렌즈의 부호 규약에서 m=−v/u이며 음수는 도립을 뜻한다. |
+| 수차 | 이상적 상에서 벗어나는 현상. 색수차는 파장별 굴절률 차이, 구면수차는 구면계에서 광선 높이에 따른 초점 차이와 관련된다. |
+
+## 출처와 확인 범위
+
+아래 자료의 해당 절·표·초록을 확인해 사실과 공식을 요약했습니다. 점검 순서·가상 사례·시각화는 앱에서 작성한 학습용 구성입니다.
+
+| 확인 내용 | 근거 자료와 위치 |
+| --- | --- |
+| 얇은 렌즈 | [OpenStax: Thin Lenses](https://openstax.org/books/university-physics-volume-3/pages/2-4-thin-lenses) — §2.4 |
+| 구면거울 | [OpenStax: Spherical Mirrors](https://openstax.org/books/university-physics-volume-3/pages/2-2-spherical-mirrors) — §2.2 |
+| 원형 개구 분해능 | [OpenStax: Circular Apertures and Resolution](https://openstax.org/books/university-physics-volume-3/pages/4-5-circular-apertures-and-resolution) — §4.5, Eq. 4.5 |
+
+상세 서지·접근 범위는 `data/source_registry.json`에 기록합니다. 공식의 앱 내 적용 범위와 생략한 현상은 본문의 모델 설명을 따릅니다.

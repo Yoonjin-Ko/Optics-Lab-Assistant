@@ -57,10 +57,7 @@ A=60도, delta_min=40도이면 n≈1.532이다. 모두 설명용 값이며 실�
 같은 d와 m에서 긴 파장은 더 큰 회절각을 가진다. 차수가 커지면 서로 다른 파장·차수의 선이 겹칠 수 있다. 스펙트럼 선 하나만으로 재료를 확정하지 않는다.
 
 ## 참고 자료
-- OpenStax, University Physics Volume 3, Light / Geometric Optics / Interference / Diffraction: https://openstax.org/details/books/university-physics-volume-3
 - 실험실 장비별 매뉴얼과 수업 실험 지침으로 실제 배치를 확인한다.
-- 관련 절: https://openstax.org/books/university-physics-volume-3/pages/4-4-diffraction-gratings
-- 관련 절: https://openstax.org/books/university-physics-volume-3/pages/1-3-refraction
 
 ## 가상 프리즘 분산 실험
 앱은 작은 꼭지각 A에서 얇은 프리즘 근사 delta≈(n−1)A를 사용한다. 가상의 정상분산 모델 n(lambda)=1.50+0.004/lambda[µm]^2를 사용하며 특정 유리의 실측 데이터가 아니다. lambda를 nm에서 µm로 변환해야 한다. 작은 각도·작은 편이 근사를 벗어나면 정확한 스넬 법칙 광선 추적이 필요하다.
@@ -75,3 +72,25 @@ A=60도, delta_min=40도이면 n≈1.532이다. 모두 설명용 값이며 실�
 
 ## 앱의 정삼각형 프리즘 표시
 기본 꼭지각은 60°입니다. 60°에서 정삼각형이며 각도를 조절하면 삼각형 외형과 출사 위치·색 분리폭이 함께 바뀝니다. 수치는 가상 Cauchy 굴절률 모델에서 550 nm의 최소 편이 입사각을 기준으로 고정하고, 각 파장의 첫 굴절각·두 번째 면의 출사각을 Snell 법칙으로 구합니다. 따라서 60°에서는 얇은 프리즘 근사를 사용하지 않습니다. 무지개 간격은 관찰을 위해 확대하며 실척 각도는 수치표를 확인합니다.
+
+
+## 핵심 용어
+
+| 용어 | 뜻 |
+| --- | --- |
+| 콜리메이터 | 광원·슬릿에서 나오는 빛을 거의 평행한 광선으로 만드는 광학계. |
+| 분산 | 굴절률이 파장에 따라 달라지는 성질. 프리즘의 색 분리와 관계되며 산란과 구분한다. |
+| 최소편이각 | 프리즘의 입사·출사 방향 차이가 최소가 되는 편이각. 대칭 광로 조건과 관계된다. |
+| 격자간격 | 회절격자에서 반복 구조의 주기 d와 정수 차수 m. 수직 입사의 이상적 투과격자에서 d sinθ=mλ. |
+
+## 출처와 확인 범위
+
+아래 자료의 해당 절·표·초록을 확인해 사실과 공식을 요약했습니다. 점검 순서·가상 사례·시각화는 앱에서 작성한 학습용 구성입니다.
+
+| 확인 내용 | 근거 자료와 위치 |
+| --- | --- |
+| 격자의 주최대 | [OpenStax: Diffraction Gratings](https://openstax.org/books/university-physics-volume-3/pages/4-4-diffraction-gratings) — §4.4 |
+| 굴절 법칙 | [OpenStax: Refraction](https://openstax.org/books/university-physics-volume-3/pages/1-3-refraction) — §1.3, Eq. 1.4 |
+| 프리즘 분산 | [OpenStax: Dispersion](https://openstax.org/books/university-physics-volume-3/pages/1-5-dispersion) — §1.5, Table 1.2 |
+
+상세 서지·접근 범위는 `data/source_registry.json`에 기록합니다. 공식의 앱 내 적용 범위와 생략한 현상은 본문의 모델 설명을 따릅니다.

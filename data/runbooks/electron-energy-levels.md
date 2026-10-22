@@ -43,3 +43,25 @@ f(E)=\frac{1}{1+\exp[(E-E_F)/(k_B T)]},\qquad k_B\approx8.617333262\times10^{-5}
 - [OpenStax · 금속의 자유전자 모형](https://openstax.org/books/university-physics-volume-3/pages/9-4-free-electron-model-of-metals)
 - [OpenStax · 고체 밴드 이론](https://openstax.org/books/university-physics-volume-3/pages/9-5-band-theory-of-solids)
 - [OpenStax · 반도체와 도핑](https://openstax.org/books/university-physics-volume-3/pages/9-6-semiconductors-and-doping)
+
+
+## 핵심 용어
+
+| 용어 | 뜻 |
+| --- | --- |
+| 전도대 | 전도에 기여할 수 있는 전자 상태의 에너지 밴드. 전도대 바닥 Ec는 그 밴드의 최소 에너지이며 전자의 에너지 상한은 아니다. |
+| 가전자대 | 가전자 전자들이 차지하는 밴드. 가전자대 꼭대기 Ev와 Ec 차이가 밴드갭이다. |
+| 페르미준위 | 열평형 전자의 화학퍼텐셜. 점유 분포를 정하는 기준이며 그 에너지에 실제 전자 상태가 반드시 있다는 뜻은 아니다. |
+| 정공 | 거의 채워진 밴드에서 전자가 비어 있는 상태를 유효한 양전하 운반자로 기술한 것. |
+
+## 출처와 확인 범위
+
+아래 자료의 해당 절·표·초록을 확인해 사실과 공식을 요약했습니다. 점검 순서·가상 사례·시각화는 앱에서 작성한 학습용 구성입니다.
+
+| 확인 내용 | 근거 자료와 위치 |
+| --- | --- |
+| 페르미 에너지·점유 | [OpenStax: Free Electron Model of Metals](https://openstax.org/books/university-physics-volume-3/pages/9-4-free-electron-model-of-metals) — §9.4 |
+| 밴드·갭 | [OpenStax: Band Theory of Solids](https://openstax.org/books/university-physics-volume-3/pages/9-5-band-theory-of-solids) — §9.5 |
+| 도핑·정공 | [OpenStax: Semiconductors and Doping](https://openstax.org/books/university-physics-volume-3/pages/9-6-semiconductors-and-doping) — §9.6 |
+
+상세 서지·접근 범위는 `data/source_registry.json`에 기록합니다. 공식의 앱 내 적용 범위와 생략한 현상은 본문의 모델 설명을 따릅니다.

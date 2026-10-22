@@ -1,0 +1,36 @@
+[
+  {
+    "id": "michelson-default-1",
+    "first_answer_seconds": 0.19,
+    "event_types": [
+      "RouteDecided",
+      "PlanCreated",
+      "CalculationCompleted",
+      "SourcesPrepared",
+      "DraftWritten",
+      "CalculationValidated",
+      "Finalize",
+      "FinalAnswer"
+    ],
+    "answer": "- **거울 이동량: 2.66 µm**\n\n입력: fringes=10 count, wavelength=532 nm\n\n입력 출처: fringes: 질문, wavelength: 현재 가상실험\n\n공식: Δx ≈ Nλ/2\n\n적용 조건: 공기 n≈1, 한 팔 거울의 추가 이동 거리, 밝음→다음 밝음 한 주기\n\n출처: [michelson-interferometer](/documents/michelson-interferometer) · MCP `calculate_optics` 계산. 실험값이 아닌 입력 기반 이론값입니다.",
+    "done": true,
+    "total_seconds": 0.191
+  },
+  {
+    "id": "camera-default-1",
+    "first_answer_seconds": 0.007,
+    "event_types": [
+      "RouteDecided",
+      "PlanCreated",
+      "CalculationCompleted",
+      "SourcesPrepared",
+      "DraftWritten",
+      "CalculationValidated",
+      "Finalize",
+      "FinalAnswer"
+    ],
+    "answer": "- **상 거리: 5.26316 cm**\n- **횡배율: -0.0526316 ratio**\n\n입력: focal=50 mm, object_distance=1000 mm\n\n입력 출처: focal: 현재 가상실험, object_distance: 현재 가상실험\n\n공식: 1/f = 1/u + 1/v, m = −v/u\n\n적용 조건: 공기 중 얇은 렌즈. 실물체 u>0, 볼록 f>0·오목 f<0. 유한 두께·수차 생략\n\n출처: [lenses-and-optical-instruments](/documents/lenses-and-optical-instruments) · MCP `calculate_optics` 계산. 실험값이 아닌 입력 기반 이론값입니다.",
+    "done": true,
+    "total_seconds": 0.008
+  }
+]

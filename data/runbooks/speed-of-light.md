@@ -63,8 +63,26 @@ f_mod=10 MHz, 총 경로 증가 1.5 m, 풀어 쓴 위상 지연 증가 pi/10 rad
 단일 거리의 큰 오차는 고정 계통 지연 때문일 수 있다. 여러 거리에서 기울기와 반복성을 확인하고 실제 관측 없이 특정 오차 원인을 확정하지 않는다.
 
 ## 참고 자료
-- OpenStax, University Physics Volume 3, Light / Geometric Optics / Interference / Diffraction: https://openstax.org/details/books/university-physics-volume-3
 - 실험실 장비별 매뉴얼과 수업 실험 지침으로 실제 배치를 확인한다.
-- 관련 절: https://openstax.org/books/university-physics-volume-3/pages/1-1-the-propagation-of-light
 
 </details>
+
+
+## 핵심 용어
+
+| 용어 | 뜻 |
+| --- | --- |
+| 비행시간 | 빛이 주어진 경로를 이동하는 데 걸린 시간. 거리와 시간의 기준·고정 지연을 구분해야 한다. |
+| 위상지연 | 기준 신호와 측정 신호의 위상 차이. 주파수와 함께 시간 지연을 추정하지만 2π 모호성을 고려한다. |
+| 왕복광로 | 빛이 거울까지 갔다 되돌아오는 경로. 편도 거리 L과 왕복 이동 거리 2L을 구분한다. |
+
+## 출처와 확인 범위
+
+아래 자료의 해당 절·표·초록을 확인해 사실과 공식을 요약했습니다. 점검 순서·가상 사례·시각화는 앱에서 작성한 학습용 구성입니다.
+
+| 확인 내용 | 근거 자료와 위치 |
+| --- | --- |
+| 진공 광속 상수 | [NIST SP 330: SI defining constants](https://www.nist.gov/pml/special-publication-330/sp-330-section-2) — §2.2, defining constants |
+| 매질의 전파 | [OpenStax: The Propagation of Light](https://openstax.org/books/university-physics-volume-3/pages/1-1-the-propagation-of-light) — §1.1 |
+
+상세 서지·접근 범위는 `data/source_registry.json`에 기록합니다. 공식의 앱 내 적용 범위와 생략한 현상은 본문의 모델 설명을 따릅니다.

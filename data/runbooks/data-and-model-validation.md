@@ -41,3 +41,14 @@ NumPy는 배열 연산으로 Python 반복 부담을 줄일 수 있고, Numba는
 ## 참고 자료
 - [scikit-learn · 데이터 누출과 전처리 주의점](https://scikit-learn.org/stable/common_pitfalls.html)
 - [Numba · 성능 안내](https://numba.readthedocs.io/en/stable/user/performance-tips.html)
+
+## 출처와 확인 범위
+
+아래 자료의 해당 절·표·초록을 확인해 사실과 공식을 요약했습니다. 점검 순서·가상 사례·시각화는 앱에서 작성한 학습용 구성입니다.
+
+| 확인 내용 | 근거 자료와 위치 |
+| --- | --- |
+| 데이터 누출 | [scikit-learn: Common pitfalls and recommended practices](https://scikit-learn.org/stable/common_pitfalls.html) — Inconsistent preprocessing, Data leakage |
+| 성능 최적화의 조건 | [Numba: Performance Tips](https://numba.readthedocs.io/en/stable/user/performance-tips.html) — Profiling, No Python mode, Fastmath, Parallel |
+
+상세 서지·접근 범위는 `data/source_registry.json`에 기록합니다. 공식의 앱 내 적용 범위와 생략한 현상은 본문의 모델 설명을 따릅니다.

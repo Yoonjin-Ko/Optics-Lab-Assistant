@@ -61,9 +61,7 @@ R_s=\left|\frac{n_1\cos\theta_i-n_2\cos\theta_t}{n_1\cos\theta_i+n_2\cos\theta_t
 이상적인 교차 편광판은 투과를 막지만 실험의 최솟값에는 배경광·유한 소광비·암신호가 남을 수 있다.
 
 ## 참고 자료
-- OpenStax, University Physics Volume 3, Light / Geometric Optics / Interference / Diffraction: https://openstax.org/details/books/university-physics-volume-3
 - 실험실 장비별 매뉴얼과 수업 실험 지침으로 실제 배치를 확인한다.
-- 관련 절: https://openstax.org/books/university-physics-volume-3/pages/1-7-polarization
 
 ## s·p 편광과 전반사
 s와 p는 빛의 전기장이 입사면에 수직인지 평행인지의 구분이며 지진의 S파·P파와 다르다.
@@ -85,3 +83,27 @@ s와 p는 빛의 전기장이 입사면에 수직인지 평행인지의 구분�
 p편광은 종파가 아닙니다. p의 평행은 **입사면에 평행**이라는 뜻입니다. 정상 입사에서는 입사면의 선택이 유일하지 않고 두 반사율이 같습니다. 이상적인 비흡수·비자성 유전체에서 Brewster 각 tanθB=n₂/n₁이면 p 반사가 0입니다. s는 일반적으로 그 각도에서 남습니다. n₁>n₂의 임계각 초과에서는 두 세기 반사율 모두 1이지만 위상은 달라질 수 있습니다. 따라서 전반사 후 타원편광이 생길 수 있으며 현재 세기 모델에서는 이를 계산하지 않습니다.
 
 앱의 회전형 3D 도식은 좌우·상하 관찰 방향과 진동 위상을 조절할 수 있습니다. 파란 전기장이 입사면 밖으로, 주황 전기장이 입사면 안으로 진동하는 것을 비교하세요. 파형 높이는 방향 설명용이며 반사 세기 비율은 Fresnel 그래프를 확인합니다.
+
+
+## 핵심 용어
+
+| 용어 | 뜻 |
+| --- | --- |
+| 입사면 | 입사광 진행 벡터와 경계면 법선이 만드는 평면. s/p 방향을 정의하는 기준. |
+| 법선 | 경계면에 수직인 방향. 입사·반사·굴절 각도는 일반적으로 이 방향을 기준으로 잰다. |
+| 투과율 | 반사율 R과 투과율 T는 입사 에너지 유속에 대한 비율. 전기장 진폭 계수 r,t와 구분하며 무흡수 경계에서 R+T=1. |
+| 브루스터각 | 비흡수·비자성 유전체 경계에서 p 반사율이 0인 입사각. tanθB=n₂/n₁. |
+| 소광비 | 편광 소자의 통과 방향과 차단 방향 투과 성능을 비교하는 비율. 실제 편광판은 완전 차단이 아닐 수 있다. |
+| 임계각 | n₁>n₂일 때 θc=arcsin(n₂/n₁). 임계각보다 큰 입사각에서 전반사가 발생한다. |
+
+## 출처와 확인 범위
+
+아래 자료의 해당 절·표·초록을 확인해 사실과 공식을 요약했습니다. 점검 순서·가상 사례·시각화는 앱에서 작성한 학습용 구성입니다.
+
+| 확인 내용 | 근거 자료와 위치 |
+| --- | --- |
+| 편광·말뤼스·브루스터 | [OpenStax: Polarization](https://openstax.org/books/university-physics-volume-3/pages/1-7-polarization) — §1.7, Malus’s Law 및 반사 편광 |
+| 임계각·전반사 | [OpenStax: Total Internal Reflection](https://openstax.org/books/university-physics-volume-3/pages/1-4-total-internal-reflection) — §1.4 |
+| 전기장 방향 | [Feynman Lectures Vol. I, Ch. 33](https://www.feynmanlectures.caltech.edu/I_33.html) — §33–1 전기장 벡터 |
+
+상세 서지·접근 범위는 `data/source_registry.json`에 기록합니다. 공식의 앱 내 적용 범위와 생략한 현상은 본문의 모델 설명을 따릅니다.

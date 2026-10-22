@@ -91,3 +91,24 @@ D=\int I(t)\,dt\approx It
 ### 참고
 
 - [EPFL — Photolithography introduction](https://www.epfl.ch/research/facilities/cmi/process/photolithography/introductiontophotolithography/)
+
+
+## 핵심 용어
+
+| 용어 | 뜻 |
+| --- | --- |
+| 오버레이 | 서로 다른 층 패턴의 상대 위치 정렬 오차. 선폭 변화와 구분한다. |
+| 초점심도 | 허용 영상·공정 품질을 유지할 수 있는 초점 방향 범위. 매질·허용 기준이 고정되면 대략 λ/NA² 경향을 갖는다. |
+
+## 출처와 확인 범위
+
+아래 자료의 해당 절·표·초록을 확인해 사실과 공식을 요약했습니다. 점검 순서·가상 사례·시각화는 앱에서 작성한 학습용 구성입니다.
+
+| 확인 내용 | 근거 자료와 위치 |
+| --- | --- |
+| 공정 흐름·PR | [EPFL CMi: Introduction to Photolitography](https://www.epfl.ch/research/facilities/cmi/process/photolithography/introductiontophotolithography/) — Introduction, Photoresist chemistry, Photolithography steps |
+| 일반 광학 분해능 | [OpenStax: Circular Apertures and Resolution](https://openstax.org/books/university-physics-volume-3/pages/4-5-circular-apertures-and-resolution) — §4.5, Eq. 4.5 |
+| 교정·검증 | [JCGM 200:2012, International vocabulary of metrology](https://www.bipm.org/documents/20126/2071204/JCGM_200_2012.pdf) — §2.13, 2.15, 2.26, 2.39, 2.44–2.45 |
+| CD=k₁λ/NA, DOF=k₂λ/NA²와 공정 의존 계수 | [H. Kirchauer: Optical Lithography, §2.1](https://iue.tuwien.ac.at/phd/kirchauer/node16.html) — Eq. 2.1–2.2 |
+
+상세 서지·접근 범위는 `data/source_registry.json`에 기록합니다. 공식의 앱 내 적용 범위와 생략한 현상은 본문의 모델 설명을 따릅니다.

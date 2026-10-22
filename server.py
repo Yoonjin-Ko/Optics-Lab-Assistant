@@ -1,15 +1,7 @@
-"""all_total 통합 실습 — FastAPI 백엔드 (Wave 1·3·12·14 축 + 전체 조립).
-
-- Wave 1  : lifespan에서 Agent 번들(MCP 연결·LLM·그래프)을 프로세스당 정확히 1회 생성,
-            app.state로 모든 요청이 공유 (creation_count/instance_id로 증명)
-- Wave 2  : mcp_server.py를 subprocess(stdio)로 기동해 연결 유지
-- Wave 3  : GET /chat/stream — 그래프 실행 과정을 SSE 이벤트로 스트리밍
-- Wave 12 : 대화 이력을 SQLite(session.db)에 저장 — 재시작해도 유지
-- Wave 14 : SUPERVISOR_VERSION(v1/v2) 환경변수로 legacy/신형 파이프라인 즉시 전환
-- LangSmith: 요청당 chat_request 루트 run 아래로 노드·LLM·MCP 호출이 계층 기록됨
-"""
+"""광학 도우미 FastAPI 서버. 모델·MCP·세션을 초기화하고 REST/SSE로 답변한다."""
 import json
 import os
+import httpx
 from contextlib import asynccontextmanager
 
 from dotenv import load_dotenv
@@ -27,12 +19,11 @@ from agent.fake_llm import FastLLM, QualityLLM
 from agent.graph import build_graph
 from agent.mcp_client import MCPClient
 from agent.session_store import SqliteSessionStore
-from agent.supervisor_v1 import run_v1
 
-CREATION_COUNT = 0   # Wave 1 — 프로세스 내 Agent 번들 생성 횟수 (항상 1이어야 정상)
+CREATION_COUNT = 0
 
 
-class ChatRequest(BaseModel):   # Wave 1 — Pydantic 요청 검증
+class ChatRequest(BaseModel):
     message: str
     thread_id: str = "default"
 
@@ -69,7 +60,7 @@ async def lifespan(app: FastAPI):
     global CREATION_COUNT
     CREATION_COUNT += 1
     mcp = MCPClient()
-    await mcp.start()   # Wave 2 — MCP subprocess는 서버 수명 동안 딱 1개
+    await mcp.start()
     backend, fast_llm, quality_llm = _build_llms()
     app.state.llm_backend = backend
     deps = SupervisorDeps(
@@ -77,10 +68,10 @@ async def lifespan(app: FastAPI):
         quality_llm=quality_llm,
         mcp=mcp,
         session_store=SqliteSessionStore(),
-        version=os.environ.get("SUPERVISOR_VERSION", "v2"),
+        version="v2",
     )
     app.state.deps = deps
-    app.state.graph = build_graph(deps) if deps.version == "v2" else None
+    app.state.graph = build_graph(deps)
     app.state.instance_id = id(deps)
     yield
     await mcp.stop()
@@ -133,10 +124,9 @@ def _metadata(result: dict, run_id: str | None) -> dict:
     return {
         "route": result.get("route"),
         "task_count": len(result.get("tasks", [])),
-        "gate_removed": result.get("gate_removed", 0),
-        "replan_rounds": result.get("replan_rounds", 0),
         "retry_count": result.get("retry_count", 0),
         "parallel_elapsed": result.get("parallel_elapsed"),
+        "timings":result.get("timings",{}),
         "validation_attempts": result.get("validation_attempts", 0),
         "cost_usd": result.get("cost_usd", 0.0),
         "llm_backend": app.state.llm_backend,
@@ -158,13 +148,10 @@ async def _handle_chat(message: str, thread_id: str) -> tuple[dict, str | None]:
         Supervisor 결과와 추적 ID의 튜플.
     """
     deps = app.state.deps
-    history = deps.session_store.load(thread_id)   # Wave 12
-    if deps.version == "v2":
-        result = await app.state.graph.ainvoke(
-            {"query": message, "thread_id": thread_id, "history": history,
-             "events": [], "cost_usd": 0.0})
-    else:
-        result = await run_v1(deps, message, thread_id, history)   # Wave 14
+    history = deps.session_store.load(thread_id)
+    result = await app.state.graph.ainvoke(
+        {"query": message, "thread_id": thread_id, "history": history,
+         "events": [], "cost_usd": 0.0})
     deps.session_store.append(thread_id, "user", message)
     deps.session_store.append(thread_id, "assistant", result["final"])
     rt = get_current_run_tree()
@@ -188,11 +175,7 @@ async def chat(req: ChatRequest):
 
 @app.get("/chat/stream")
 async def chat_stream(request: Request, message: str, thread_id: str = "default"):
-    """Wave 3 — 그래프의 노드별 진행 상황을 SSE로 스트리밍.
-
-    이벤트마다 'data: {json}\\n\\n' 형태로 내려보내고 마지막에 data: [DONE] 센티널을
-    보낸다 — 프론트엔드는 \\n\\n 경계로 이벤트를 분리해 파싱해야 한다(Wave 3b).
-    """
+    """처리 이벤트·답변을 SSE로 전달한다."""
     deps = app.state.deps
 
     async def gen():
@@ -202,43 +185,57 @@ async def chat_stream(request: Request, message: str, thread_id: str = "default"
             순서대로 전달할 SSE 텍스트 또는 원본 바이트 조각.
         """
         history = deps.session_store.load(thread_id)
-        if deps.version != "v2":
-            result = await run_v1(deps, message, thread_id, history)
-            for ev in result["events"]:
-                yield f"data: {json.dumps(ev, ensure_ascii=False)}\n\n"
-            yield f"data: {json.dumps({'type': 'FinalAnswer', 'reply': result['final']}, ensure_ascii=False)}\n\n"
-        else:
-            seen = 0
-            final = ""
-            last_prompt = None   # finalize까지 살아남은 최종 write/chat 호출의 실제 프롬프트
-            # stream_mode를 리스트로 주면 (mode, payload) 튜플이 나온다 — "updates"는
-            # 노드가 끝날 때마다의 상태 델타, "custom"은 write_node/chat_answer_node가
-            # get_stream_writer()로 실행 중에 즉시 흘려보내는 토큰(AnswerToken) 이벤트다.
-            async for mode, payload in app.state.graph.astream(
-                    {"query": message, "thread_id": thread_id, "history": history,
-                     "events": [], "cost_usd": 0.0}, stream_mode=["updates", "custom"]):
-                if mode == "custom":
-                    yield f"data: {json.dumps(payload, ensure_ascii=False)}\n\n"
+        seen = 0
+        final = ""
+        last_prompt = None   # finalize까지 살아남은 최종 write/chat 호출의 실제 프롬프트
+        # stream_mode를 리스트로 주면 (mode, payload) 튜플이 나온다 — "updates"는
+        # 노드가 끝날 때마다의 상태 델타, "custom"은 write_node/chat_answer_node가
+        # get_stream_writer()로 실행 중에 즉시 흘려보내는 토큰(AnswerToken) 이벤트다.
+        async for mode, payload in app.state.graph.astream(
+                {"query": message, "thread_id": thread_id, "history": history,
+                 "events": [], "cost_usd": 0.0}, stream_mode=["updates", "custom"]):
+            if mode == "custom":
+                yield f"data: {json.dumps(payload, ensure_ascii=False)}\n\n"
+                continue
+            for node_name, delta in payload.items():
+                if not delta:
                     continue
-                for node_name, delta in payload.items():
-                    for ev in (delta.get("events") or [])[seen:]:
-                        ev = {**ev, "node": node_name}
-                        yield f"data: {json.dumps(ev, ensure_ascii=False)}\n\n"
-                    if delta.get("events"):
-                        seen = len(delta["events"])
-                    if delta.get("final"):
-                        final = delta["final"]
-                    if delta.get("last_prompt"):
-                        last_prompt = delta["last_prompt"]
-            yield f"data: {json.dumps({'type': 'FinalAnswer', 'reply': final, 'prompt': last_prompt}, ensure_ascii=False)}\n\n"
-            # 중지/연결 종료된 응답은 다음 질문의 대화 이력에 포함하지 않는다.
-            if await request.is_disconnected():
-                return
-            deps.session_store.append(thread_id, "user", message)
-            deps.session_store.append(thread_id, "assistant", final)
+                for ev in (delta.get("events") or [])[seen:]:
+                    ev = {**ev, "node": node_name}
+                    yield f"data: {json.dumps(ev, ensure_ascii=False)}\n\n"
+                if delta.get("events"):
+                    seen = len(delta["events"])
+                if delta.get("final"):
+                    final = delta["final"]
+                if delta.get("last_prompt"):
+                    last_prompt = delta["last_prompt"]
+        yield f"data: {json.dumps({'type': 'FinalAnswer', 'reply': final, 'prompt': last_prompt}, ensure_ascii=False)}\n\n"
+        # 중지/연결 종료된 응답은 다음 질문의 대화 이력에 포함하지 않는다.
+        if await request.is_disconnected():
+            return
+        deps.session_store.append(thread_id, "user", message)
+        deps.session_store.append(thread_id, "assistant", final)
         yield "data: [DONE]\n\n"
 
-    return StreamingResponse(gen(), media_type="text/event-stream")
+    async def guarded():
+        try:
+            async for chunk in gen():
+                yield chunk
+        except Exception as exc:
+            status=getattr(getattr(exc,"response",None),"status_code",None)
+            if status in (401,403):
+                message="모델 API 인증 또는 접근 권한 오류입니다. 서버의 API 키·모델 권한을 확인하세요."
+            elif status==429:
+                message="모델 API의 사용량 또는 요청 한도에 도달했습니다. 계정 사용량을 확인하세요."
+            elif isinstance(exc,httpx.TimeoutException):
+                message="모델 응답 시간이 초과되었습니다. 모델 실행 상태를 확인한 뒤 다시 시도하세요."
+            else:
+                message="답변 처리 중 서버 오류가 발생했습니다. 백엔드를 재시작하고 다시 시도하세요."
+            # 예외 본문은 키·요청 내용을 포함할 수 있으므로 전송하지 않는다.
+            print(f"chat_stream failed: {type(exc).__name__}, status={status}",flush=True)
+            yield "data: "+json.dumps({"type":"Error","message":message,"code":type(exc).__name__},ensure_ascii=False)+"\n\n"
+            yield "data: [DONE]\n\n"
+    return StreamingResponse(guarded(), media_type="text/event-stream",headers={"Cache-Control":"no-cache","X-Accel-Buffering":"no"})
 
 
 if __name__ == "__main__":

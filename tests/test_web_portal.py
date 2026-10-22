@@ -9,7 +9,10 @@ class DocumentsTest(unittest.TestCase):
         """외부 LLM 호출 없이 해당 경로의 연결·경계 조건을 검증한다.
         """
         with TestClient(app) as client:
-            for slug in ('electron-energy-levels', 'absorption-photoelectric', 'lithography-process', 'resolution-and-focus', 'pattern-quality', 'alignment-and-verification', 'scattering-and-sky', 'xrd-bragg', 'experiment-intake', 'light-fundamentals',
+            self.assertEqual(client.get('/').headers.get('cache-control'),'no-store')
+            self.assertEqual(client.get('/optics_lab.js').headers.get('cache-control'),'no-store')
+            self.assertIn('/optics_lab.js?v=',client.get('/').text)
+            for slug in ('electron-energy-levels', 'absorption-photoelectric', 'lithography-process', 'scattering-and-sky', 'xrd-bragg', 'experiment-intake', 'light-fundamentals',
                          'grating-prism-spectrometer', 'shadow-and-diffraction',
                          'michelson-interferometer', 'lenses-and-optical-instruments',
                          'polarization-and-reflection', 'speed-of-light'):

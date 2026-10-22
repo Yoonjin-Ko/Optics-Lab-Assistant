@@ -1,0 +1,43 @@
+{
+  "description": "광학·물리 학습용 검색 출처 제한. 도메인 허용은 내용의 사실 검증이 아니다.",
+  "domains": [
+    "nist.gov",
+    "nasa.gov",
+    "energy.gov",
+    "anl.gov",
+    "lbl.gov",
+    "ornl.gov",
+    "openstax.org",
+    "libretexts.org",
+    "feynmanlectures.caltech.edu",
+    "ocw.mit.edu",
+    "physics.byu.edu",
+    "phys.libretexts.org",
+    "rp-photonics.com",
+    "optica.org",
+    "opg.optica.org",
+    "aps.org",
+    "aip.org",
+    "iop.org",
+    "iucr.org",
+    "journals.iucr.org",
+    "arxiv.org",
+    "nature.com",
+    "science.org",
+    "sciencedirect.com",
+    "springer.com",
+    "link.springer.com",
+    "wiley.com",
+    "acs.org",
+    "rsc.org",
+    "pnas.org",
+    "academic.oup.com",
+    "noaa.gov"
+  ],
+  "reference": "기존 과학검증봇 AI_Science_Claim_Checker_v3_TrustedSources, v5_FastSingleSearch 및 ScienceCheck_Final_Context_Updated의 허용 출처를 참고해 광학·물리 범위로 선정",
+  "policy_notes": [
+    "의학 전용 도메인과 기관 전체를 허용하는 edu/ac.uk 같은 광범위 접미사는 추가하지 않음",
+    "허용 도메인은 검색 범위일 뿐 개별 페이지의 사실성·원문 접근성을 보장하지 않음",
+    "논문 검색 결과는 초록·프리프린트·본문 및 실측값·계산값을 구분해 사용"
+  ]
+}

@@ -32,7 +32,6 @@ K_{\max}=E-\Phi,\quad \lambda_c=1239.841984/\Phi
 
 ## 참고 자료
 - [OpenStax · 광전효과](https://openstax.org/books/university-physics-volume-3/pages/6-2-photoelectric-effect)
-- [MIT 강의 · Photoelectric effect and band gaps](https://courses.media.mit.edu/2022spring/mas836/lectures/Class9-Optical.pdf)
 
 ## 함께 읽기
 - 좌측 **전자·에너지 준위** 메뉴에서 들뜸·밴드갭·페르미 준위 설명을 볼 수 있습니다.
@@ -68,7 +67,7 @@ I(z)=I(0)e^{-\alpha z},\qquad \delta=\frac1\alpha.
 **앱 범위:** 위 심화 개념은 설명 문서입니다. 현재 애니메이션은 에너지 문턱만 비교하며 α·포논·재결합·전류를 계산하지 않습니다.
 
 ## 물질별 밴드갭 비교
-약 300 K의 대표적인 벌크 물질 기준값입니다. 결정 구조·온도·조성·응력·결함에 따라 값이 달라집니다.
+앱에 채택한 문헌 입력·근삿값입니다. Si·GaAs·SiO₂ 값은 Hlali 등의 300 K MIS 시뮬레이션 입력 표, GaN은 공개 초록의 육방정 비교값입니다. 인증 표준값이나 본 앱의 실측값이 아닙니다. 결정 구조·온도·조성·응력·결함에 따라 값이 달라집니다.
 
 | 물질 | Eg (eV) | 에너지 문턱 환산 파장 | 구분 |
 |---|---:|---:|---|
@@ -79,15 +78,38 @@ I(z)=I(0)e^{-\alpha z},\qquad \delta=\frac1\alpha.
 
 **λ=hc/Eg는 에너지 기준의 환산값**입니다. 간접 전이의 포논·실제 흡수단·엑시톤·결함 흡수를 재현하지 않습니다. 특히 SiO₂의 전자적 갭과 측정된 광학 흡수 시작을 동일시하지 않습니다. 금속의 외부 광전효과는 이 표의 Eg 대신 일함수 Φ를 사용합니다.
 
-앱에서 물질을 선택하면 해당 Eg가 계산·준위 그림·전자 들뜸의 단순 에너지 판정·채팅 조건에 반영됩니다. Eg를 직접 조절하면 가상 물질로 전환됩니다. 점유 분포 온도 조절은 이 표의 Eg에 온도 보정을 하지 않습니다.
+앱에서 물질을 선택하면 해당 Eg가 계산·준위 그림·전자 들뜸의 단순 에너지 판정·채팅 조건에 반영됩니다. 프리셋 값은 고정하며 직접 조절하려면 가상 물질 모드를 선택합니다. 점유 분포 온도 조절은 이 표의 Eg에 온도 보정을 하지 않습니다.
 
-출처: [300 K 재료 매개변수를 사용한 연구 · Si/GaAs/SiO₂](https://journals.ioffe.ru/articles/viewPDF/45185), [GaN 결정상별 밴드갭 연구](https://arxiv.org/abs/0708.2211). 확인일: 2026-10-20.
+출처: [Hlali·Hizem·Kalboussi (2017), 인쇄 p.1688의 300 K 입력 표](https://journals.ioffe.ru/articles/viewPDF/45185), [Dhara 등 (2007), 공개 초록의 결정상 비교](https://arxiv.org/abs/0708.2211). 수치·서지 대조일: 2026-10-21.
 
 ## 비교 예시와 화면 읽기
 - **650 nm(약 1.91 eV):** Si의 Eg=1.12 eV 에너지 조건을 넘지만 GaN의 Eg≈3.4 eV에는 부족합니다. Si의 간접 전이율·흡수 확률은 여기서 계산하지 않습니다.
 - **300 nm(약 4.13 eV):** GaN의 단순 밴드간 에너지 조건을 넘습니다.
 - **450 nm(약 2.76 eV):** 대표 일함수 Na=2.46 eV에서는 방출 에너지 조건 충족, Cu=4.70 eV에서는 부족합니다. 표면 결정면·산화·오염에 따라 실제 일함수는 달라집니다.
 
-[금속 일함수 예시 출처: OpenStax 광전효과 표](https://openstax.org/books/university-physics-volume-3/pages/6-2-photoelectric-effect)
+[금속 일함수 예시 출처: OpenStax §6.2, Table 6.1](https://openstax.org/books/university-physics-volume-3/pages/6-2-photoelectric-effect)
 
 노란 막대는 광자의 에너지, 가로선은 Eg 또는 진공 준위 Φ, 파란 점은 대표 전자입니다. 에너지 눈금은 표시 범위에 맞춰 자동 확대합니다. 내부 들뜸은 전도대 바닥으로의 이동을 대표로 표시하며 초과 에너지의 전자·정공 간 배분은 계산하지 않습니다. 오른쪽 공간 그림은 에너지 그래프와 별개입니다. 진행 슬라이더로 입사 전·반응 중·반응 후를 직접 확인할 수 있습니다.
+
+
+## 핵심 용어
+
+| 용어 | 뜻 |
+| --- | --- |
+| 밴드갭 | 가전자대 꼭대기와 전도대 바닥의 에너지 차이 Eg. 물질 밖 방출에 필요한 에너지와 같은 개념이 아니다. |
+| 일함수 | 금속에서 페르미 준위의 전자를 진공 준위까지 꺼내는 데 필요한 에너지. 표면 상태·결정면에 영향을 받는다. |
+| 문턱파장 | 해당 에너지 문턱과 hc/λ가 같아지는 파장. 단일광자 에너지 조건이며 실제 흡수율을 정하는 값은 아니다. |
+| 정지전압 | 광전효과에서 최대 운동에너지 전자까지 저지하는 전위차의 크기. eVs=Kmax. |
+
+## 출처와 확인 범위
+
+아래 자료의 해당 절·표·초록을 확인해 사실과 공식을 요약했습니다. 점검 순서·가상 사례·시각화는 앱에서 작성한 학습용 구성입니다.
+
+| 확인 내용 | 근거 자료와 위치 |
+| --- | --- |
+| 광전효과·일함수·문턱 | [OpenStax: Photoelectric Effect](https://openstax.org/books/university-physics-volume-3/pages/6-2-photoelectric-effect) — §6.2, Eq. 6.14–6.16, Table 6.1 |
+| 밴드 설명 | [OpenStax: Band Theory of Solids](https://openstax.org/books/university-physics-volume-3/pages/9-5-band-theory-of-solids) — §9.5 |
+| Si/GaAs/SiO₂ 프리셋 입력값 | [Hlali, Hizem & Kalboussi (2017), Charge density at the Al2O3/Si interface in MIS devices](https://journals.ioffe.ru/articles/viewPDF/45185) — 인쇄 p.1688, Physical Parameters (300 K) 표 |
+| GaN 근삿값 | [Dhara et al. (2007), Optical characterization of GaN by N+ implantation into GaAs at elevated temperature](https://arxiv.org/abs/0708.2211) — 공개 Abstract의 hexagonal/cubic GaN 비교 |
+
+상세 서지·접근 범위는 `data/source_registry.json`에 기록합니다. 공식의 앱 내 적용 범위와 생략한 현상은 본문의 모델 설명을 따릅니다.

@@ -25,7 +25,7 @@ CASES=[
  ('렌즈 초점거리 10 cm 물체거리 10 cm 상 거리 계산','singular',None,None),
 ]
 async def main():
-    mcp=MCPClient(flaky_first_tool_call=False)
+    mcp=MCPClient()
     await mcp.start()
     try:
         graph=build_graph(SupervisorDeps(FastLLM('fake',0),QualityLLM('fake',0),mcp,None,'v2'))
@@ -39,7 +39,7 @@ async def main():
             called=sum(e['type']=='CalculationCompleted' for e in state['events'])
             passed=data.get('status')==status and called==1 and (name is None or actual is not None and math.isclose(actual,expected,rel_tol=1e-9,abs_tol=1e-9))
             rows.append({'query':query,'expected_status':status,'actual_status':data.get('status'),'expected_value':expected,'actual_value':actual,'mcp_calculation_calls':called,'latency_seconds':round(elapsed,4),'passed':passed})
-        report={'backend':'fake (수치 도구와 MCP는 실제 실행)','case_count':len(rows),'passed':sum(r['passed'] for r in rows),'notes':['LLM 답변 품질·Ollama/OpenAI 지연의 평가가 아니다.','기존 research 노드의 작업당 인위적 0.35초 지연이 포함된다.','변경 전 실행 결과를 저장하지 않아 Before/After 성능 향상은 주장하지 않는다.'],'cases':rows}
+        report={'backend':'fake (수치 도구와 MCP는 실제 실행)','case_count':len(rows),'passed':sum(r['passed'] for r in rows),'notes':['LLM 답변 품질·Ollama/OpenAI 지연의 평가가 아니다.','실습용 인위적 작업 지연을 제거한 광학 전용 경로에서 측정한다.','변경 전 실행 결과를 저장하지 않아 Before/After 성능 향상은 주장하지 않는다.'],'cases':rows}
         out=Path(__file__).with_name('optics_calculation_results.json')
         out.write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n')
         print(f"{report['passed']}/{len(rows)} 통과 · {out}")

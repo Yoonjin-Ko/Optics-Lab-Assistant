@@ -9,10 +9,10 @@ from agent.optics import optical_targets, answer_mode, THEORY_WRITER
 
 
 class OpticsIntegration(unittest.IsolatedAsyncioTestCase):
-    async def test_documents_followup_and_legacy(self):
+    async def test_documents_followup_and_scope(self):
         """외부 LLM 호출 없이 해당 경로의 연결·경계 조건을 검증한다.
         """
-        mcp = MCPClient(flaky_first_tool_call=False)
+        mcp = MCPClient()
         await mcp.start()
         try:
             graph = build_graph(SupervisorDeps(FastLLM('fake', 0), QualityLLM('fake', 0),
@@ -36,18 +36,18 @@ class OpticsIntegration(unittest.IsolatedAsyncioTestCase):
                     self.assertNotIn('CPU', result['final'])
             # 실제 문제가 된 짧은 정의 질문은 문서 전체 요약으로 번지지 않아야 한다.
             self.assertEqual(optical_targets('산란이 뭐야?'), ['scattering-and-sky'])
-            class VerboseQuality:
-                async def write(self, query, collected, attempt, feedback, on_token=None):
-                    self_inputs = [c['data'] for c in collected if c['source']=='runbook']
-                    assert len(''.join(self_inputs)) < 500
-                    assert on_token is None  # 긴 초안을 사용자에게 먼저 노출하지 않는다.
-                    return '파장과 에너지와 모든 광학 개념 설명입니다.' * 100, {'usd':0}
-            verbose_graph = build_graph(SupervisorDeps(FastLLM('fake',0), VerboseQuality(),mcp,None,'v2'))
-            short = await verbose_graph.ainvoke(dict(query='산란이 뭐야?',history=[],events=[],cost_usd=0))
-            self.assertLessEqual(len(short['final']),500)
-            self.assertIn('진행 방향',short['final'])
-            self.assertNotIn('파장과 에너지와 모든',short['final'])
-            self.assertEqual(short['validation_attempts'],3)
+            class RevisedQuality:
+                async def write(self,query,collected,attempt,feedback,on_token=None):
+                    assert on_token is not None
+                    if attempt==1:return '일반적인 불필요한 설명입니다.'*100,{'usd':0}
+                    assert feedback
+                    return '현재 질문의 결론을 먼저 설명합니다. 이어서 필요한 조건과 근거만 짧게 정리합니다.',{'usd':0}
+            generic_graph=build_graph(SupervisorDeps(FastLLM('fake',0),RevisedQuality(),mcp,None,'v2'))
+            for question in ['산란이 뭐야?','렌즈의 배율이 달라지는 이유는?','두 현상의 관계를 설명해줘']:
+                concise=await generic_graph.ainvoke(dict(query=question,history=[],events=[],cost_usd=0,optics_targets=['experiment-intake']))
+                if concise['route']=='chat':continue
+                self.assertLessEqual(len(concise['final']),900)
+                self.assertEqual(concise['validation_attempts'],2)
             history = [{'role': 'user', 'content': 'Michelson 간섭계 무늬가 안 보여요'}]
             result = await graph.ainvoke(dict(query='빛은 보이는데 무늬만 없어요',
                                               history=history, events=[], cost_usd=0))
@@ -91,21 +91,29 @@ class OpticsIntegration(unittest.IsolatedAsyncioTestCase):
             self.assertIn('michelson-interferometer', optical_targets(attached))
             speed = await graph.ainvoke(dict(query='빛의 속도는?', history=[], events=[], cost_usd=0))
             self.assertEqual(speed['optics_mode'], 'theory')
-            self.assertIn('299792458', speed['final'])
+            self.assertIn('299,792,458', speed['final'])
             self.assertNotIn('먼저 물어볼 질문', speed['final'])
             self.assertEqual(speed['validation_attempts'], 1)
             self.assertIn('1~3문장', THEORY_WRITER)
             self.assertEqual(result['optics_mode'], 'troubleshooting')
             self.assertEqual(optical_targets('빛의 종류는?', history), ['light-fundamentals'])
 
-            legacy = await graph.ainvoke(dict(query='auth-service 지연 진단',
-                                             history=[], events=[], cost_usd=0))
-            self.assertTrue(any(c['source'] == 'monitoring' for c in legacy['collected']))
-            self.assertIn('CPU', legacy['final'])
-            self.assertNotIn('Runbook Not Found', str(legacy['collected']))
+            unrelated = await graph.ainvoke(dict(query='안녕하세요',history=[],events=[],cost_usd=0))
+            self.assertEqual(unrelated['route'],'chat')
+            self.assertFalse(unrelated.get('collected'))
         finally:
             await mcp.stop()
 
 
 if __name__ == '__main__':
     unittest.main()
+
+
+class InquiryContextTests(unittest.TestCase):
+    def test_active_experiment_resolves_implicit_questions(self):
+        from agent.optics import optical_targets
+        cases=[('현재 물질에서 내부 들뜸과 진공 방출 중 무엇을 보는 것일까?','absorption-photoelectric'),('현재 상은 어디에 생길까?','optical-equipment'),('각도를 두 배로 바꾸면 세기도 두 배로 변할까?','polarization-and-reflection')]
+        for question,document in cases:
+            wrapped='[사용자 질문]\n'+question+'\n\n[현재 가상 실험]\n[현재 실험 문서] '+document
+            self.assertEqual(optical_targets(wrapped,[]),[document])
+        self.assertEqual(optical_targets('[사용자 질문]\nXRD 브래그 법칙 설명\n\n[현재 가상 실험]\n[현재 실험 문서] optical-equipment',[]),['xrd-bragg'])

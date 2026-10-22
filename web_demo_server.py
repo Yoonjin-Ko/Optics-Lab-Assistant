@@ -1,17 +1,5 @@
-"""web_demo_server.py — all_total_vue 에이전트와 브라우저 채팅창으로 대화해보는 데모.
-
-web_chat.html이 바닐라 JS 대신 Vue 3(CDN 글로벌 빌드, 별도 빌드 단계 없음)로 되어
-있다는 점만 all_total과 다르다. server.py(8100)의 채팅 API를 같은 출처로 중계한다. 이 스크립트는
-- web_chat.html 한 장을 같은 출처(origin)로 띄우고
-- optics_lab.js와 허용된 학습 문서를 제공하고
-- /chat/stream 요청을 그대로 8100으로 중계(프록시)해서
-
-브라우저의 CORS 제약 없이 실제 에이전트와 대화할 수 있게 해주는 아주 얇은 레이어다.
-server.py는 평소처럼(fake/ollama/openai 아무 백엔드로나) 8100에 미리 띄워 놓아야 한다.
-
-실행:
-    python3 web_demo_server.py        # http://localhost:8600 에서 채팅 화면 오픈
-"""
+"""광학 UI·학습 문서를 제공하고 채팅 API와 SSE를 백엔드로 중계한다."""
+import json
 from pathlib import Path
 
 import httpx
@@ -32,7 +20,7 @@ async def index():
     Returns:
         채팅 HTML 파일 응답.
     """
-    return FileResponse(HERE / "web_chat.html")
+    return FileResponse(HERE / "web_chat.html", headers={"Cache-Control":"no-store"})
 
 
 @app.get("/optics_lab.js")
@@ -42,7 +30,7 @@ async def simulation_script():
     Returns:
         JavaScript 파일 응답.
     """
-    return FileResponse(HERE / "optics_lab.js", media_type="text/javascript")
+    return FileResponse(HERE / "optics_lab.js", media_type="text/javascript", headers={"Cache-Control":"no-store"})
 
 
 @app.get("/assets/atomic-light-scale.svg")
@@ -67,7 +55,7 @@ async def document(slug: str):
     Returns:
         문서 본문을 담은 사전. 허용되지 않은 ID는 HTTP 404.
     """
-    allowed = {"optical-equipment", "measurement-and-uncertainty", "ising-and-monte-carlo", "data-and-model-validation", "electron-energy-levels", "absorption-photoelectric", "lithography-process", "resolution-and-focus", "pattern-quality", "alignment-and-verification", "lithography-cd", "scattering-and-sky", "xrd-bragg", "experiment-intake", "light-fundamentals", "grating-prism-spectrometer",
+    allowed = {"optical-equipment", "measurement-and-uncertainty", "ising-and-monte-carlo", "data-and-model-validation", "electron-energy-levels", "absorption-photoelectric", "lithography-process", "lithography-cd", "scattering-and-sky", "xrd-bragg", "experiment-intake", "light-fundamentals", "grating-prism-spectrometer",
                "shadow-and-diffraction", "michelson-interferometer",
                "lenses-and-optical-instruments", "polarization-and-reflection", "speed-of-light"}
     if slug not in allowed:
@@ -121,13 +109,18 @@ async def proxy_stream(message: str, thread_id: str = "web-demo"):
         Yields:
             순서대로 전달할 SSE 텍스트 또는 원본 바이트 조각.
         """
-        async with httpx.AsyncClient(timeout=None) as client:
-            async with client.stream(
-                "GET", f"{BACKEND}/chat/stream",
-                params={"message": message, "thread_id": thread_id},
-            ) as upstream:
-                async for chunk in upstream.aiter_bytes():
-                    yield chunk
+        try:
+            async with httpx.AsyncClient(timeout=None) as client:
+                async with client.stream(
+                    "GET", f"{BACKEND}/chat/stream",
+                    params={"message": message, "thread_id": thread_id},
+                ) as upstream:
+                    upstream.raise_for_status()
+                    async for chunk in upstream.aiter_bytes():
+                        yield chunk
+        except httpx.HTTPError:
+            yield "data: "+json.dumps({"type":"Error","message":"백엔드 연결이 끊겼습니다. 8100 서버가 실행 중인지 확인하세요."},ensure_ascii=False)+"\n\n"
+            yield "data: [DONE]\n\n"
 
     return StreamingResponse(relay(), media_type="text/event-stream")
 

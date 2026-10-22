@@ -4,7 +4,7 @@
   "passed": 11,
   "notes": [
     "LLM 답변 품질·Ollama/OpenAI 지연의 평가가 아니다.",
-    "기존 research 노드의 작업당 인위적 0.35초 지연이 포함된다.",
+    "실습용 인위적 작업 지연을 제거한 광학 전용 경로에서 측정한다.",
     "변경 전 실행 결과를 저장하지 않아 Before/After 성능 향상은 주장하지 않는다."
   ],
   "cases": [
@@ -15,7 +15,7 @@
       "expected_value": 2.3305300457368467,
       "actual_value": 2.3305300457368467,
       "mcp_calculation_calls": 1,
-      "latency_seconds": 0.5276,
+      "latency_seconds": 0.1466,
       "passed": true
     },
     {
@@ -25,7 +25,7 @@
       "expected_value": 2.3305300457368467,
       "actual_value": 2.3305300457368467,
       "mcp_calculation_calls": 1,
-      "latency_seconds": 0.3617,
+      "latency_seconds": 0.0039,
       "passed": true
     },
     {
@@ -35,7 +35,7 @@
       "expected_value": 29.75658740683661,
       "actual_value": 29.75658740683661,
       "mcp_calculation_calls": 1,
-      "latency_seconds": 0.3693,
+      "latency_seconds": 0.004,
       "passed": true
     },
     {
@@ -45,7 +45,7 @@
       "expected_value": 632.8,
       "actual_value": 632.8000000000001,
       "mcp_calculation_calls": 1,
-      "latency_seconds": 0.3692,
+      "latency_seconds": 0.0041,
       "passed": true
     },
     {
@@ -55,7 +55,7 @@
       "expected_value": 4,
       "actual_value": 3.999999999999999,
       "mcp_calculation_calls": 1,
-      "latency_seconds": 0.3662,
+      "latency_seconds": 0.0036,
       "passed": true
     },
     {
@@ -65,7 +65,7 @@
       "expected_value": 50,
       "actual_value": 50.000000000000014,
       "mcp_calculation_calls": 1,
-      "latency_seconds": 0.3718,
+      "latency_seconds": 0.0036,
       "passed": true
     },
     {
@@ -75,7 +75,7 @@
       "expected_value": 15,
       "actual_value": 15.0,
       "mcp_calculation_calls": 1,
-      "latency_seconds": 0.3696,
+      "latency_seconds": 0.0042,
       "passed": true
     },
     {
@@ -85,7 +85,7 @@
       "expected_value": null,
       "actual_value": null,
       "mcp_calculation_calls": 1,
-      "latency_seconds": 0.368,
+      "latency_seconds": 0.0036,
       "passed": true
     },
     {
@@ -95,7 +95,7 @@
       "expected_value": null,
       "actual_value": null,
       "mcp_calculation_calls": 1,
-      "latency_seconds": 0.3678,
+      "latency_seconds": 0.0035,
       "passed": true
     },
     {
@@ -105,7 +105,7 @@
       "expected_value": null,
       "actual_value": null,
       "mcp_calculation_calls": 1,
-      "latency_seconds": 0.3662,
+      "latency_seconds": 0.0035,
       "passed": true
     },
     {
@@ -115,7 +115,7 @@
       "expected_value": null,
       "actual_value": null,
       "mcp_calculation_calls": 1,
-      "latency_seconds": 0.3679,
+      "latency_seconds": 0.0033,
       "passed": true
     }
   ]

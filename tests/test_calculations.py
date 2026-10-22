@@ -48,10 +48,36 @@ class CalculationTests(unittest.TestCase):
         self.assertEqual(plan['parameters']['angle']['value'],90)
         self.assertEqual(plan['origins']['angle'],'question')
 
+    def test_latest_snapshot_overrides_descriptive_numbers(self):
+        query='[사용자 질문]\n렌즈 상 거리 계산해줘\n\n[현재 가상 실험]\n초점거리 10 cm, 물체 거리 30 cm\n[광학 계산 입력]\n{"default_operation":"thin_lens","parameters":{"focal":{"value":20,"unit":"cm"},"object_distance":{"value":30,"unit":"cm"}}}'
+        plan=plan_calculation(query)
+        self.assertEqual(plan['parameters']['focal']['value'],20)
+        result=calculate_optics(plan['operation'],plan['parameters'])
+        old_plan=plan_calculation(query.replace('"value":20','"value":10'))
+        old_result=calculate_optics(old_plan['operation'],old_plan['parameters'])
+        self.assertNotEqual(result['results'],old_result['results'])
+
+    def test_inquiry_targets_are_not_replaced_by_current_forward_result(self):
+        context='\n\n[현재 가상 실험]\n[광학 계산 입력]\n{"default_operation":"michelson_fringes","parameters":{"displacement":{"value":1,"unit":"µm"},"wavelength":{"value":532,"unit":"nm"},"fringes":{"value":3.759,"unit":"count"}}}'
+        for question in ['현재 최대 투과 세기의 절반을 얻으려면 편광판을 몇 도로 맞출까?', '같은 크기의 실상을 만들려면 초점거리를 어떻게 정할까?']:
+            self.assertIsNone(plan_calculation('[사용자 질문]\n'+question+context))
+
+    def test_diffraction_fringe_is_not_michelson(self):
+        query='[사용자 질문]\n현재 중앙 밝은 무늬의 폭을 계산하려면 어떤 값이 필요할까?\n\n[현재 가상 실험]\n[현재 실험 문서] shadow-and-diffraction\n파장 532 nm, 슬릿 폭 0.1 mm, 거리 1 m'
+        self.assertIsNone(plan_calculation(query))
+
+    def test_mirror_goal_uses_requested_count_and_current_wavelength(self):
+        query='[사용자 질문]\n지금 파장에서 무늬 10개가 지나가려면 거울을 얼마나 옮겨야 할까?\n\n[현재 가상 실험]\n[현재 실험 문서] michelson-interferometer\n[광학 계산 입력]\n{"parameters":{"wavelength":{"value":532,"unit":"nm"},"fringes":{"value":0,"unit":"count"}}}'
+        plan=plan_calculation(query)
+        self.assertEqual(plan['operation'],'michelson_displacement')
+        self.assertEqual(plan['parameters']['fringes']['value'],10)
+        result=calculate_optics(plan['operation'],plan['parameters'])
+        self.assertAlmostEqual(result['results'][0]['value'],2.66)
+
 
 class MCPGraphCalculationTests(unittest.IsolatedAsyncioTestCase):
     async def test_actual_mcp_tool_and_graph(self):
-        mcp=MCPClient(flaky_first_tool_call=False)
+        mcp=MCPClient()
         await mcp.start()
         try:
             graph=build_graph(SupervisorDeps(FastLLM('fake',0),QualityLLM('fake',0),mcp,None,'v2'))

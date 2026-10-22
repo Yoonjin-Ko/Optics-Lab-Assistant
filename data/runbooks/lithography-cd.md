@@ -24,6 +24,14 @@
 2. 승인된 공정 문서와 담당 엔지니어의 검토가 필요함을 구분한다.
 3. 공개 자료의 일반 이론만으로 원인·조정량을 확정하지 않는다. NASA 하늘색 설명을 노광 불량의 근거로 인용하지 않는다.
 
-## 참고 자료
-
 </details>
+
+## 출처와 확인 범위
+
+아래 자료의 해당 절·표·초록을 확인해 사실과 공식을 요약했습니다. 점검 순서·가상 사례·시각화는 앱에서 작성한 학습용 구성입니다.
+
+| 확인 내용 | 근거 자료와 위치 |
+| --- | --- |
+| 노광·현상·식각 구분 | [EPFL CMi: Introduction to Photolitography](https://www.epfl.ch/research/facilities/cmi/process/photolithography/introductiontophotolithography/) — Introduction, Photoresist chemistry, Photolithography steps |
+
+상세 서지·접근 범위는 `data/source_registry.json`에 기록합니다. 공식의 앱 내 적용 범위와 생략한 현상은 본문의 모델 설명을 따릅니다.

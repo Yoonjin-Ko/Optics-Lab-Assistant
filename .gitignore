@@ -6,3 +6,8 @@
 session.db
 __pycache__/
 *.log
+
+# Local metadata and database sidecars
+.DS_Store
+**/.DS_Store
+session.db-*

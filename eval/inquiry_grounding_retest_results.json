@@ -1,0 +1,337 @@
+[
+  {
+    "id": "lens-default-2",
+    "experiment": "lens",
+    "variant": "default",
+    "question": "물체 거리를 고정하고 같은 크기의 실상을 만들려면 초점거리를 어떻게 정할까?",
+    "message": "[사용자 질문]\n물체 거리를 고정하고 같은 크기의 실상을 만들려면 초점거리를 어떻게 정할까?\n\n[현재 가상 실험]\n실험: 볼록렌즈\n[현재 실험 문서] lenses-and-optical-instruments\n볼록렌즈 실험 (근축 근사, λ=532 nm, 색수차·재료 분산 생략): f=10 cm, 물체 거리 s=30 cm. 상 거리 s′=15.00 cm, 배율 M=-0.50, 도립 실상. 이 결과를 설명해줘.\n[광학 계산 입력]\n{\"default_operation\":\"thin_lens\",\"parameters\":{\"focal\":{\"value\":10,\"unit\":\"cm\"},\"object_distance\":{\"value\":30,\"unit\":\"cm\"}}}\n\n위 내용은 가상 모델의 조건과 계산 결과입니다. 참고 자료의 설명 요청 문구보다 사용자 질문에 우선 답하세요. 실제 측정이나 센서 관측으로 표현하지 마세요.",
+    "configured_quality_model": "qwen3:8b",
+    "first_token_seconds": 11.309,
+    "events": [
+      {
+        "type": "RouteDecided",
+        "route": "optics"
+      },
+      {
+        "type": "PlanCreated",
+        "task_count": 1,
+        "targets": [
+          "lenses-and-optical-instruments"
+        ]
+      },
+      {
+        "type": "TaskCompleted",
+        "id": "optics-0",
+        "source": "runbook",
+        "target": "lenses-and-optical-instruments",
+        "retries": 0
+      },
+      {
+        "type": "SourcesPrepared",
+        "seconds": 0.0717,
+        "workers": [
+          "documents"
+        ]
+      },
+      {
+        "type": "DraftWritten",
+        "attempt": 1,
+        "length": 137,
+        "seconds": 15.216,
+        "first_token_seconds": 11.231211790989619
+      },
+      {
+        "type": "Validation",
+        "attempt": 1,
+        "verdict": "합격"
+      },
+      {
+        "type": "Finalize",
+        "pipeline": "optics"
+      }
+    ],
+    "drafts": [
+      "물체 거리를 고정하고 같은 크기의 실상을 만들려면 초점거리를 물체 거리와 같게 설정해야 합니다. 현재 물체 거리 s=30 cm이므로 초점거리 f도 30 cm로 정해야 합니다. 이 경우 상 거리 s′는 무한대가 되며, 실상은 무한远处에 형성됩니다."
+    ],
+    "input_chars": 453,
+    "timings": {
+      "documents": 0.0717,
+      "write_1": 15.216,
+      "first_token": 11.2312
+    },
+    "answer": "물체 거리를 고정하고 같은 크기의 실상을 만들려면 초점거리를 물체 거리와 같게 설정해야 합니다. 현재 물체 거리 s=30 cm이므로 초점거리 f도 30 cm로 정해야 합니다. 이 경우 상 거리 s′는 무한대가 되며, 실상은 무한远处에 형성됩니다.",
+    "total_seconds": 15.3,
+    "manual_review": {
+      "status": "fail",
+      "note": "같은 크기 실상 조건은 u=v=2f이나 f=u로 답함."
+    }
+  },
+  {
+    "id": "concave-lens-default-1",
+    "experiment": "concave-lens",
+    "variant": "default",
+    "question": "현재 허상은 어디에 보이고 왜 스크린에는 맺히지 않을까?",
+    "message": "[사용자 질문]\n현재 허상은 어디에 보이고 왜 스크린에는 맺히지 않을까?\n\n[현재 가상 실험]\n실험: 오목렌즈\n[현재 실험 문서] lenses-and-optical-instruments\n오목렌즈 실험 (근축 근사, λ=532 nm, 색수차·재료 분산 생략): f=-10 cm, 물체 거리 s=30 cm. 상 거리 s′=-7.50 cm, 배율 M=0.25, 정립 허상. 이 결과를 설명해줘.\n[광학 계산 입력]\n{\"default_operation\":\"thin_lens\",\"parameters\":{\"focal\":{\"value\":-10,\"unit\":\"cm\"},\"object_distance\":{\"value\":30,\"unit\":\"cm\"}}}\n\n위 내용은 가상 모델의 조건과 계산 결과입니다. 참고 자료의 설명 요청 문구보다 사용자 질문에 우선 답하세요. 실제 측정이나 센서 관측으로 표현하지 마세요.",
+    "configured_quality_model": "qwen3:8b",
+    "first_token_seconds": 1.327,
+    "events": [
+      {
+        "type": "RouteDecided",
+        "route": "optics"
+      },
+      {
+        "type": "PlanCreated",
+        "task_count": 1,
+        "targets": [
+          "lenses-and-optical-instruments"
+        ]
+      },
+      {
+        "type": "TaskCompleted",
+        "id": "optics-0",
+        "source": "runbook",
+        "target": "lenses-and-optical-instruments",
+        "retries": 0
+      },
+      {
+        "type": "SourcesPrepared",
+        "seconds": 0.0182,
+        "workers": [
+          "documents"
+        ]
+      },
+      {
+        "type": "DraftWritten",
+        "attempt": 1,
+        "length": 138,
+        "seconds": 6.4217,
+        "first_token_seconds": 1.3031157089862972
+      },
+      {
+        "type": "Validation",
+        "attempt": 1,
+        "verdict": "합격"
+      },
+      {
+        "type": "Finalize",
+        "pipeline": "optics"
+      }
+    ],
+    "drafts": [
+      "현재 허상은 렌즈의 뒷쪽, 즉 상 거리 s′=-7.50 cm 위치에 보입니다. 스크린에는 맺히지 않는 이유는 허상이 광선의 역연장선이 만나는 위치이기 때문입니다. 실상과 달리 허상은 실제 광선이 모이지 않기 때문에 스크린에 직접 받을 수 없습니다."
+    ],
+    "input_chars": 443,
+    "timings": {
+      "documents": 0.0181,
+      "write_1": 6.4217,
+      "first_token": 1.3031
+    },
+    "answer": "현재 허상은 렌즈의 뒷쪽, 즉 상 거리 s′=-7.50 cm 위치에 보입니다. 스크린에는 맺히지 않는 이유는 허상이 광선의 역연장선이 만나는 위치이기 때문입니다. 실상과 달리 허상은 실제 광선이 모이지 않기 때문에 스크린에 직접 받을 수 없습니다.",
+    "total_seconds": 6.45,
+    "manual_review": {
+      "status": "fail",
+      "note": "음의 상 거리의 허상은 물체 쪽인데 렌즈 뒤라고 답함."
+    }
+  },
+  {
+    "id": "fresnel-default-2",
+    "experiment": "fresnel",
+    "variant": "default",
+    "question": "p 반사가 사라지는 입사각은 얼마이고 어떻게 맞출까?",
+    "message": "[사용자 질문]\np 반사가 사라지는 입사각은 얼마이고 어떻게 맞출까?\n\n[현재 가상 실험]\n실험: s·p 편광 / 전반사\n[현재 실험 문서] polarization-and-reflection\ns·p 편광 반사·전반사 실험: λ=532 nm, 비흡수 유전체 n₁=1, n₂=1.5, 법선 기준 입사각 45°. Rₛ=0.0920, Rₚ=0.0085, 굴절각 28.13°. 브루스터 각 56.31°, 임계각 없음. 굴절률은 사용자가 정한 고정값이며 파장 분산·위상·소멸파는 모델에 포함하지 않았다.\n\n위 내용은 가상 모델의 조건과 계산 결과입니다. 참고 자료의 설명 요청 문구보다 사용자 질문에 우선 답하세요. 실제 측정이나 센서 관측으로 표현하지 마세요.",
+    "configured_quality_model": "qwen3:8b",
+    "first_token_seconds": 6.098,
+    "events": [
+      {
+        "type": "RouteDecided",
+        "route": "optics"
+      },
+      {
+        "type": "PlanCreated",
+        "task_count": 1,
+        "targets": [
+          "polarization-and-reflection"
+        ]
+      },
+      {
+        "type": "TaskCompleted",
+        "id": "optics-0",
+        "source": "runbook",
+        "target": "polarization-and-reflection",
+        "retries": 0
+      },
+      {
+        "type": "SourcesPrepared",
+        "seconds": 0.0246,
+        "workers": [
+          "documents"
+        ]
+      },
+      {
+        "type": "DraftWritten",
+        "attempt": 1,
+        "length": 133,
+        "seconds": 10.6742,
+        "first_token_seconds": 6.068124832992908
+      },
+      {
+        "type": "Validation",
+        "attempt": 1,
+        "verdict": "합격"
+      },
+      {
+        "type": "Finalize",
+        "pipeline": "optics"
+      }
+    ],
+    "drafts": [
+      "p 반사가 사라지는 입사각은 브루스터 각으로, 현재 조건에서는 56.31°입니다. 이 각도는 tanθB = n₂/n₁에서 계산되며, n₁=1, n₂=1.5일 때 이 값이 됩니다. 이 각도를 맞추려면 입사각을 56.31°로 설정하면 됩니다."
+    ],
+    "input_chars": 364,
+    "timings": {
+      "documents": 0.0245,
+      "write_1": 10.6742,
+      "first_token": 6.0681
+    },
+    "answer": "p 반사가 사라지는 입사각은 브루스터 각으로, 현재 조건에서는 56.31°입니다. 이 각도는 tanθB = n₂/n₁에서 계산되며, n₁=1, n₂=1.5일 때 이 값이 됩니다. 이 각도를 맞추려면 입사각을 56.31°로 설정하면 됩니다.",
+    "total_seconds": 10.708,
+    "manual_review": {
+      "status": "pass",
+      "note": "공기→굴절률1.5의 브루스터 각56.31도와 식이 일치."
+    }
+  },
+  {
+    "id": "absorption-default-1",
+    "experiment": "absorption",
+    "variant": "default",
+    "question": "현재 물질에서 내부 들뜸과 진공 방출 중 무엇을 보는 것일까?",
+    "message": "[사용자 질문]\n현재 물질에서 내부 들뜸과 진공 방출 중 무엇을 보는 것일까?\n\n[현재 가상 실험]\n실험: 광흡수 / 광전효과\n[현재 실험 문서] absorption-photoelectric\n광흡수·광전효과 실험: 현재 모드=semiconductor, 물질 내부 밴드 간 들뜸 모델, 진공 방출을 다루지 않음. 실리콘 Si · diamond cubic, 간접갭 · 포논을 포함한 전이 고려, Hlali 등(2017) p.1688 · 300 K 계산 입력값, 상대 광자 유입률=1 (표시 광자 묶음 3개, 실제 전류 아님), λ=532 nm, 광자 에너지=2.331 eV, 밴드갭 Eg=1.12 eV, 문턱 파장=1107.00 nm. 점유 확률 참고 모델 T=300 K, EF=0.560 eV (금속은 EF=0 기준, 비금속은 Ev=0 기준), f(Ec)=3.912e-10. 이 확률은 전자 농도·광흡수 확률이 아니다. 이상적인 밴드 간 들뜸 조건 충족. 물질 밖 방출은 의미하지 않음. 입력한 문턱 외의 실제 재료 응답·흡수율·양자효율·전류·전자 수명·간접천이·결함은 모델링하지 않은 학습용 문턱 모델이다.\n\n위 내용은 가상 모델의 조건과 계산 결과입니다. 참고 자료의 설명 요청 문구보다 사용자 질문에 우선 답하세요. 실제 측정이나 센서 관측으로 표현하지 마세요.",
+    "configured_quality_model": "qwen3:8b",
+    "first_token_seconds": 3.903,
+    "events": [
+      {
+        "type": "RouteDecided",
+        "route": "optics"
+      },
+      {
+        "type": "PlanCreated",
+        "task_count": 1,
+        "targets": [
+          "absorption-photoelectric"
+        ]
+      },
+      {
+        "type": "TaskCompleted",
+        "id": "optics-0",
+        "source": "runbook",
+        "target": "absorption-photoelectric",
+        "retries": 0
+      },
+      {
+        "type": "SourcesPrepared",
+        "seconds": 0.014,
+        "workers": [
+          "documents"
+        ]
+      },
+      {
+        "type": "DraftWritten",
+        "attempt": 1,
+        "length": 89,
+        "seconds": 6.4108,
+        "first_token_seconds": 3.8838539160205983
+      },
+      {
+        "type": "Validation",
+        "attempt": 1,
+        "verdict": "합격"
+      },
+      {
+        "type": "Finalize",
+        "pipeline": "optics"
+      }
+    ],
+    "drafts": [
+      "현재 물질인 실리콘(Si)에서는 내부 들뜸을 보고 있습니다. 진공 방출은 의미하지 않으며, 간접 전이 특성으로 인해 포논 참여가 필요한 전이 과정을 고려합니다."
+    ],
+    "input_chars": 652,
+    "timings": {
+      "documents": 0.0139,
+      "write_1": 6.4108,
+      "first_token": 3.8839
+    },
+    "answer": "현재 물질인 실리콘(Si)에서는 내부 들뜸을 보고 있습니다. 진공 방출은 의미하지 않으며, 간접 전이 특성으로 인해 포논 참여가 필요한 전이 과정을 고려합니다.",
+    "total_seconds": 6.434,
+    "manual_review": {
+      "status": "pass",
+      "note": "현재 Si의 내부 들뜸과 진공 방출을 구분."
+    }
+  },
+  {
+    "id": "camera-default-3",
+    "experiment": "camera",
+    "variant": "default",
+    "question": "F수를 높이면 밝기와 회절 무늬는 각각 어떻게 변할까?",
+    "message": "[사용자 질문]\nF수를 높이면 밝기와 회절 무늬는 각각 어떻게 변할까?\n\n[현재 가상 실험]\n실험: 광학장비\n[현재 실험 문서] optical-equipment\n카메라 · 얇은 렌즈. 초점거리 f=50 mm, 물체 거리 u=1000 mm, 센서 폭=36 mm, F수=4. 1/f=1/u+1/v, m=-v/u. 물체는 실상 조건 u>f 필요. 센서는 계산된 상면에 둔다. |m|=f/(u−f)이므로 u 고정·0<f<u에서 f를 늘리면 |m|가 증가한다. 센서도 새 상면 v로 이동해야 한다. 기본 계산: 상 거리=52.6316 mm; 횡배율=-0.0526 배; 수평 화각=39.5978 °.  사용자가 요청한 파생값은 가정·단위·식을 밝히고 계산하세요. 정보가 부족하면 필요한 값만 질문하세요. 모든 역산은 이상 모델이며 실제 장비 설정 권고가 아닙니다.\n\n위 내용은 가상 모델의 조건과 계산 결과입니다. 참고 자료의 설명 요청 문구보다 사용자 질문에 우선 답하세요. 실제 측정이나 센서 관측으로 표현하지 마세요.",
+    "configured_quality_model": "qwen3:8b",
+    "first_token_seconds": 5.505,
+    "events": [
+      {
+        "type": "RouteDecided",
+        "route": "optics"
+      },
+      {
+        "type": "PlanCreated",
+        "task_count": 1,
+        "targets": [
+          "optical-equipment"
+        ]
+      },
+      {
+        "type": "TaskCompleted",
+        "id": "optics-0",
+        "source": "runbook",
+        "target": "optical-equipment",
+        "retries": 0
+      },
+      {
+        "type": "SourcesPrepared",
+        "seconds": 0.0112,
+        "workers": [
+          "documents"
+        ]
+      },
+      {
+        "type": "DraftWritten",
+        "attempt": 1,
+        "length": 171,
+        "seconds": 11.3598,
+        "first_token_seconds": 5.488050291955005
+      },
+      {
+        "type": "Validation",
+        "attempt": 1,
+        "verdict": "합격"
+      },
+      {
+        "type": "Finalize",
+        "pipeline": "optics"
+      }
+    ],
+    "drafts": [
+      "F수를 높이면 밝기가 줄고 회절 무늬가 작아집니다.  \nF수는 초점거리와 입사동공 지름의 비로, F수를 높이면 동공 지름이 작아져 같은 조명 조건에서 상면 조도가 1/(F수)²에 비례해 감소합니다.  \n회절 무늬 지름은 $ d = 2.44\\lambda F_\\# $로, F수 증가 시 무늬 지름이 줄어듭니다."
+    ],
+    "input_chars": 510,
+    "timings": {
+      "documents": 0.0112,
+      "write_1": 11.3598,
+      "first_token": 5.4881
+    },
+    "answer": "F수를 높이면 밝기가 줄고 회절 무늬가 작아집니다.  \nF수는 초점거리와 입사동공 지름의 비로, F수를 높이면 동공 지름이 작아져 같은 조명 조건에서 상면 조도가 1/(F수)²에 비례해 감소합니다.  \n회절 무늬 지름은 $ d = 2.44\\lambda F_\\# $로, F수 증가 시 무늬 지름이 줄어듭니다.",
+    "total_seconds": 11.381,
+    "manual_review": {
+      "status": "fail",
+      "note": "F수 증가 시 밝기 감소는 맞지만 회절 무늬는 커져야 함."
+    }
+  }
+]

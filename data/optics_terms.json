@@ -1,0 +1,475 @@
+[
+  {
+    "document": "xrd-bragg",
+    "terms": [
+      "결정구조",
+      "결정 구조",
+      "crystal structure"
+    ],
+    "definition": "원자·이온·분자가 공간에서 주기적으로 배열되는 방식. 격자와 그 격자점에 배치되는 원자 묶음(기저)을 함께 고려한다. XRD가 구조를 만드는 것이 아니라 회절로 구조를 추론한다."
+  },
+  {
+    "document": "xrd-bragg",
+    "terms": [
+      "격자상수",
+      "격자 상수",
+      "lattice parameter"
+    ],
+    "definition": "단위격자의 크기와 모양을 정하는 길이 a,b,c와 각도 α,β,γ. 입방정계에서는 a=b=c이고 세 각은 90°이다. 일반적으로 면간격 d와 같은 값이 아니다."
+  },
+  {
+    "document": "xrd-bragg",
+    "terms": [
+      "단위격자",
+      "단위 격자",
+      "unit cell"
+    ],
+    "definition": "반복하여 전체 결정을 구성할 수 있는 기본 공간 단위."
+  },
+  {
+    "document": "xrd-bragg",
+    "terms": [
+      "밀러지수",
+      "밀러 지수",
+      "miller indices"
+    ],
+    "definition": "결정면의 방향을 나타내는 정수 표기 (hkl). 입방정계에서 면간격은 d=a/√(h²+k²+l²)."
+  },
+  {
+    "document": "xrd-bragg",
+    "terms": [
+      "고니오미터",
+      "goniometer"
+    ],
+    "definition": "시료·검출기의 각도를 정밀하게 조절하고 읽는 장치. 대칭 θ–2θ 배치에서 시료면 기준 입사각은 θ, 산란각은 2θ."
+  },
+  {
+    "document": "xrd-bragg",
+    "terms": [
+      "소멸규칙",
+      "소멸 규칙",
+      "구조인자",
+      "structure factor"
+    ],
+    "definition": "단위격자 내부 원자들의 산란파 합으로 일부 반사가 사라질 수 있다. 구조인자는 원자 위치·산란인자와 관련되며 브래그 조건만으로 강도를 정할 수 없다."
+  },
+  {
+    "document": "michelson-interferometer",
+    "terms": [
+      "빔스플리터",
+      "beam splitter"
+    ],
+    "definition": "입사광을 두 팔로 나누고 되돌아온 빛을 중첩시키는 광학 소자."
+  },
+  {
+    "document": "michelson-interferometer",
+    "terms": [
+      "광로차",
+      "광로 차",
+      "광학경로차"
+    ],
+    "definition": "두 경로의 광학적 길이 ∫n ds 차이. 위상차는 진공 파장 기준 Δφ=2π·광로차/λ₀."
+  },
+  {
+    "document": "michelson-interferometer",
+    "terms": [
+      "가시도",
+      "visibility"
+    ],
+    "definition": "간섭무늬 대비 V=(Imax−Imin)/(Imax+Imin). 세기 불균형·결맞음·공간 중첩·편광 등의 영향을 받는다."
+  },
+  {
+    "document": "michelson-interferometer",
+    "terms": [
+      "등경사",
+      "등두께"
+    ],
+    "definition": "등경사 간섭은 관측 방향에 따른 광로차와, 등두께 간섭은 위치별 두께·광로차와 관련된다. 정렬과 관찰 배치에 따라 원형 또는 띠 무늬가 나타난다."
+  },
+  {
+    "document": "michelson-interferometer",
+    "terms": [
+      "미동대",
+      "거울기울기",
+      "거울 기울기"
+    ],
+    "definition": "미동대는 거울 위치를 미세 조절한다. 기울기는 반사광 방향과 화면의 위상 기울기를 바꾸며, 실제 장비에서는 빔 중첩에도 영향을 준다."
+  },
+  {
+    "document": "polarization-and-reflection",
+    "terms": [
+      "입사면",
+      "plane of incidence"
+    ],
+    "definition": "입사광 진행 벡터와 경계면 법선이 만드는 평면. s/p 방향을 정의하는 기준."
+  },
+  {
+    "document": "polarization-and-reflection",
+    "terms": [
+      "법선",
+      "normal vector"
+    ],
+    "definition": "경계면에 수직인 방향. 입사·반사·굴절 각도는 일반적으로 이 방향을 기준으로 잰다."
+  },
+  {
+    "document": "polarization-and-reflection",
+    "terms": [
+      "투과율",
+      "반사율",
+      "프레넬",
+      "fresnel"
+    ],
+    "definition": "반사율 R과 투과율 T는 입사 에너지 유속에 대한 비율. 전기장 진폭 계수 r,t와 구분하며 무흡수 경계에서 R+T=1."
+  },
+  {
+    "document": "polarization-and-reflection",
+    "terms": [
+      "브루스터각",
+      "브루스터 각"
+    ],
+    "definition": "비흡수·비자성 유전체 경계에서 p 반사율이 0인 입사각. tanθB=n₂/n₁."
+  },
+  {
+    "document": "polarization-and-reflection",
+    "terms": [
+      "소광비",
+      "소광 비",
+      "extinction ratio"
+    ],
+    "definition": "편광 소자의 통과 방향과 차단 방향 투과 성능을 비교하는 비율. 실제 편광판은 완전 차단이 아닐 수 있다."
+  },
+  {
+    "document": "polarization-and-reflection",
+    "terms": [
+      "임계각",
+      "임계 각"
+    ],
+    "definition": "n₁>n₂일 때 θc=arcsin(n₂/n₁). 임계각보다 큰 입사각에서 전반사가 발생한다."
+  },
+  {
+    "document": "lenses-and-optical-instruments",
+    "terms": [
+      "초점거리",
+      "초점 거리",
+      "focal length"
+    ],
+    "definition": "광학계의 집광·발산 정도를 나타내는 길이. 얇은 렌즈의 평행 근축광이 모이거나 발산해 보이는 위치와 관련된다."
+  },
+  {
+    "document": "lenses-and-optical-instruments",
+    "terms": [
+      "실상",
+      "real image"
+    ],
+    "definition": "광선이 실제로 모여 형성하는 상으로 적절한 위치의 스크린에 맺을 수 있다."
+  },
+  {
+    "document": "lenses-and-optical-instruments",
+    "terms": [
+      "허상",
+      "virtual image"
+    ],
+    "definition": "광선의 역연장선이 만나는 것으로 보이는 상. 그 위치에 스크린을 놓아 직접 받는 상은 아니다."
+  },
+  {
+    "document": "lenses-and-optical-instruments",
+    "terms": [
+      "횡배율",
+      "횡 배율"
+    ],
+    "definition": "상 높이/물체 높이. 근축 얇은 렌즈의 부호 규약에서 m=−v/u이며 음수는 도립을 뜻한다."
+  },
+  {
+    "document": "lenses-and-optical-instruments",
+    "terms": [
+      "수차",
+      "색수차",
+      "구면수차"
+    ],
+    "definition": "이상적 상에서 벗어나는 현상. 색수차는 파장별 굴절률 차이, 구면수차는 구면계에서 광선 높이에 따른 초점 차이와 관련된다."
+  },
+  {
+    "document": "optical-equipment",
+    "terms": [
+      "대물구경",
+      "대물 구경"
+    ],
+    "definition": "대물렌즈·거울의 빛을 받아들이는 유효 지름. 집광량과 회절 한계에 영향을 주며 초점거리·접안렌즈 크기와는 별개다."
+  },
+  {
+    "document": "optical-equipment",
+    "terms": [
+      "대물렌즈",
+      "대물 렌즈"
+    ],
+    "definition": "물체 쪽에서 빛을 받아 상 형성에 관여하는 렌즈."
+  },
+  {
+    "document": "optical-equipment",
+    "terms": [
+      "접안렌즈",
+      "접안 렌즈"
+    ],
+    "definition": "눈 쪽에서 중간상 또는 광학계 출사광을 관찰하도록 하는 렌즈. 망원경 종류에 따라 양·음의 초점거리를 쓸 수 있다."
+  },
+  {
+    "document": "optical-equipment",
+    "terms": [
+      "센서폭",
+      "센서 폭",
+      "센서 크기"
+    ],
+    "definition": "상을 기록하는 센서의 가로 유효 길이. 초점거리와 함께 기록되는 화각을 결정한다."
+  },
+  {
+    "document": "optical-equipment",
+    "terms": [
+      "F수",
+      "F 수",
+      "f-number"
+    ],
+    "definition": "초점거리/입사동공 지름. 이상적 조건에서 같은 노출시간의 상면 조도는 대략 1/(F수)²에 비례한다."
+  },
+  {
+    "document": "optical-equipment",
+    "terms": [
+      "튜브렌즈",
+      "튜브 렌즈"
+    ],
+    "definition": "무한 보정 현미경에서 대물이 내보낸 평행광으로 중간상을 형성하는 렌즈."
+  },
+  {
+    "document": "optical-equipment",
+    "terms": [
+      "개구수",
+      "numerical aperture"
+    ],
+    "definition": "NA=n sinα. 매질 굴절률 n과 수광 원뿔 반각 α로 정의하며 수광과 분해능에 관련된다."
+  },
+  {
+    "document": "grating-prism-spectrometer",
+    "terms": [
+      "콜리메이터",
+      "collimator"
+    ],
+    "definition": "광원·슬릿에서 나오는 빛을 거의 평행한 광선으로 만드는 광학계."
+  },
+  {
+    "document": "grating-prism-spectrometer",
+    "terms": [
+      "분산",
+      "dispersion"
+    ],
+    "definition": "굴절률이 파장에 따라 달라지는 성질. 프리즘의 색 분리와 관계되며 산란과 구분한다."
+  },
+  {
+    "document": "grating-prism-spectrometer",
+    "terms": [
+      "최소편이각",
+      "최소 편이각"
+    ],
+    "definition": "프리즘의 입사·출사 방향 차이가 최소가 되는 편이각. 대칭 광로 조건과 관계된다."
+  },
+  {
+    "document": "grating-prism-spectrometer",
+    "terms": [
+      "격자간격",
+      "격자 간격",
+      "회절차수"
+    ],
+    "definition": "회절격자에서 반복 구조의 주기 d와 정수 차수 m. 수직 입사의 이상적 투과격자에서 d sinθ=mλ."
+  },
+  {
+    "document": "shadow-and-diffraction",
+    "terms": [
+      "슬릿폭",
+      "슬릿 폭"
+    ],
+    "definition": "빛이 통과하는 틈의 폭. 단일슬릿 원거리 회절에서 폭이 작아지면 중앙 무늬가 넓어진다."
+  },
+  {
+    "document": "shadow-and-diffraction",
+    "terms": [
+      "원거리회절",
+      "원거리 회절",
+      "프라운호퍼"
+    ],
+    "definition": "전파 거리·관찰 렌즈 배치에 따라 파면을 원거리 근사로 취급하는 회절 조건."
+  },
+  {
+    "document": "shadow-and-diffraction",
+    "terms": [
+      "중앙최대",
+      "중앙 최대"
+    ],
+    "definition": "단일슬릿 회절의 중심 밝은 무늬. 첫 암선 사이 전체 폭은 작은 각도에서 약 2λL/a."
+  },
+  {
+    "document": "absorption-photoelectric",
+    "terms": [
+      "밴드갭",
+      "밴드 갭",
+      "band gap"
+    ],
+    "definition": "가전자대 꼭대기와 전도대 바닥의 에너지 차이 Eg. 물질 밖 방출에 필요한 에너지와 같은 개념이 아니다."
+  },
+  {
+    "document": "absorption-photoelectric",
+    "terms": [
+      "일함수",
+      "일 함수",
+      "work function"
+    ],
+    "definition": "금속에서 페르미 준위의 전자를 진공 준위까지 꺼내는 데 필요한 에너지. 표면 상태·결정면에 영향을 받는다."
+  },
+  {
+    "document": "absorption-photoelectric",
+    "terms": [
+      "문턱파장",
+      "문턱 파장"
+    ],
+    "definition": "해당 에너지 문턱과 hc/λ가 같아지는 파장. 단일광자 에너지 조건이며 실제 흡수율을 정하는 값은 아니다."
+  },
+  {
+    "document": "absorption-photoelectric",
+    "terms": [
+      "정지전압",
+      "정지 전압",
+      "저지전압"
+    ],
+    "definition": "광전효과에서 최대 운동에너지 전자까지 저지하는 전위차의 크기. eVs=Kmax."
+  },
+  {
+    "document": "electron-energy-levels",
+    "terms": [
+      "전도대",
+      "전도대바닥"
+    ],
+    "definition": "전도에 기여할 수 있는 전자 상태의 에너지 밴드. 전도대 바닥 Ec는 그 밴드의 최소 에너지이며 전자의 에너지 상한은 아니다."
+  },
+  {
+    "document": "electron-energy-levels",
+    "terms": [
+      "가전자대",
+      "가전자대꼭대기"
+    ],
+    "definition": "가전자 전자들이 차지하는 밴드. 가전자대 꼭대기 Ev와 Ec 차이가 밴드갭이다."
+  },
+  {
+    "document": "electron-energy-levels",
+    "terms": [
+      "페르미준위",
+      "페르미 준위",
+      "fermi level"
+    ],
+    "definition": "열평형 전자의 화학퍼텐셜. 점유 분포를 정하는 기준이며 그 에너지에 실제 전자 상태가 반드시 있다는 뜻은 아니다."
+  },
+  {
+    "document": "electron-energy-levels",
+    "terms": [
+      "정공",
+      "hole"
+    ],
+    "definition": "거의 채워진 밴드에서 전자가 비어 있는 상태를 유효한 양전하 운반자로 기술한 것."
+  },
+  {
+    "document": "speed-of-light",
+    "terms": [
+      "비행시간",
+      "비행 시간",
+      "time of flight"
+    ],
+    "definition": "빛이 주어진 경로를 이동하는 데 걸린 시간. 거리와 시간의 기준·고정 지연을 구분해야 한다."
+  },
+  {
+    "document": "speed-of-light",
+    "terms": [
+      "위상지연",
+      "위상 지연"
+    ],
+    "definition": "기준 신호와 측정 신호의 위상 차이. 주파수와 함께 시간 지연을 추정하지만 2π 모호성을 고려한다."
+  },
+  {
+    "document": "speed-of-light",
+    "terms": [
+      "왕복광로",
+      "왕복 광로"
+    ],
+    "definition": "빛이 거울까지 갔다 되돌아오는 경로. 편도 거리 L과 왕복 이동 거리 2L을 구분한다."
+  },
+  {
+    "document": "light-fundamentals",
+    "terms": [
+      "굴절률",
+      "refractive index"
+    ],
+    "definition": "위상속도 v에 대한 n=c/v. 매질 안 파장은 λ=λ₀/n이고 정지한 선형 경계에서 진동수는 유지된다."
+  },
+  {
+    "document": "light-fundamentals",
+    "terms": [
+      "결맞음",
+      "coherence"
+    ],
+    "definition": "파동 사이 위상 관계가 유지되는 정도. 시간·공간 결맞음을 구분한다."
+  },
+  {
+    "document": "light-fundamentals",
+    "terms": [
+      "광세기",
+      "광 세기",
+      "광출력"
+    ],
+    "definition": "실험에서 세기는 면적당 광출력 또는 상대 검출값을 가리킬 수 있어 단위를 확인해야 한다. 광자 하나의 에너지와는 다르다."
+  },
+  {
+    "document": "scattering-and-sky",
+    "terms": [
+      "레일리산란",
+      "레일리 산란"
+    ],
+    "definition": "파장보다 작은 산란체에 대한 근사. 다른 조건이 같을 때 산란 세기는 대략 λ⁻⁴ 경향을 보인다."
+  },
+  {
+    "document": "scattering-and-sky",
+    "terms": [
+      "미산란",
+      "미 산란",
+      "mie scattering"
+    ],
+    "definition": "구형 입자에 대한 전자기 산란 해석으로, 입자 크기가 파장에 가까운 경우 등에서 레일리 근사와 다른 각도·파장 의존성을 보인다."
+  },
+  {
+    "document": "measurement-and-uncertainty",
+    "terms": [
+      "정확도",
+      "정밀도"
+    ],
+    "definition": "정확도는 참값·기준과의 가까움, 정밀도는 반복 측정값끼리의 일치 정도를 가리킨다. 수치화 방법과 기준을 구분한다."
+  },
+  {
+    "document": "measurement-and-uncertainty",
+    "terms": [
+      "불확도",
+      "오차전파",
+      "오차 전파"
+    ],
+    "definition": "불확도는 측정값에 합리적으로 부여할 수 있는 값의 퍼짐을 표현한다. 입력 불확도와 상관관계가 계산 결과에 전달된다."
+  },
+  {
+    "document": "lithography-process",
+    "terms": [
+      "오버레이",
+      "overlay"
+    ],
+    "definition": "서로 다른 층 패턴의 상대 위치 정렬 오차. 선폭 변화와 구분한다."
+  },
+  {
+    "document": "lithography-process",
+    "terms": [
+      "초점심도",
+      "초점 심도"
+    ],
+    "definition": "허용 영상·공정 품질을 유지할 수 있는 초점 방향 범위. 매질·허용 기준이 고정되면 대략 λ/NA² 경향을 갖는다."
+  }
+]
